@@ -11,6 +11,13 @@ services:
     ports:
       - "5432:5432"
 
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
   web:
     build:
       context: .
@@ -23,3 +30,10 @@ services:
       POSTGRE_URL: jdbc:postgresql://datasource:5432/database
       POSTGRE_USERNAME: admin
       POSTGRE_PASSWORD: admin
+      MAIL_SERVICE_HOST: mailhog
+      MAIL_SERVICE_PORT: 1025
+      MAIL_SERVICE_USERNAME:
+      MAIL_SERVICE_PASSWORD:
+      MAIL_SERVICE_AUTH: false
+      MAIL_SERVICE_TLS: false
+      MAIL_FROM: granko@upcba.sk
