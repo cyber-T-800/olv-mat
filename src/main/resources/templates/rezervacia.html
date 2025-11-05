@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="sk">
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Rezervácia lístka</title>
+        <link type="text/css" rel="stylesheet" href="/stylesheet.css">
+    </head>
+
+    <body>
+        <div class="obal">
+            <h1>Rezervácia lístka na OĽV</h1>
+
+
+            <p>Švárni šuhaji, driečne devy,</p>
+            <div style="height:0.75rem;"></div>
+
+            <p>
+            Pozývame Vás na Ondrejskú ľudovú veselicu plnú farieb, vzorov a zábavy!
+            Už <strong>28. novembra</strong> bude naše UPeCe znieť ľudovými tancami a piesňami.
+            Ak si toto nechceš nechať ujsť, tu si môžeš zarezervovať lístok.
+            Jednoducho <strong>vyplň formulár</strong> a lístok budeš mať rezervovaný.
+            Následne prídeš do <strong>Libressa</strong>, ktorýkoľvek <strong>pracovný deň hodinku pred svätou omšou</strong>,
+            kde nám dáš svoj príspevok a my ti lístok aktivujeme.
+            </p>
+
+            <div style="height:2.25rem;"></div>
+
+
+            <p><strong>Odporúčaný príspevok:</strong></p>
+
+            <pre>  -  8€  Študent</pre>
+            <pre>  - 16€  Neštudent</pre>
+            <div style="height:1.25rem;"></div>
+
+
+            <p>Ak máš túžbu pridať ruku k dielu, pridaj sa do kolektívu dobrovoľníkov:</p>
+
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLScQT35Go2tPK3XinxHqm2aahp-Bnjccv7c8_zjW1nsb_9RQKw/viewform?usp=dialog"
+                class="button" style="margin-left: 0.75rem;">
+                <strong>Viac informácií</strong>
+            </a>
+            
+            <div style="height:3.5rem;"></div>
+
+
+
+            <form method="post" action="">
+                <label for="name">Meno a priezvisko:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Emailová adresa:</label>
+                <input type="email" id="email" name="email" required>
+
+
+                <fieldset style="margin-top:1rem;">
+                    <legend>Typ lístka:</legend>
+                    <label>
+                    <input type="radio" name="ticket-type" value="student" checked required>
+                    Študentský
+                    </label>
+                    <label>
+                    <input type="radio" name="ticket-type" value="nonstudent" required>
+                    Neštudentský
+                    </label>
+                </fieldset>
+
+                <div style="height:1rem;"></div>
+                <input class="button" style="width: 100%;" type="submit" value="Odoslať rezerváciu">
+            </form>
+        </div>
+    </body>
+</html>

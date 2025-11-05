@@ -3,8 +3,8 @@ package org.upece.granko.olvmat.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.upece.granko.olvmat.entity.Test;
-import org.upece.granko.olvmat.repository.TestRepository;
+import org.upece.granko.olvmat.entity.TicketEntity;
+import org.upece.granko.olvmat.repository.TicketRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,20 +13,21 @@ import java.util.List;
 @AllArgsConstructor
 public class UptimeController {
 
-    private final TestRepository testRepository;
+    private final TicketRepository ticketRepository;
 
-    @GetMapping
-    public UptimeStatus getUp(){
+    @GetMapping("healt")
+    public UptimeStatus getUp() {
         return new UptimeStatus("UP", LocalDate.now());
     }
 
     @GetMapping("test")
-    public List<Test> getTest(){
-        return testRepository.findAll();
+    public List<TicketEntity> getTest() {
+        return ticketRepository.findAll();
     }
 
     public record UptimeStatus(
             String up,
             LocalDate time
-    ){}
+    ) {
+    }
 }
