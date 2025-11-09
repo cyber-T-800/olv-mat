@@ -1,19 +1,17 @@
 package org.upece.granko.olvmat.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.upece.granko.olvmat.entity.enums.StavRezervacieEnum;
+import org.upece.granko.olvmat.entity.enums.TypListkaEnum;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "ticket")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class TicketEntity {
@@ -24,17 +22,20 @@ public class TicketEntity {
 
     private String email;
     private String meno;
-    private String stav;
 
+    @Enumerated(value = EnumType.STRING)
     private TypListkaEnum typListka;
 
-    public TicketEntity(String meno, String email){
+    @Enumerated(value = EnumType.STRING)
+    private StavRezervacieEnum stav;
+
+    public TicketEntity(String meno, String email, TypListkaEnum typListka) {
         id = UUID.randomUUID();
         securityKey = UUID.randomUUID();
 
         this.email = email;
         this.meno = meno;
-        this.stav = "rezervovany";
-        this.typListka = TypListkaEnum.STUDENTSKY;
+        this.stav = StavRezervacieEnum.REZERVOVANY;
+        this.typListka = typListka;
     }
 }

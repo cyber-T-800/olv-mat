@@ -2,7 +2,7 @@
 <html lang="sk" xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <p th:text="${'Ahoj ' + krstne_meno + '!'}">Ahoj!</p>
+    <p th:text="${'Ahoj ' + krstneMeno + '!'}">Ahoj!</p>
 
     <div style="height:0.25rem;"></div>
 
@@ -19,7 +19,7 @@
     <div style="height:0.25rem;"></div>
 
     <p>
-        <a href="http://localhost:8080">
+        <a th:href="${'olv-mat.upcba.sk/listok/' + ticketId + '?securityKey=' + securityKey}">
             Tu môžeš sledovať stav svojho lístka
         </a>
     </p>

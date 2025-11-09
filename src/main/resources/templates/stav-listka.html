@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="sk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stav rezervácie</title>
+    <!-- link type="text/css" rel="stylesheet" href="/stylesheet.css" -->
+    <link type="text/css" rel="stylesheet" href="/stylesheet.css">
+</head>
+
+<body>
+<div class="obal">
+    <h1>Stav tvojej rezervácie</h1>
+
+    <div class="info">
+        <p><strong>Meno:</strong> <span th:text="${meno}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${mail}"></span></p>
+        <p><strong>Typ lístka:</strong> <span th:text="${typ}"></span></p>
+        <p><strong>Stav lístka:</strong> <span th:text="${stav}"></span></p>
+    </div>
+
+    <div style="height:1rem;"></div>
+</div>
+</body>
+</html>
