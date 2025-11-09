@@ -9,6 +9,9 @@ import org.upece.granko.olvmat.model.ReservationForm;
 import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.service.EmailService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 @RequiredArgsConstructor
 public class ReservationController {
@@ -25,7 +28,8 @@ public class ReservationController {
     public String odosliRezervaciu(ReservationForm form) {
 
         ticketRepository.save(new TicketEntity(form.getName(), form.getEmail()));
-        emailService.sendMail(form.getEmail(), "Predaj lístka", "Ďakujeme " + form.getName());
+        Map<String, Object> model = new HashMap<>();
+        emailService.sendMail(form.getEmail(), "Potvrdenie rezervácie listka", "mail-potvrdenie", model);
 
         return "rezervacia";
     }
