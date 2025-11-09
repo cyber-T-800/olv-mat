@@ -26,6 +26,8 @@ public class TicketEntity {
     private String meno;
     private String stav;
 
+    private TypListkaEnum typListka;
+
     public TicketEntity(String meno, String email){
         id = UUID.randomUUID();
         securityKey = UUID.randomUUID();
@@ -33,5 +35,6 @@ public class TicketEntity {
         this.email = email;
         this.meno = meno;
         this.stav = "rezervovany";
+        this.typListka = TypListkaEnum.STUDENTSKY;
     }
 }
