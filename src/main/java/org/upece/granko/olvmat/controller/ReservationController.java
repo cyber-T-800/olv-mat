@@ -29,8 +29,8 @@ public class ReservationController {
 
         ticketRepository.save(new TicketEntity(form.getName(), form.getEmail()));
         Map<String, Object> model = new HashMap<>();
-        emailService.sendMail(form.getEmail(), "Potvrdenie rezervácie listka", "mail-potvrdenie", model);
+        emailService.sendMail(form.getEmail(), "Potvrdenie rezervácie listka", "potvrdenie-rezervacie", model);
 
-        return "rezervacia";
+        return "potvrdenie";
     }
 }

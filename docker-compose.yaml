@@ -10,6 +10,8 @@ services:
       POSTGRES_DB: database
     ports:
       - "5432:5432"
+    volumes:
+      - db-olv-mat-postgres-data:/etc/data
 
   mailhog:
     image: mailhog/mailhog
@@ -39,3 +41,6 @@ services:
       MAIL_SERVICE_AUTH: false
       MAIL_SERVICE_TLS: false
       MAIL_FROM: granko@upcba.sk
+
+volumes:
+  db-olv-mat-postgres-data:

@@ -32,7 +32,6 @@ public class EmailService {
             helper.setSubject(subject);
             helper.setText(mailTemplateService.generateHtml(template, model), true);
 
-            System.out.println(mailTemplateService.generateHtml(template, model));
             mailSender.send(message);
         } catch (MessagingException | UnsupportedEncodingException ex) {
             throw new RuntimeException(ex);
