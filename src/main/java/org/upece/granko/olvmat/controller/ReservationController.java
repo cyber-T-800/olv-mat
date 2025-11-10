@@ -29,19 +29,21 @@ public class ReservationController {
     }
 
     @PostMapping("")
-    public String odosliRezervaciu(ReservationForm form) {
+    public String odosliRezervaciu(ReservationForm form, ModelMap model) {
         if (form.getName() == null || form.getEmail() == null) {
             return "redirect:/";
         }
 
         TicketEntity entity = ticketRepository.save(new TicketEntity(form.getName(), form.getEmail(), form.getTicketType()));
 
-        Map<String, Object> model = new HashMap<>();
-        model.put("krstneMeno", form.getName().split(" ")[0]);
+        Map<String, Object> mailModel = new HashMap<>();
+        mailModel.put("krstneMeno", form.getName().split(" ")[0]);
+        mailModel.put("ticketId", entity.getId());
+        mailModel.put("securityKey", entity.getSecurityKey());
+        emailService.sendMail(form.getEmail(), "Potvrdenie rezervácie listka", "potvrdenie-rezervacie", mailModel);
+
         model.put("ticketId", entity.getId());
         model.put("securityKey", entity.getSecurityKey());
-        emailService.sendMail(form.getEmail(), "Potvrdenie rezervácie listka", "potvrdenie-rezervacie", model);
-
         return "potvrdenie";
     }
 

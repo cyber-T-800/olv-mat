@@ -14,9 +14,16 @@
     <p>Vaša rezervácia bola úspešne prijatá. Podrobnosti sme Vám poslali e-mailom.</p>
     <div style="height:2rem;"></div>
 
-    <p>V prípade že vám žiadny email nepriešiel, zastavte sa u našich vydávačov lístkov od 17.11. niektorý pracovný deň po svätej omši.</p>
+    <p>V prípade, že vám žiadny email nepriešiel, zastavte sa u našich vydávačov lístkov od 17.11. niektorý pracovný deň po svätej omši.</p>
 
     <div style="height:3rem;"></div>
+
+    <div style="display: flex; justify-content: center;">
+        <a class="button" th:href="${'ticket/' + ticketId + '?securityKey=' + securityKey}">
+            Skontrolovať stav
+        </a>
+    </div>
+    <div style="height:2rem;"></div>
 
     <div style="display: flex; justify-content: center;">
         <a href=""

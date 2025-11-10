@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        .button {
+            display: inline-block;
+            padding: 0.75rem 1.25rem;
+            border-radius: 15px;
 
+            background: #2864f0;
+            color: #fafafa;
+            text-decoration: none;
+
+            cursor: pointer;
+            transition: background 0.25s ease;
+        }
+    </style>
+</head>
 <body>
     <p th:text="${'Ahoj ' + krstneMeno + '!'}">Ahoj!</p>
 
@@ -11,7 +26,7 @@
     <p>
         Lístok máš úspešne rezervovaný &ndash; <strong>stačí si ho prísť vyzdvihnúť do UPeCe.</strong><br>
         Môžeš tak urobiť od pondelka 17.11.2025 do štvrtku 27.11.2025 každý <strong>pracovný deň 30 minút po svätej omši</strong> v
-        Libresse
+        Libresse.
     </p>
 
     <p>Nezabudni, že <strong>platba je možná len v hotovosti</strong>!</p>
@@ -19,7 +34,7 @@
     <div style="height:0.25rem;"></div>
 
     <p>
-        <a th:href="${'olv-mat.upcba.sk/ticket/' + ticketId + '?securityKey=' + securityKey}">
+        <a class="button" th:href="${'olv-mat.upcba.sk/ticket/' + ticketId + '?securityKey=' + securityKey}">
             Tu môžeš sledovať stav svojho lístka
         </a>
     </p>
