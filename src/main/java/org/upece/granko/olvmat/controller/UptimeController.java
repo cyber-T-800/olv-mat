@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @RestController
 @AllArgsConstructor
 public class UptimeController {
-    @GetMapping("healt")
+    @GetMapping("health")
     public UptimeStatus getUp() {
         return new UptimeStatus("UP", LocalDate.now());
     }

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Administrácia rezervácií</title>
+    <!-- link type="text/css" rel="stylesheet" href="/stylesheet.css" -->
+    <link type="text/css" rel="stylesheet" href="/stylesheet.css">
+</head>
+
+<body>
+<div class="obal" style="max-width: 1250px;">
+    <h1>Administrácia rezervácií</h1>
+    <div class="admin-info">
+        Prihlásený ako: <strong th:text="${user}">admin@upc.sk</strong> |
+        <a href="/logout">
+            Odhlásiť sa
+        </a>
+    </div>
+
+    <input type="text" id="search" placeholder="Vyhľadať podľa mena alebo priezviska...">
+
+    <table id="reservations">
+        <thead>
+        <tr>
+            <th>Meno</th>
+            <th>Email</th>
+            <th>Typ lístka</th>
+            <th>Stav</th>
+            <th>Akcia</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    let reservations = [];
+    const tbody = document.querySelector('#reservations tbody');
+
+    async function renderTable() {
+        const response = await fetch("admin/tickets");
+
+        reservations = await response.json();
+
+        tbody.innerHTML = '';
+        reservations.forEach(r => {
+            const tr = document.createElement('tr');
+            tr.dataset.id = r.id;
+            tr.innerHTML = `
+                        <td>${r.meno}</td>
+                        <td>${r.email}</td>
+                        <td>${r.typListka}</td>
+                        <td>
+                            ${r.stav}
+                        </td>
+                        <td>
+                            ${r.stav === "REZERVOVANY" ? `<button class="button" style="padding: 0.25rem 0.75rem;" onclick="confirmPayment('${r.id}')">Zaplatiť</button>` : ""}
+                        </td>
+                    `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    async function confirmPayment(id) {
+        const res = reservations.find(r => r.id === id);
+        if (!res) return;
+
+
+
+        const ok = confirm(`Naozaj chceš potvrdiť platbu pre: ${res.meno}?`);
+        if (!ok) return; // ak klikne na "Zrušiť", nič sa nezmení
+
+        const response = await fetch("admin/tickets/" + id + "/zaplatenie", {
+            method: 'PUT'
+        });
+
+        if (!response.ok){
+            alert("Nepodarilo sa potvrdiť zaplatenie - lístok už je zaznamenaný ako zaplatený. Prosím znovunačítaj stránku.")
+        }
+
+        await renderTable();
+    }
+
+
+    document.getElementById('search').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#reservations tbody tr');
+        rows.forEach(row => {
+            const name = row.cells[0].textContent.toLowerCase();
+            row.style.display = name.includes(filter) ? '' : 'none';
+        });
+    });
+
+    renderTable();
+</script>
+</body>
+</html>
