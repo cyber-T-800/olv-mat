@@ -92,7 +92,7 @@
     });
 
     function runFilter(){
-        const filter = document.getElementById('search').textContent.toLowerCase();
+        const filter = document.getElementById('search').value.toLowerCase();
         const nezaplateneFilterChecked = document.getElementById('filter-nezaplatene').checked;
         const rows = document.querySelectorAll('#reservations tbody tr');
         rows.forEach(row => {
@@ -104,9 +104,11 @@
                     disp = 'none'
                 }
             }
-            if(disp === ''){
+
+
+            if(disp !== 'none'){
                 const name = row.cells[0].textContent.toLowerCase();
-                disp = name.includes(filter)  ? '' : 'none';
+                disp = name.includes(filter) ? '' : 'none';
             }
             row.style.display = disp;
         });
