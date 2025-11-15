@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<h2>Nová žiadosť o registráciu admina</h2>
+
+<div style="height:0.25rem;"></div>
+
+<p>
+    Užívateľ požiadal o registráciu nového účtu na správu lístkov na mail: <span style="font-style: italic" th:text="${email}"></span>
+</p>
+
+<p>
+    <a th:href="${url}">
+        Tu môžeš potvrdiť registráciu
+    </a>
+</p>
+</body>
+</html>

@@ -41,6 +41,8 @@ services:
       MAIL_SERVICE_AUTH: false
       MAIL_SERVICE_TLS: false
       MAIL_FROM: granko@upcba.sk
+      SUPER_ADMIN_EMAIL: granko@upcba.sk
+      HOST_PORT: localhost:8080
 
 volumes:
   db-olv-mat-postgres-data:
