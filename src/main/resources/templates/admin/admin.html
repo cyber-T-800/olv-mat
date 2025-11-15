@@ -18,7 +18,8 @@
     </div>
 
     <input type="text" id="search" placeholder="Vyhľadať podľa mena alebo priezviska...">
-
+    <label for="filter-nezaplatene">Zobraz iba nezaplatené lístky: </label>
+    <input type="checkbox" id="filter-nezaplatene">
     <table id="reservations">
         <thead>
         <tr>
@@ -83,14 +84,33 @@
 
 
     document.getElementById('search').addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        const rows = document.querySelectorAll('#reservations tbody tr');
-        rows.forEach(row => {
-            const name = row.cells[0].textContent.toLowerCase();
-            row.style.display = name.includes(filter) ? '' : 'none';
-        });
+        runFilter();
     });
 
+    document.getElementById('filter-nezaplatene').addEventListener('input', function() {
+        runFilter();
+    });
+
+    function runFilter(){
+        const filter = document.getElementById('search').textContent.toLowerCase();
+        const nezaplateneFilterChecked = document.getElementById('filter-nezaplatene').checked;
+        const rows = document.querySelectorAll('#reservations tbody tr');
+        rows.forEach(row => {
+            let disp = '';
+
+
+            if(nezaplateneFilterChecked) {
+                if (row.cells[3].textContent.trim() !== 'REZERVOVANY') {
+                    disp = 'none'
+                }
+            }
+            if(disp === ''){
+                const name = row.cells[0].textContent.toLowerCase();
+                disp = name.includes(filter)  ? '' : 'none';
+            }
+            row.style.display = disp;
+        });
+    }
     renderTable();
 </script>
 </body>

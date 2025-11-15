@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.upece.granko.olvmat.entity.AdminEntity;
 import org.upece.granko.olvmat.entity.AdminRegistraciaZiadostEntity;
 import org.upece.granko.olvmat.entity.enums.AdminRegistraciaZiadostStavEnum;
+import org.upece.granko.olvmat.model.AdminDetails;
 import org.upece.granko.olvmat.repository.AdminRegistraciaZiadostRepository;
 import org.upece.granko.olvmat.repository.AdminRepository;
 import org.upece.granko.olvmat.service.EmailService;
@@ -47,7 +48,7 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String getAdminPage(ModelMap modelMap) {
-        modelMap.put("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        modelMap.put("user", ((AdminDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         return "admin/admin";
     }
 
