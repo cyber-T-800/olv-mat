@@ -9,12 +9,15 @@ body {
     background: #f0f0f0;
 }
 
+
+
 .obal {
     background: #fafafa;
     padding: 2rem;
     box-shadow: 0 6px 20px rgba(0,0,0,0.1);
     max-width: 690px;
 }
+
 
 .button {
     display: inline-block;
@@ -33,9 +36,31 @@ body {
 }
 
 
+.admin-info {
+    text-align: right;
+    color: #000000;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.login-registration {
+    text-align: center;
+    color: #000000;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+
+
 h1 {
     text-align: center;
     color: #0000f0;
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    text-align: center;
+    color: #000096;
     margin-bottom: 1.5rem;
 }
 
@@ -65,4 +90,38 @@ input[type="password"]{
 label {
     display: block;
     margin-top: 0.5rem;
+}
+
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border-bottom: 1px solid #dcdcdc;
+    width: max-content;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+    padding-top: 0.15rem;
+    padding-bottom: 0.15rem;
+    text-align: center;
+    font-size: 1rem;
+}
+th {
+    background: #fafafa;
+}
+tr:hover {
+    background: #f0f0f0;
+}
+
+.paid {
+    color: #00af00;
+    font-weight: bold;
+}
+
+.unpaid {
+    color: #ff0000;
+    font-weight: bold;
 }
