@@ -97,15 +97,11 @@ label {
 table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
 th, td {
     border-bottom: 1px solid #dcdcdc;
-    width: max-content;
-    padding-right: 0.75rem;
-    padding-left: 0.75rem;
-    padding-top: 0.15rem;
-    padding-bottom: 0.15rem;
     text-align: center;
     font-size: 1rem;
 }
@@ -114,14 +110,4 @@ th {
 }
 tr:hover {
     background: #f0f0f0;
-}
-
-.paid {
-    color: #00af00;
-    font-weight: bold;
-}
-
-.unpaid {
-    color: #ff0000;
-    font-weight: bold;
 }
