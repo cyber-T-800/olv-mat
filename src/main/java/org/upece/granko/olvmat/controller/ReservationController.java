@@ -23,8 +23,17 @@ public class ReservationController {
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
 
+    private int maxPocetListkov = 70;
+    private int lastListkyPocet = 25;
+
     @GetMapping("")
-    public String rezervacia() {
+    public String rezervacia(ModelMap model) {
+        int pocetUcastnickych = ticketRepository.countUcastnicke();
+        model.put("percentObsadene", 100.0f * ticketRepository.countUcastnicke() / maxPocetListkov);
+
+        if(maxPocetListkov - pocetUcastnickych <= lastListkyPocet){
+            model.put("lastListky", maxPocetListkov - pocetUcastnickych);
+        }
         return "rezervacia";
     }
 

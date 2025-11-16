@@ -47,6 +47,11 @@ body {
     position: relative;
     height:100%;
     background: #2864f0;
+    text-align: center;
+    font-weight: bold;
+    vertical-align: center;
+    padding-top: 10pt;
+    color: white;
 }
 .bar-text {
     position: absolute;

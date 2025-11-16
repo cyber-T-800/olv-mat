@@ -42,8 +42,11 @@
     <div style="height:4rem;"></div>
 
 
+    <h3>Aktuálna obsadenosť</h3>
     <div class="bar-bg">
-        <div id="barFill" class="bar-fill"></div>
+        <div id="barFill" class="bar-fill">
+            <span id="barFillText" style="vertical-align: center;"></span>
+        </div>
         <div id="barText" class="bar-text"></div>
     </div>
     <div style="height:1.5rem;"></div>
@@ -74,11 +77,13 @@
     </form>
 </div>
 
-<script>
+<script th:inline="javascript">
     const barFill = document.getElementById("barFill");
-    const barText = document.getElementById("barText");
+    const barFillText = document.getElementById("barFillText");
 
-    // Slovak pluralization
+    const percentObsadene = /*[[${percentObsadene}]]*/ 0;
+    const lastListky = /*[[${lastListky}]]*/ null;
+
     function skMiesta(n) {
         if (n === 1) return "Posledné miesto";
         if (n >= 2 && n <= 4) return "Posledné " + n + " miesta";
@@ -86,22 +91,14 @@
     }
 
     function updateUI() {
-        const ticket_num = 62;  // CURRENT number of tickets (replace with dynamic)
-        const cap = 200;         // MAX capacity (replace with dynamic)
-        const threshold = 25;    // Value (number of free) at which text changes
-
-        const free = cap - ticket_num;
-        const pct = Math.round((ticket_num / cap) * 100);
-        const freePct = Math.round((free / cap) * 100);
-
         // fill the bar
-        barFill.style.width = pct + "%";
+        barFill.style.width = percentObsadene + "%";
 
         // decide what text to show
-        if (free <= threshold) { 
-            barText.textContent = skMiesta(free);
+        if (lastListky !== null) {
+            barFillText.innerText = skMiesta(lastListky);
         } else {
-            barText.textContent = "";
+            barFillText.innerText = percentObsadene + "%";
         }
     }
 
