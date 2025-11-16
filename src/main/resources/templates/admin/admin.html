@@ -8,7 +8,7 @@
 </head>
 
 <body>
-<div class="obal" style="max-width: 1250px;">
+<div class="obal" style="min-width: 824px;">
     <h1>Administrácia rezervácií</h1>
     <div class="admin-info">
         Prihlásený ako: <strong th:text="${user}">admin@upc.sk</strong> |
@@ -18,9 +18,21 @@
     </div>
 
     <input type="text" id="search" placeholder="Vyhľadať podľa mena alebo priezviska...">
-    <label for="filter-nezaplatene">Zobraz iba nezaplatené lístky: </label>
-    <input type="checkbox" id="filter-nezaplatene">
+    
+    <label style="margin-top: 0rem; margin-bottom: 1.5rem;">
+        <input type="checkbox" id="filter-nezaplatene">
+        Zobraziť iba nezaplatené lístky
+    </label>
+    
     <table id="reservations">
+        <colgroup>
+            <col style="width: 165px">
+            <col style="width: 250px">
+            <col style="width: 115px">
+            <col style="width: 140px">
+            <col style="width:  90px">
+        </colgroup>
+
         <thead>
         <tr>
             <th>Meno</th>
@@ -48,7 +60,7 @@
             const tr = document.createElement('tr');
             tr.dataset.id = r.id;
             tr.innerHTML = `
-                        <td>${r.meno}</td>
+                        <td style="height: 35px">${r.meno}</td>
                         <td>${r.email}</td>
                         <td>${r.typListka}</td>
                         <td>
@@ -76,7 +88,7 @@
         });
 
         if (!response.ok){
-            alert("Nepodarilo sa potvrdiť zaplatenie - lístok už je zaznamenaný ako zaplatený. Prosím znovunačítaj stránku.")
+            alert("Nepodarilo sa potvrdiť zaplatenie - lístok už je zaznamenaný ako zaplatený.")
         }
 
         await renderTable();
