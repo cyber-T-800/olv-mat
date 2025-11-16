@@ -36,6 +36,33 @@ body {
 }
 
 
+.bar-bg{
+    position: relative;
+    height: 2.5rem;
+    background: #f0f0f0;
+    border-radius: 15px;
+    overflow: hidden;
+}
+.bar-fill{
+    position: relative;
+    height:100%;
+    background: #2864f0;
+}
+.bar-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    font-weight: bold;
+    color: #fafafa;
+}
+
+
 .admin-info {
     text-align: right;
     color: #000000;
@@ -114,14 +141,4 @@ th {
 }
 tr:hover {
     background: #f0f0f0;
-}
-
-.paid {
-    color: #00af00;
-    font-weight: bold;
-}
-
-.unpaid {
-    color: #ff0000;
-    font-weight: bold;
 }
