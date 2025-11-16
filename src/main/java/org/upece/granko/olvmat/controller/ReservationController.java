@@ -23,7 +23,7 @@ public class ReservationController {
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
 
-    private int maxPocetListkov = 70;
+    private int maxPocetListkov = 200;
     private int lastListkyPocet = 25;
 
     @GetMapping("")
