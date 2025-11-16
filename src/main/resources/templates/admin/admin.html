@@ -19,7 +19,7 @@
 
     <input type="text" id="search" placeholder="Vyhľadať podľa mena alebo priezviska...">
 
-    <label style="margin-top: 0rem; margin-bottom: 1.5rem;">
+    <label style="margin-top: 0; margin-bottom: 1.5rem;">
         <input type="checkbox" id="filter-nezaplatene">
         Zobraziť iba nezaplatené lístky
     </label>
@@ -51,9 +51,13 @@
     <form method="post" enctype="multipart/form-data">
         <fieldset>
             <legend>Nahrávam:</legend>
-            <input type="radio" name="typ" id="dobrovolnik" value="DOBROVOLNIK"><label
-                for="dobrovolnik">Dobrovoľníkov</label>
-            <input type="radio" name="typ" id="team" value="TEAM" checked><label for="team">Teamákov</label>
+            <div>
+            <input type="radio" name="typ" id="dobrovolnik" value="DOBROVOLNIK" style="display: inline-block"><label
+                for="dobrovolnik" style="display: inline-block">Dobrovoľníkov</label>
+            </div>
+            <div>
+                <input type="radio" name="typ" id="team" value="TEAM" checked style="display: inline-block"><label style="display: inline-block" for="team" >Teamákov</label>
+            </div>
         </fieldset>
         <input type="file" name="subor" placeholder="Tu nahraj súbor">
 
@@ -66,27 +70,27 @@
     const tbody = document.querySelector('#reservations tbody');
 
     async function renderTable() {
-        const response = await fetch("admin/tickets");
+            const response = await fetch("admin/tickets");
 
-        reservations = await response.json();
+            reservations = await response.json();
 
-        tbody.innerHTML = '';
-        reservations.forEach(r => {
-            const tr = document.createElement('tr');
-            tr.dataset.id = r.id;
-            tr.innerHTML = `
-                        <td style="height: 35px">${r.meno}</td>
-                        <td>${r.email}</td>
-                        <td>${r.typListka}</td>
-                        <td>
-                            ${r.stav}
-                        </td>
-                        <td>
-                            ${r.stav === "REZERVOVANY" ? `<button class="button" style="padding: 0.25rem 0.75rem;" onclick="confirmPayment('${r.id}')">Zaplatiť</button>` : ""}
-                        </td>
-                    `;
-            tbody.appendChild(tr);
-        });
+            tbody.innerHTML = '';
+            reservations.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.dataset.id = r.id;
+                tr.innerHTML = `
+                            <td style="height: 35px">${r.meno}</td>
+                            <td>${r.email}</td>
+                            <td>${r.typListka}</td>
+                            <td>
+                                ${r.stav}
+                            </td>
+                            <td>
+                                ${r.stav === "REZERVOVANY" ? `<button class="button" style="padding: 0.25rem 0.75rem;" onclick="confirmPayment('${r.id}')">Zaplatiť</button>` : ""}
+                            </td>
+                        `;
+                tbody.appendChild(tr);
+            });
     }
 
     async function confirmPayment(id) {

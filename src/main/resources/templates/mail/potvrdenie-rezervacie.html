@@ -23,7 +23,13 @@
 
     <p>Ďakujeme za tvoju rezerváciu lístka na OĽV.</p>
 
-    <p>
+    <p th:if="${dobrovolnik != null && dobrovolnik}">
+        Lístok máš úspešne rezervovaný &ndash; <strong>stačí si ho prísť vyzdvihnúť do UPeCe.</strong><br>
+        Môžeš tak urobiť buď na dobrovoľníckom stretku alebo od pondelka 17.11.2025 do štvrtku 27.11.2025 každý <strong>pracovný deň 30 minút po svätej omši</strong> v
+        Libresse.
+    </p>
+
+    <p th:if="${dobrovolnik == null || !dobrovolnik}">
         Lístok máš úspešne rezervovaný &ndash; <strong>stačí si ho prísť vyzdvihnúť do UPeCe.</strong><br>
         Môžeš tak urobiť od pondelka 17.11.2025 do štvrtku 27.11.2025 každý <strong>pracovný deň 30 minút po svätej omši</strong> v
         Libresse.

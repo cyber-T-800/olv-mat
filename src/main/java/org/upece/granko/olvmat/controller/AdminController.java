@@ -64,7 +64,7 @@ public class AdminController {
     }
 
     @PostMapping("/admin")
-    public String nahrajListky(@Param("typ") String typ, @Param("subor") MultipartFile subor) throws IOException {
+    public String nahrajListky(@Param("typ") String typ, @Param("subor") MultipartFile subor, ModelMap modelMap) throws IOException {
         TypListkaEnum typListka = TypListkaEnum.valueOf(typ);
 
         String inputString = new String(subor.getBytes(), StandardCharsets.UTF_8);
@@ -81,6 +81,9 @@ public class AdminController {
             mailModel.put("krstneMeno", meno);
             mailModel.put("ticketId", entity.getId());
             mailModel.put("securityKey", entity.getSecurityKey());
+            if(typListka == TypListkaEnum.DOBROVOLNIK) {
+                mailModel.put("dobrovolnik", true);
+            }
             emailService.sendMail(email, "Potvrdenie rezervácie listka", "potvrdenie-rezervacie", mailModel);
 
         }
