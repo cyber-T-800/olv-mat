@@ -17,6 +17,7 @@ import org.upece.granko.olvmat.entity.enums.AdminRegistraciaZiadostStavEnum;
 import org.upece.granko.olvmat.model.AdminDetails;
 import org.upece.granko.olvmat.repository.AdminRegistraciaZiadostRepository;
 import org.upece.granko.olvmat.repository.AdminRepository;
+import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.service.EmailService;
 import org.upece.granko.olvmat.service.VytvorenieHeslaSession;
 
@@ -33,11 +34,14 @@ public class AdminController {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
     private final VytvorenieHeslaSession vytvorenieHeslaSession;
+    private final TicketRepository ticketRepository;
 
     @Value("${super.admin.email}")
     private String superAdminEmail;
     @Value("${hostport}")
     private String hostport;
+
+    private final int maxPocetListkov = 200;
 
     @GetMapping("/admin/login")
     public String getLogin() {
@@ -48,6 +52,8 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String getAdminPage(ModelMap modelMap) {
+        modelMap.put("pocetObsadenych", ticketRepository.countUcastnicke());
+        modelMap.put("maxPocet", maxPocetListkov);
         modelMap.put("user", ((AdminDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         return "admin/admin";
     }
