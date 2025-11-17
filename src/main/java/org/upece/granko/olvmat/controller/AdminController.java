@@ -59,6 +59,9 @@ public class AdminController {
     public String getAdminPage(ModelMap modelMap) {
         modelMap.put("pocetObsadenych", ticketRepository.countUcastnicke());
         modelMap.put("maxPocet", maxPocetListkov);
+
+        modelMap.put("pocetDobrovolnikov", ticketRepository.countDobrovolnicke());
+        modelMap.put("pocetTeamakov", ticketRepository.countTeamacke());
         modelMap.put("user", ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         return "admin/admin";
     }
