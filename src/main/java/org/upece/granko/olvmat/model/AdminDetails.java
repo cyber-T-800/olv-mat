@@ -1,5 +1,6 @@
 package org.upece.granko.olvmat.model;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Getter
 public class AdminDetails implements UserDetails {
     private final AdminEntity adminEntity;
 

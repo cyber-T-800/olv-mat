@@ -2,9 +2,12 @@ package org.upece.granko.olvmat.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.upece.granko.olvmat.entity.AdminEntity;
 import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.entity.enums.StavRezervacieEnum;
+import org.upece.granko.olvmat.model.AdminDetails;
 import org.upece.granko.olvmat.model.Ticket;
 import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.service.EmailService;
@@ -47,6 +50,8 @@ public class AdminRestController {
 
         emailService.sendMail(entity.getEmail(), "Tvoj lístok na OĽV", "potvrdenie-zaplatenie", mailModel, qrImage);
 
+        AdminEntity admin = ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAdminEntity();
+        entity.setSchvalil(admin);
         entity.setStav(StavRezervacieEnum.ZAPLATENY);
         ticketRepository.save(entity);
 

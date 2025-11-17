@@ -29,6 +29,10 @@ public class TicketEntity {
     @Enumerated(value = EnumType.STRING)
     private StavRezervacieEnum stav;
 
+    @JoinColumn(name = "schvalil", referencedColumnName = "id")
+    @ManyToOne
+    private AdminEntity schvalil;
+
     public TicketEntity(String meno, String email, TypListkaEnum typListka) {
         id = UUID.randomUUID();
         securityKey = UUID.randomUUID();
