@@ -11,15 +11,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.upece.granko.olvmat.entity.AdminEntity;
 import org.upece.granko.olvmat.entity.AdminRegistraciaZiadostEntity;
+import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.entity.enums.AdminRegistraciaZiadostStavEnum;
+import org.upece.granko.olvmat.entity.enums.TypListkaEnum;
 import org.upece.granko.olvmat.model.AdminDetails;
 import org.upece.granko.olvmat.repository.AdminRegistraciaZiadostRepository;
 import org.upece.granko.olvmat.repository.AdminRepository;
+import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.service.EmailService;
 import org.upece.granko.olvmat.service.VytvorenieHeslaSession;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -33,11 +39,14 @@ public class AdminController {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
     private final VytvorenieHeslaSession vytvorenieHeslaSession;
+    private final TicketRepository ticketRepository;
 
     @Value("${super.admin.email}")
     private String superAdminEmail;
     @Value("${hostport}")
     private String hostport;
+
+    private final int maxPocetListkov = 200;
 
     @GetMapping("/admin/login")
     public String getLogin() {
@@ -48,8 +57,37 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String getAdminPage(ModelMap modelMap) {
-        modelMap.put("user", ((AdminDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
+        modelMap.put("pocetObsadenych", ticketRepository.countUcastnicke());
+        modelMap.put("maxPocet", maxPocetListkov);
+        modelMap.put("user", ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         return "admin/admin";
+    }
+
+    @PostMapping("/admin")
+    public String nahrajListky(@Param("typ") String typ, @Param("subor") MultipartFile subor, ModelMap modelMap) throws IOException {
+        TypListkaEnum typListka = TypListkaEnum.valueOf(typ);
+
+        String inputString = new String(subor.getBytes(), StandardCharsets.UTF_8);
+        String[] lines = inputString.split("\n");
+        for(String line : lines){
+            String[] values = line.split(",");
+            String email = values[0].trim();
+            String meno = values[1].trim();
+            String priezvisko = values[2].trim();
+
+            TicketEntity entity = ticketRepository.save(new TicketEntity(meno + " " + priezvisko, email, typListka));
+
+            Map<String, Object> mailModel = new HashMap<>();
+            mailModel.put("krstneMeno", meno);
+            mailModel.put("ticketId", entity.getId());
+            mailModel.put("securityKey", entity.getSecurityKey());
+            if(typListka == TypListkaEnum.DOBROVOLNIK) {
+                mailModel.put("dobrovolnik", true);
+            }
+            emailService.sendMail(email, "Potvrdenie rezervácie listka", "potvrdenie-rezervacie", mailModel);
+
+        }
+        return "redirect:/admin";
     }
 
 

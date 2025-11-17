@@ -45,6 +45,25 @@
         </thead>
         <tbody></tbody>
     </table>
+
+    <h3>
+        Nahratie dobrovoľníkov a teamákov
+    </h3>
+    <form method="post" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Nahrávam:</legend>
+            <div>
+            <input type="radio" name="typ" id="dobrovolnik" value="DOBROVOLNIK" style="display: inline-block"><label
+                for="dobrovolnik" style="display: inline-block">Dobrovoľníkov</label>
+            </div>
+            <div>
+                <input type="radio" name="typ" id="team" value="TEAM" checked style="display: inline-block"><label style="display: inline-block" for="team" >Teamákov</label>
+            </div>
+        </fieldset>
+        <input type="file" name="subor" placeholder="Tu nahraj súbor">
+
+        <button type="submit">Nahraj lístky</button>
+    </form>
 </div>
 
 <script>
@@ -52,33 +71,32 @@
     const tbody = document.querySelector('#reservations tbody');
 
     async function renderTable() {
-        const response = await fetch("admin/tickets");
+            const response = await fetch("admin/tickets");
 
-        reservations = await response.json();
+            reservations = await response.json();
 
-        tbody.innerHTML = '';
-        reservations.forEach(r => {
-            const tr = document.createElement('tr');
-            tr.dataset.id = r.id;
-            tr.innerHTML = `
-                        <td style="height: 35px">${r.meno}</td>
-                        <td>${r.email}</td>
-                        <td>${r.typListka}</td>
-                        <td>
-                            ${r.stav}
-                        </td>
-                        <td>
-                            ${r.stav === "REZERVOVANY" ? `<button class="button" style="padding: 0.25rem 0.75rem;" onclick="confirmPayment('${r.id}')">Zaplatiť</button>` : ""}
-                        </td>
-                    `;
-            tbody.appendChild(tr);
-        });
+            tbody.innerHTML = '';
+            reservations.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.dataset.id = r.id;
+                tr.innerHTML = `
+                            <td style="height: 35px">${r.meno}</td>
+                            <td>${r.email}</td>
+                            <td>${r.typListka}</td>
+                            <td>
+                                ${r.stav}
+                            </td>
+                            <td>
+                                ${r.stav === "REZERVOVANY" ? `<button class="button" style="padding: 0.25rem 0.75rem;" onclick="confirmPayment('${r.id}')">Zaplatiť</button>` : ""}
+                            </td>
+                        `;
+                tbody.appendChild(tr);
+            });
     }
 
     async function confirmPayment(id) {
         const res = reservations.find(r => r.id === id);
         if (!res) return;
-
 
 
         const ok = confirm(`Naozaj chceš potvrdiť platbu pre: ${res.meno}?`);
@@ -88,7 +106,7 @@
             method: 'PUT'
         });
 
-        if (!response.ok){
+        if (!response.ok) {
             alert("Nepodarilo sa potvrdiť zaplatenie - lístok už je zaznamenaný ako zaplatený. Prosím znovunačítaj stránku.")
         }
 
@@ -96,15 +114,15 @@
     }
 
 
-    document.getElementById('search').addEventListener('input', function() {
+    document.getElementById('search').addEventListener('input', function () {
         runFilter();
     });
 
-    document.getElementById('filter-nezaplatene').addEventListener('input', function() {
+    document.getElementById('filter-nezaplatene').addEventListener('input', function () {
         runFilter();
     });
 
-    function runFilter(){
+    function runFilter() {
         const filter = document.getElementById('search').value.toLowerCase();
         const nezaplateneFilterChecked = document.getElementById('filter-nezaplatene').checked;
         const rows = document.querySelectorAll('#reservations tbody tr');
@@ -112,20 +130,21 @@
             let disp = '';
 
 
-            if(nezaplateneFilterChecked) {
+            if (nezaplateneFilterChecked) {
                 if (row.cells[3].textContent.trim() !== 'REZERVOVANY') {
                     disp = 'none'
                 }
             }
 
 
-            if(disp !== 'none'){
+            if (disp !== 'none') {
                 const name = row.cells[0].textContent.toLowerCase();
                 disp = name.includes(filter) ? '' : 'none';
             }
             row.style.display = disp;
         });
     }
+
     renderTable();
 </script>
 </body>
