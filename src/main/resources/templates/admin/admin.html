@@ -24,12 +24,31 @@
         <span class="toggle"></span>
         <span class="text">Zobraziť iba nezaplatené</span>
     </label>
+
+    <div style="height: 0.5rem;"></div>
+
+    <label class="toggle-line" style="margin-top: 0">
+        <input type="checkbox" id="filter-zrusene" checked>
+        <span class="toggle"></span>
+        <span class="text" id="toggleText">Zobraziť zrušené</span>
+    </label>
+
     <p>Aktuálna obsadenosť účastníkov: <strong
             th:text="${pocetObsadenych + '/' + maxPocet}">20/54</strong></p>
     <p>Počet dobrovoľníkov: <strong
             th:text="${pocetDobrovolnikov}">20/54</strong></p>
     <p>Počet teamákov: <strong
             th:text="${pocetTeamakov}">20/54</strong></p>
+
+    <div style="height: 0.5rem;"></div>
+
+    <div style="display: flex; justify-content: left;">
+        <a href="pridaj url"
+           class="button">Štatistika adminov
+        </a>
+    </div>
+
+    <div style="height: 1.5rem;"></div>
 
     <table id="reservations">
         <colgroup>
@@ -51,6 +70,8 @@
         </thead>
         <tbody></tbody>
     </table>
+
+    <div style="height: 3rem;"></div>
 
     <h3>
         Nahratie dobrovoľníkov a teamákov
@@ -76,6 +97,18 @@
 <script>
     let reservations = [];
     const tbody = document.querySelector('#reservations tbody');
+    const toggleText = document.getElementById("toggleText");
+
+    function updateUI() {
+        const zruseneFilterChecked = document.getElementById('filter-zrusene').checked;
+
+        // decide what text to show
+        if (zruseneFilterChecked) {
+            toggleText.innerText = "Zobraziť zrušené";
+        } else {
+            toggleText.innerText = "Zobraziť aktívne";
+        }
+    }
 
     async function renderTable() {
         const response = await fetch("admin/tickets");
@@ -130,9 +163,15 @@
         runFilter();
     });
 
+    document.getElementById('filter-zrusene').addEventListener('input', function () {
+        updateUI();
+        runFilter();
+    });
+
     function runFilter() {
         const filter = document.getElementById('search').value.toLowerCase();
         const nezaplateneFilterChecked = document.getElementById('filter-nezaplatene').checked;
+        const zruseneFilterChecked = document.getElementById('filter-zrusene').checked;
         const rows = document.querySelectorAll('#reservations tbody tr');
         rows.forEach(row => {
             let disp = '';
@@ -143,6 +182,8 @@
                     disp = 'none'
                 }
             }
+
+            // DOPLNIT logiku pre filter zrusene
 
 
             if (disp !== 'none') {

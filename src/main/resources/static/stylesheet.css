@@ -150,7 +150,6 @@ tr:hover {
 
 .toggle-line {
     display: flex;
-    margin-bottom: 1rem;
     align-items: center;
     gap: 10px;
     cursor: pointer;
