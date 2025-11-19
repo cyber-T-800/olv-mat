@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Štatistika</title>
+    <link type="text/css" rel="stylesheet" href="/stylesheet.css">
+</head>
+
+<body>
+<div class="obal" style="min-width: 584px;">
+    <table id="statistics">
+        <colgroup>
+            <col style="width: 250px">
+            <col style="width:  90px">
+            <col style="width:  90px">
+            <col style="width:  90px">
+        </colgroup>
+
+        <thead>
+        <tr>
+            <th>Email</th>
+            <th>Účastníci</th>
+            <th>D+T</th>
+            <th>Spolu</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    let admins = [];
+    const tbody = document.querySelector('#statistics tbody');
+
+    async function renderTable() {
+        const stats = await fetch("admin/tickets"); // zmeň odkiaľ berie údaje
+
+        admins = await stats.json();
+
+        tbody.innerHTML = '';
+        admins.forEach(r => {
+            const tr = document.createElement('tr');
+            tr.dataset.id = r.id;
+            tr.innerHTML = `
+                            <td>${r.email}</td>
+                            <td>${r.predane}</td>
+                        `; // zmeň na potrebné premenné
+            tbody.appendChild(tr);
+        });
+    }
+
+    renderTable();
+</script>
+</body>
+</html>
