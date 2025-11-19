@@ -30,7 +30,7 @@
     Html5Qrcode.getCameras().then(cameras => {
         if (cameras && cameras.length) {
             html5QrCode.start(
-                cameras[0].id,   // use first camera
+                cameras[1].id,   // use first camera
                 config,
                 onScanSuccess,
                 onScanError
