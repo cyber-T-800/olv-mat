@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Čitačka lístkov</title>
+    <link type="text/css" rel="stylesheet" href="/stylesheet.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body>
+<div class="obal" style="min-width: 824px;">
+    <h1>Čítačka lístkov</h1>
+    <div id="reader" style="width: 100%;"></div>
+    <p>Scanned result: <span id="result"></span></p>
+</div>
+
+<script>
+    function onScanSuccess(decodedText, decodedResult) {
+        document.getElementById("result").innerText = decodedText;
+        console.log(`QR decoded: ${decodedText}`);
+    }
+
+    function onScanError(errorMessage) {
+        // optional: console.log(errorMessage);
+    }
+
+    const html5QrCode = new Html5Qrcode("reader");
+    const config = { fps: 10, qrbox: 250 };
+
+    Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+            html5QrCode.start(
+                cameras[0].id,   // use first camera
+                config,
+                onScanSuccess,
+                onScanError
+            );
+        }
+    }).catch(err => console.error(err));
+</script>
+
+</body>
+</html>
