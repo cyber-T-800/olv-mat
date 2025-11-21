@@ -27,7 +27,7 @@
 
         const responseListok = await response.json();
 
-        const qrKod = confirm("QR kód načítaný: " + responseListok.email);
+        const qrKod = confirm("Lístok načítaný: " + responseListok.meno + " (" +  responseListok.email + ")");
 
         if (!qrKod) {
             return
