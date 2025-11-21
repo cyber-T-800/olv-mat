@@ -11,17 +11,28 @@
 <div class="obal" style="min-width: 824px;">
     <h1>Čítačka lístkov</h1>
     <div id="reader" style="width: 100%;"></div>
-    <p>Scanned result: <span id="result"></span></p>
 </div>
 
 <script>
-    function onScanSuccess(decodedText, decodedResult) {
-        document.getElementById("result").innerText = decodedText;
+    async function onScanSuccess(decodedText, decodedResult) {
         console.log(`QR decoded: ${decodedText}`);
+
+        const response = await fetch("admin/vstup/" + decodedText, {
+            method: 'GET'
+        });
+
+        if(!response.ok){return}
+        const qrKod = confirm("QR kód načítaný: " + response.email);
+
+        if(!qrKod){return}
+
+        const responsePut = await fetch("admin/vstup/" + decodedText, {
+            method: 'PUT'
+        });
+
     }
 
     function onScanError(errorMessage) {
-        // optional: console.log(errorMessage);
     }
 
     const html5QrCode = new Html5Qrcode("reader");
@@ -29,8 +40,12 @@
 
     Html5Qrcode.getCameras().then(cameras => {
         if (cameras && cameras.length) {
+            let camId = 0;
+            if(cameras.length > 1){
+                camId = 1;
+            }
             html5QrCode.start(
-                cameras[1].id,   // use first camera
+                cameras[camId].id,
                 config,
                 onScanSuccess,
                 onScanError
