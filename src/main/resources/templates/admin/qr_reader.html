@@ -24,7 +24,7 @@
         if (!response.ok) {
             return
         }
-        const qrKod = confirm("QR kód načítaný: " + response.email);
+        const qrKod = confirm("QR kód načítaný: " + response.json().meno);
 
         if (!qrKod) {
             return
