@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<html lang="sk">
 <head>
     <meta charset="utf-8">
     <title>Čitačka lístkov</title>
@@ -17,16 +17,20 @@
     async function onScanSuccess(decodedText, decodedResult) {
         console.log(`QR decoded: ${decodedText}`);
 
-        const response = await fetch("admin/vstup/" + decodedText, {
+        const response = await fetch("/admin/vstup/" + decodedText, {
             method: 'GET'
         });
 
-        if(!response.ok){return}
+        if (!response.ok) {
+            return
+        }
         const qrKod = confirm("QR kód načítaný: " + response.email);
 
-        if(!qrKod){return}
+        if (!qrKod) {
+            return
+        }
 
-        const responsePut = await fetch("admin/vstup/" + decodedText, {
+        const responsePut = await fetch("/admin/vstup/" + decodedText, {
             method: 'PUT'
         });
 
@@ -36,12 +40,12 @@
     }
 
     const html5QrCode = new Html5Qrcode("reader");
-    const config = { fps: 10, qrbox: 250 };
+    const config = {fps: 10, qrbox: 250};
 
     Html5Qrcode.getCameras().then(cameras => {
         if (cameras && cameras.length) {
             let camId = 0;
-            if(cameras.length > 1){
+            if (cameras.length > 1) {
                 camId = 1;
             }
             html5QrCode.start(
