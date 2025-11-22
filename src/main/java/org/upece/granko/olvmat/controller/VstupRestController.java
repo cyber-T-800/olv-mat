@@ -23,8 +23,15 @@ public class VstupRestController {
         if (entity == null) {
             response.setStatus(404);
             return null;
+        }else if (entity.getStav() == StavRezervacieEnum.POUZITY) {
+            response.setStatus(409);
+            return null;
+        }else if (entity.getStav() == StavRezervacieEnum.REZERVOVANY) {
+            response.setStatus(402);
+            return null;
+        }else {
+            return new Ticket(entity.getId(), entity.getEmail(), entity.getMeno(), entity.getTypListka(), entity.getStav());
         }
-        return new Ticket(entity.getId(), entity.getEmail(), entity.getMeno(), entity.getTypListka(), entity.getStav());
     }
 
     @PutMapping("{id}/potvrd")
