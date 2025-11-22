@@ -32,16 +32,14 @@ public class VstupRestController {
         TicketEntity entity = ticketRepository.findById(id).orElse(null);
         if (entity == null) {
             response.setStatus(404);
-            return;
-        }
-        if (entity.getStav() == StavRezervacieEnum.POUZITY) {
+        }else if (entity.getStav() == StavRezervacieEnum.POUZITY) {
             response.setStatus(409);
-        }
-        if (entity.getStav() == StavRezervacieEnum.REZERVOVANY) {
+        }else if (entity.getStav() == StavRezervacieEnum.REZERVOVANY) {
             response.setStatus(402);
+        }else {
+            entity.setStav(StavRezervacieEnum.POUZITY);
+            ticketRepository.save(entity);
+            response.setStatus(200);
         }
-        entity.setStav(StavRezervacieEnum.POUZITY);
-        ticketRepository.save(entity);
-        response.setStatus(200);
     }
 }
