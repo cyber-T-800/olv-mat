@@ -22,6 +22,15 @@
         });
 
         if (!response.ok) {
+            if(response.status === 400) {
+                alert("Nesprávny qr kód");
+            }else if(response.status === 402){
+                alert("Lístok nebol zaplatenený")
+            } else if(response.status === 404){
+                alert("Lístok nebol nájdený");
+            }else if(response.status === 409){
+                alert("Lístok už bol použítý");
+            }
             return
         }
 
@@ -33,10 +42,11 @@
             return
         }
 
-        const responsePut = await fetch("/admin/vstup/" + decodedText, {
+        const responsePut = await fetch("/admin/vstup/" + decodedText + "/potvrd", {
             method: 'PUT'
         });
 
+        alert("Lístok úspešne potvrdený");
     }
 
     function onScanError(errorMessage) {

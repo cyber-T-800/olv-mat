@@ -34,8 +34,11 @@ public class VstupRestController {
             response.setStatus(404);
             return;
         }
-        if (entity.getStav() != StavRezervacieEnum.ZAPLATENY) {
-            response.setStatus(400);
+        if (entity.getStav() == StavRezervacieEnum.POUZITY) {
+            response.setStatus(409);
+        }
+        if (entity.getStav() == StavRezervacieEnum.REZERVOVANY) {
+            response.setStatus(402);
         }
         entity.setStav(StavRezervacieEnum.POUZITY);
         ticketRepository.save(entity);
