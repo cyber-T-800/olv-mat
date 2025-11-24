@@ -103,11 +103,11 @@ public class AdminController {
     }
 
     @PostMapping("/nejaka-dlha-url-ze-by-nam-tu-randomaci-nechodili")
-    public String postRegistracia(@Param("email") String email) {
+    public String postRegistracia(@Param("email") String email, @Param("typ") String typ) {
         Map<String, Object> model = new HashMap<>();
 
         AdminRegistraciaZiadostEntity entity = adminRegistraciaZiadostRepository.save(
-                new AdminRegistraciaZiadostEntity(email)
+                new AdminRegistraciaZiadostEntity(email, AdminRoleEnum.valueOf(typ))
         );
 
         String url = hostport + "/admin-ziadost/" + entity.getId() + "/potvrdit" + "?sa=" + superAdminEmail + "&em=" + email + "&secret=" + entity.getSecret();
@@ -179,7 +179,7 @@ public class AdminController {
         AdminRegistraciaZiadostEntity entity = adminRegistraciaZiadostRepository.findById(id).orElseThrow();
         if (entity.getSecret().equals(vytvorenieHeslaSession.getSecret()) && entity.getEmail().equals(vytvorenieHeslaSession.getEmail())) {
             if (entity.getStav() == AdminRegistraciaZiadostStavEnum.POTVRDENA) {
-                AdminEntity admin = new AdminEntity(vytvorenieHeslaSession.getEmail(), passwordEncoder.encode(password), AdminRoleEnum.ADMIN);
+                AdminEntity admin = new AdminEntity(vytvorenieHeslaSession.getEmail(), passwordEncoder.encode(password), entity.getRola());
                 adminRepository.save(admin);
                 entity.setStav(AdminRegistraciaZiadostStavEnum.VYBAVENA);
                 adminRegistraciaZiadostRepository.save(entity);

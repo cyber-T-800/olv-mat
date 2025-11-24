@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.upece.granko.olvmat.entity.enums.AdminRegistraciaZiadostStavEnum;
+import org.upece.granko.olvmat.entity.enums.AdminRoleEnum;
 
 import java.util.UUID;
 
@@ -23,11 +24,14 @@ public class AdminRegistraciaZiadostEntity {
     private String email;
     @Enumerated(EnumType.STRING)
     private AdminRegistraciaZiadostStavEnum stav;
+    @Enumerated(EnumType.STRING)
+    private AdminRoleEnum rola;
 
-    public AdminRegistraciaZiadostEntity(String email) {
+    public AdminRegistraciaZiadostEntity(String email, AdminRoleEnum rola) {
         this.id = UUID.randomUUID();
         this.secret = UUID.randomUUID();
         this.stav = AdminRegistraciaZiadostStavEnum.PODANA;
         this.email = email;
+        this.rola = rola;
     }
 }
