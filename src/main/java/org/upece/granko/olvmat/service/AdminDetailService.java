@@ -18,6 +18,7 @@ public class AdminDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AdminEntity user = adminRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        
         return new AdminDetails(user);
     }
 }

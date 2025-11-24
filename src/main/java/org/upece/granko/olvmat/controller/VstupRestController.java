@@ -11,7 +11,7 @@ import org.upece.granko.olvmat.repository.TicketRepository;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("admin/vstup")
+@RequestMapping("vstup")
 @RequiredArgsConstructor
 public class VstupRestController {
 
@@ -23,13 +23,13 @@ public class VstupRestController {
         if (entity == null) {
             response.setStatus(404);
             return null;
-        }else if (entity.getStav() == StavRezervacieEnum.POUZITY) {
+        } else if (entity.getStav() == StavRezervacieEnum.POUZITY) {
             response.setStatus(409);
             return null;
-        }else if (entity.getStav() == StavRezervacieEnum.REZERVOVANY) {
+        } else if (entity.getStav() == StavRezervacieEnum.REZERVOVANY) {
             response.setStatus(402);
             return null;
-        }else {
+        } else {
             return new Ticket(entity.getId(), entity.getEmail(), entity.getMeno(), entity.getTypListka(), entity.getStav());
         }
     }
@@ -39,11 +39,11 @@ public class VstupRestController {
         TicketEntity entity = ticketRepository.findById(id).orElse(null);
         if (entity == null) {
             response.setStatus(404);
-        }else if (entity.getStav() == StavRezervacieEnum.POUZITY) {
+        } else if (entity.getStav() == StavRezervacieEnum.POUZITY) {
             response.setStatus(409);
-        }else if (entity.getStav() == StavRezervacieEnum.REZERVOVANY) {
+        } else if (entity.getStav() == StavRezervacieEnum.REZERVOVANY) {
             response.setStatus(402);
-        }else {
+        } else {
             entity.setStav(StavRezervacieEnum.POUZITY);
             ticketRepository.save(entity);
             response.setStatus(200);

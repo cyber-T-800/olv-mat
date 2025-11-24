@@ -11,13 +11,15 @@
 <div class="obal" style="min-width: 824px;">
     <h1>Čítačka lístkov</h1>
     <div id="reader" style="width: 100%;"></div>
+    <button id="zmenKameru" style="display: none;" onclick="zmenKameru()">Zmeň kameru</button>
 </div>
 
 <script>
+    let camId = 0;
     async function onScanSuccess(decodedText, decodedResult) {
         console.log(`QR decoded: ${decodedText}`);
 
-        const response = await fetch("/admin/vstup/" + decodedText, {
+        const response = await fetch("/vstup/" + decodedText, {
             method: 'GET'
         });
 
@@ -36,13 +38,13 @@
 
         const responseListok = await response.json();
 
-        const qrKod = confirm("Lístok načítaný: " + responseListok.meno + " (" +  responseListok.email + ")");
+        const qrKod = confirm("Lístok načítaný: " + responseListok.meno + " (" +  responseListok.email + ")\n" + responseListok.typListka);
 
         if (!qrKod) {
             return
         }
 
-        const responsePut = await fetch("/admin/vstup/" + decodedText + "/potvrd", {
+        const responsePut = await fetch("/vstup/" + decodedText + "/potvrd", {
             method: 'PUT'
         });
 
@@ -55,11 +57,30 @@
     const html5QrCode = new Html5Qrcode("reader");
     const config = {fps: 10, qrbox: 500};
 
+    function zmenKameru(){
+        Html5Qrcode.getCameras().then(cameras => {
+            if (cameras && cameras.length) {
+                if (cameras.length > camId + 1) {
+                    camId++;
+                }else{
+                    camId = 0;
+                }
+                html5QrCode.start(
+                    cameras[camId].id,
+                    config,
+                    onScanSuccess,
+                    onScanError
+                );
+
+            }
+        }).catch(err => console.error(err));
+    }
+
     Html5Qrcode.getCameras().then(cameras => {
         if (cameras && cameras.length) {
-            let camId = 0;
             if (cameras.length > 1) {
                 camId = 1;
+                document.getElementById('zmenKameru').style.display = '';
             }
             html5QrCode.start(
                 cameras[camId].id,
@@ -67,6 +88,7 @@
                 onScanSuccess,
                 onScanError
             );
+
         }
     }).catch(err => console.error(err));
 </script>

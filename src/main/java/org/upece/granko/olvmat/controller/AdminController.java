@@ -3,6 +3,7 @@ package org.upece.granko.olvmat.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import org.upece.granko.olvmat.entity.AdminEntity;
 import org.upece.granko.olvmat.entity.AdminRegistraciaZiadostEntity;
 import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.entity.enums.AdminRegistraciaZiadostStavEnum;
+import org.upece.granko.olvmat.entity.enums.AdminRoleEnum;
 import org.upece.granko.olvmat.entity.enums.TypListkaEnum;
 import org.upece.granko.olvmat.model.AdminDetails;
 import org.upece.granko.olvmat.repository.AdminRegistraciaZiadostRepository;
@@ -57,6 +59,7 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String getAdminPage(ModelMap modelMap) {
+        System.out.println(((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAuthorities());
         modelMap.put("pocetObsadenych", ticketRepository.countUcastnicke());
         modelMap.put("maxPocet", maxPocetListkov);
 
@@ -176,7 +179,7 @@ public class AdminController {
         AdminRegistraciaZiadostEntity entity = adminRegistraciaZiadostRepository.findById(id).orElseThrow();
         if (entity.getSecret().equals(vytvorenieHeslaSession.getSecret()) && entity.getEmail().equals(vytvorenieHeslaSession.getEmail())) {
             if (entity.getStav() == AdminRegistraciaZiadostStavEnum.POTVRDENA) {
-                AdminEntity admin = new AdminEntity(vytvorenieHeslaSession.getEmail(), passwordEncoder.encode(password));
+                AdminEntity admin = new AdminEntity(vytvorenieHeslaSession.getEmail(), passwordEncoder.encode(password), AdminRoleEnum.ADMIN);
                 adminRepository.save(admin);
                 entity.setStav(AdminRegistraciaZiadostStavEnum.VYBAVENA);
                 adminRegistraciaZiadostRepository.save(entity);
