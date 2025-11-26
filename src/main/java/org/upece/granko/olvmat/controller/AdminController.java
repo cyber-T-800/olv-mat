@@ -59,7 +59,6 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String getAdminPage(ModelMap modelMap) {
-        System.out.println(((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAuthorities());
         modelMap.put("pocetObsadenych", ticketRepository.countUcastnicke());
         modelMap.put("maxPocet", maxPocetListkov);
 
