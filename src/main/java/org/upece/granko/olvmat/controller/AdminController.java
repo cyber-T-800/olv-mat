@@ -64,6 +64,9 @@ public class AdminController {
 
         modelMap.put("pocetDobrovolnikov", ticketRepository.countDobrovolnicke());
         modelMap.put("pocetTeamakov", ticketRepository.countTeamacke());
+        modelMap.put("pocetPouzite", ticketRepository.countPouzite());
+        modelMap.put("pocetZaplatene", ticketRepository.countZaplatene());
+        modelMap.put("pocetCelkovo", ticketRepository.countAll());
         modelMap.put("user", ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         return "admin/admin";
     }

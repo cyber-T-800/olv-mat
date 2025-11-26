@@ -30,9 +30,11 @@
     <p>Aktuálna obsadenosť účastníkov: <strong
             th:text="${pocetObsadenych + '/' + maxPocet}">20/54</strong></p>
     <p>Počet dobrovoľníkov: <strong
-            th:text="${pocetDobrovolnikov}">20/54</strong></p>
+            th:text="${pocetDobrovolnikov}">20</strong></p>
     <p>Počet teamákov: <strong
             th:text="${pocetTeamakov}">20/54</strong></p>
+    <p>Použité / Zaplatené / Celkovo: <strong
+            th:text="${pocetPouzite + '/' + pocetZaplatene + '/' + pocetCelkovo}">20/50/120</strong></p>
 
     <table id="reservations">
         <colgroup>
