@@ -20,6 +20,15 @@ public interface TicketRepository extends JpaRepository<TicketEntity, UUID> {
     @Query("select count(*) from TicketEntity t where (t.typListka = 'TEAM') and t.stav != 'ZRUSENY'")
     int countTeamacke();
 
+    @Query("select count(*) from TicketEntity t where  t.stav != 'ZRUSENY'")
+    int countAll();
+
+    @Query("select count(*) from TicketEntity t where t.stav = 'ZAPLATENY' or t.stav = 'POUZITY'")
+    int countZaplatene();
+
+    @Query("select count(*) from TicketEntity t where t.stav = 'POUZITY'")
+    int countPouzite();
+
     @Query("select t from TicketEntity t where t.stav != 'ZRUSENY'")
     List<TicketEntity> findAllExceptZrusene();
 }

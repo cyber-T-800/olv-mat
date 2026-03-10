@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="utf-8">
+    <title>Čitačka lístkov</title>
+    <link type="text/css" rel="stylesheet" href="/stylesheet.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body>
+<div class="obal" style="min-width: 824px;">
+    <h1>Čítačka lístkov</h1>
+    <div id="reader" style="width: 100%;"></div>
+    <button id="zmenKameru" style="display: none;" onclick="zmenKameru()">Zmeň kameru</button>
+</div>
+
+<script>
+    let camId = 0;
+    async function onScanSuccess(decodedText, decodedResult) {
+        console.log(`QR decoded: ${decodedText}`);
+
+        const response = await fetch("/vstup/" + decodedText, {
+            method: 'GET'
+        });
+
+        if (!response.ok) {
+            if(response.status === 400) {
+                alert("Nesprávny qr kód");
+            }else if(response.status === 402){
+                alert("Lístok nebol zaplatenený")
+            } else if(response.status === 404){
+                alert("Lístok nebol nájdený");
+            }else if(response.status === 409){
+                alert("Lístok už bol použítý");
+            }
+            return
+        }
+
+        const responseListok = await response.json();
+
+        const qrKod = confirm("Lístok načítaný: " + responseListok.meno + " (" +  responseListok.email + ")\n" + responseListok.typListka);
+
+        if (!qrKod) {
+            return
+        }
+
+        const responsePut = await fetch("/vstup/" + decodedText + "/potvrd", {
+            method: 'PUT'
+        });
+
+        alert("Lístok úspešne potvrdený");
+    }
+
+    function onScanError(errorMessage) {
+    }
+
+    const html5QrCode = new Html5Qrcode("reader");
+    const config = {fps: 10, qrbox: 500};
+
+    async function zmenKameru(){
+        await html5QrCode.stop();
+        Html5Qrcode.getCameras().then(cameras => {
+            if (cameras && cameras.length) {
+                if (cameras.length > camId + 1) {
+                    camId++;
+                }else{
+                    camId = 0;
+                }
+                html5QrCode.start(
+                    cameras[camId].id,
+                    config,
+                    onScanSuccess,
+                    onScanError
+                );
+
+            }
+        }).catch(err => console.error(err));
+    }
+
+    Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+            if (cameras.length > 1) {
+                camId = 1;
+                document.getElementById('zmenKameru').style.display = '';
+            }
+            html5QrCode.start(
+                cameras[camId].id,
+                config,
+                onScanSuccess,
+                onScanError
+            );
+
+        }
+    }).catch(err => console.error(err));
+</script>
+
+</body>
+</html>

@@ -3,6 +3,7 @@ package org.upece.granko.olvmat.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import org.upece.granko.olvmat.entity.AdminEntity;
 import org.upece.granko.olvmat.entity.AdminRegistraciaZiadostEntity;
 import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.entity.enums.AdminRegistraciaZiadostStavEnum;
+import org.upece.granko.olvmat.entity.enums.AdminRoleEnum;
 import org.upece.granko.olvmat.entity.enums.TypListkaEnum;
 import org.upece.granko.olvmat.model.AdminDetails;
 import org.upece.granko.olvmat.repository.AdminRegistraciaZiadostRepository;
@@ -62,6 +64,9 @@ public class AdminController {
 
         modelMap.put("pocetDobrovolnikov", ticketRepository.countDobrovolnicke());
         modelMap.put("pocetTeamakov", ticketRepository.countTeamacke());
+        modelMap.put("pocetPouzite", ticketRepository.countPouzite());
+        modelMap.put("pocetZaplatene", ticketRepository.countZaplatene());
+        modelMap.put("pocetCelkovo", ticketRepository.countAll());
         modelMap.put("user", ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         return "admin/admin";
     }
@@ -100,11 +105,11 @@ public class AdminController {
     }
 
     @PostMapping("/nejaka-dlha-url-ze-by-nam-tu-randomaci-nechodili")
-    public String postRegistracia(@Param("email") String email) {
+    public String postRegistracia(@Param("email") String email, @Param("typ") String typ) {
         Map<String, Object> model = new HashMap<>();
 
         AdminRegistraciaZiadostEntity entity = adminRegistraciaZiadostRepository.save(
-                new AdminRegistraciaZiadostEntity(email)
+                new AdminRegistraciaZiadostEntity(email, AdminRoleEnum.valueOf(typ))
         );
 
         String url = hostport + "/admin-ziadost/" + entity.getId() + "/potvrdit" + "?sa=" + superAdminEmail + "&em=" + email + "&secret=" + entity.getSecret();
@@ -176,7 +181,7 @@ public class AdminController {
         AdminRegistraciaZiadostEntity entity = adminRegistraciaZiadostRepository.findById(id).orElseThrow();
         if (entity.getSecret().equals(vytvorenieHeslaSession.getSecret()) && entity.getEmail().equals(vytvorenieHeslaSession.getEmail())) {
             if (entity.getStav() == AdminRegistraciaZiadostStavEnum.POTVRDENA) {
-                AdminEntity admin = new AdminEntity(vytvorenieHeslaSession.getEmail(), passwordEncoder.encode(password));
+                AdminEntity admin = new AdminEntity(vytvorenieHeslaSession.getEmail(), passwordEncoder.encode(password), entity.getRola());
                 adminRepository.save(admin);
                 entity.setStav(AdminRegistraciaZiadostStavEnum.VYBAVENA);
                 adminRegistraciaZiadostRepository.save(entity);
