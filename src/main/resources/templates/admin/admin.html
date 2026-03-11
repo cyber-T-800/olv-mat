@@ -8,7 +8,7 @@
 </head>
 
 <body>
-<div class="obal" style="min-width: 824px;">
+<div class="obal" style="min-width: 844px;">
     <h1>Administrácia rezervácií</h1>
     <a class="button" href="/vstup">
         Prejdi na predaj lístkov
@@ -43,6 +43,7 @@
             <col style="width: 115px">
             <col style="width: 140px">
             <col style="width:  90px">
+            <col style="width:  20px">
         </colgroup>
 
         <thead>
@@ -52,6 +53,7 @@
             <th>Typ lístka</th>
             <th>Stav</th>
             <th>Akcia</th>
+            <th></th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -78,9 +80,77 @@
     </form>
 </div>
 
+<div id="actionsModal" class="modal hidden">
+    <div class="modal-box">
+        <div id="modalContent"></div>
+    </div>
+</div>
+
 <script>
     let reservations = [];
     const tbody = document.querySelector('#reservations tbody');
+
+    function openActions(id) {
+        const r = reservations.find(x => x.id === id);
+        if (!r) return;
+
+        const modal = document.getElementById("actionsModal");
+        const content = document.getElementById("modalContent");
+
+        content.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin: -20px -20px 0 -20px; padding: 20px;">
+                <h4 style="margin: 0;">${r.meno}</h4>
+                <button class="close-btn" onclick="closeModal()" style="margin: 0;">✕</button>
+            </div>
+
+            <h3>Zmena typu lístka</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label for="actionSelect">Zmeniť na:</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <select id="actionSelect">
+                        <option value="">-- vyber --</option>
+                        <option value="STUDENT">študent</option>
+                        <option value="NESTUDENT">neštudent</option>
+                        <option value="DOBROVOLNIK">dobrovoľník</option>
+                        <option value="TEAM">team</option>
+                    </select>
+
+                    <button class="button" style="padding: 0.25rem 0.75rem;" onclick="changeType('${r.id}')">
+                        Potvrdiť
+                    </button>
+                </div>
+            </div>
+
+            <br><br>
+
+            <div style="margin-top:10px; text-align: center;">
+                <button class="button" onclick="deleteReservation('${r.id}')">Zrušiť rezerváciu</button>
+            </div>
+        `;
+
+        modal.classList.remove("hidden");
+    }
+
+    function closeModal() {
+        const actionSelect = document.getElementById("actionSelect");
+        if (actionSelect && actionSelect.value !== "") {
+            const confirmed = confirm("Nedokončil si zmenu lístka. Naozaj chceš zatvoriť bez uloženia?");
+            if (!confirmed) return;
+        }
+        document.getElementById("actionsModal").classList.add("hidden");
+    }
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape") {
+            closeModal();
+        }
+    });
+
+    document.getElementById("actionsModal").addEventListener("click", function(event) {
+        if (event.target === this) {
+            closeModal();
+        }
+    });
 
     async function renderTable() {
         const response = await fetch("admin/tickets");
@@ -100,6 +170,9 @@
                             </td>
                             <td>
                                 ${r.stav === "REZERVOVANY" ? `<button class="button" style="padding: 0.25rem 0.75rem;" onclick="confirmPayment('${r.id}')">Zaplatiť</button>` : ""}
+                            </td>
+                            <td>
+                                <button class="more-btn" onclick="openActions('${r.id}')">⋮</button>
                             </td>
                         `;
             tbody.appendChild(tr);
