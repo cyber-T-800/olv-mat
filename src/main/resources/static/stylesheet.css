@@ -18,6 +18,10 @@ body {
     max-width: 690px;
 }
 
+.obal-static{
+    width: 690px!important;
+}
+
 
 .button {
     display: inline-block;
@@ -35,6 +39,22 @@ body {
     background: #1e3cb4;
 }
 
+
+.button-secondary {
+    display: inline-block;
+    padding: 0.75rem 1.25rem;
+    border-radius: 15px;
+
+    background: #e0e0e0;
+    color: #000000;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.25s ease;
+}
+
+.button-secondary:hover {
+    background: #c8c8c8;
+}
 
 .bar-bg{
     position: relative;

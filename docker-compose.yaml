@@ -38,8 +38,8 @@ services:
       MAIL_SERVICE_PORT: 1025
       MAIL_SERVICE_USERNAME:
       MAIL_SERVICE_PASSWORD:
-      MAIL_SERVICE_AUTH: false
-      MAIL_SERVICE_TLS: false
+      MAIL_SERVICE_AUTH: 'false'
+      MAIL_SERVICE_TLS: 'false'
       MAIL_FROM: granko@upcba.sk
       SUPER_ADMIN_EMAIL: granko@upcba.sk
       HOST_PORT: localhost:8080

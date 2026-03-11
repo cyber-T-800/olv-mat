@@ -16,8 +16,14 @@
 
 <script>
     let camId = 0;
+    let uzNacitane = [];
     async function onScanSuccess(decodedText, decodedResult) {
-        console.log(`QR decoded: ${decodedText}`);
+        console.log(uzNacitane);
+
+        if(uzNacitane.includes(decodedText)){
+            return;
+        }
+        uzNacitane += decodedText;
 
         const response = await fetch("/vstup/" + decodedText, {
             method: 'GET'

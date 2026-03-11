@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Úprava eventu</title>
+    <link rel="stylesheet" href="/stylesheet.css">
+</head>
+<body>
+<div class="obal obal-static">
+    <a href="/admin/events" class="button-secondary">Späť na prehľad eventov</a>
+    <h1>Úprava eventu</h1>
+    <form action="/admin/event" method="post">
+        <label for="name">Názov:</label>
+        <input type="text" id="name" name="name"  required>
+
+        <label for="description">Popis:</label>
+        <div contenteditable="true" id="description" style="border: 1px solid black;">
+            <h1>Názov udalosti</h1>
+            <p>
+                Bla bla bla
+            </p>
+        </div>
+        <button type="submit" class="button" onclick="save(event)">Uložiť</button>
+    </form>
+
+</div>
+</body>
+<script>
+    let save = function(event) {
+        event.preventDefault();
+        let description = document.getElementById("description").innerHTML;
+        let form = event.target.form;
+        let input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "description";
+        input.value = description;
+        form.appendChild(input);
+        form.submit();
+    }
+</script>
+</html>

@@ -3,7 +3,6 @@ package org.upece.granko.olvmat.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -20,6 +19,7 @@ import org.upece.granko.olvmat.entity.enums.AdminRegistraciaZiadostStavEnum;
 import org.upece.granko.olvmat.entity.enums.AdminRoleEnum;
 import org.upece.granko.olvmat.entity.enums.TypListkaEnum;
 import org.upece.granko.olvmat.model.AdminDetails;
+import org.upece.granko.olvmat.model.EventEditForm;
 import org.upece.granko.olvmat.repository.AdminRegistraciaZiadostRepository;
 import org.upece.granko.olvmat.repository.AdminRepository;
 import org.upece.granko.olvmat.repository.TicketRepository;
@@ -77,7 +77,7 @@ public class AdminController {
 
         String inputString = new String(subor.getBytes(), StandardCharsets.UTF_8);
         String[] lines = inputString.split("\n");
-        for(String line : lines){
+        for (String line : lines) {
             String[] values = line.split(",");
             String email = values[0].trim();
             String meno = values[1].trim();
@@ -89,7 +89,7 @@ public class AdminController {
             mailModel.put("krstneMeno", meno);
             mailModel.put("ticketId", entity.getId());
             mailModel.put("securityKey", entity.getSecurityKey());
-            if(typListka == TypListkaEnum.DOBROVOLNIK) {
+            if (typListka == TypListkaEnum.DOBROVOLNIK) {
                 mailModel.put("dobrovolnik", true);
             }
             emailService.sendMail(email, "Potvrdenie rezervácie listka", "potvrdenie-rezervacie", mailModel);
@@ -192,5 +192,21 @@ public class AdminController {
         } else {
             throw new RuntimeException();
         }
+    }
+
+    @GetMapping("/admin/events")
+    public String getEventManagement() {
+        return "admin/event-management";
+    }
+
+    @GetMapping("/admin/event")
+    public String getEvent() {
+        return "admin/event";
+    }
+
+    @PostMapping("/admin/event")
+    public String saveEvent(EventEditForm eventEditForm) {
+        System.out.println(eventEditForm);
+        return "redirect:/admin/events";
     }
 }

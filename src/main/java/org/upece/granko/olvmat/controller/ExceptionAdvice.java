@@ -21,7 +21,8 @@ public class ExceptionAdvice {
     }
 
     @ExceptionHandler({NoResourceFoundException.class, MethodArgumentTypeMismatchException.class})
-    public String handleNotFound(HttpServletRequest request) {
+    public String handleNotFound(Exception ex, HttpServletRequest request) {
+        ex.printStackTrace();
         String url = request.getRequestURI();
         if (url.contains("vstup")
                 && (adminDetailService.hasAuthority(AdminRoleEnum.VSTUP)

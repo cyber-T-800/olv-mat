@@ -28,12 +28,37 @@ public class ReservationController {
 
     @GetMapping("")
     public String rezervacia(ModelMap model) {
+
         int pocetUcastnickych = ticketRepository.countUcastnicke();
         model.put("percentObsadene", 100.0f * ticketRepository.countUcastnicke() / maxPocetListkov);
 
         if(maxPocetListkov - pocetUcastnickych <= lastListkyPocet){
             model.put("lastListky", maxPocetListkov - pocetUcastnickych);
         }
+        model.put("popisUdalosti", """
+                <h1>Rezervácia lístka na Majáles</h1>
+                
+                
+                    <p>Švárni šuhaji, driečne devy,</p>
+                    <div style="height:0.75rem;"></div>
+                
+                    <p>
+                        Pozývame Vás na Ondrejskú ľudovú veselicu plnú farieb, vzorov a zábavy!
+                        Už <strong>28. novembra</strong> bude naše UPeCe znieť ľudovými tancami a piesňami.
+                        Ak si toto nechceš nechať ujsť, tu si môžeš zarezervovať lístok.
+                        Jednoducho <strong>vyplň formulár</strong> a lístok budeš mať rezervovaný.
+                        Následne prídeš do <strong>Libressa</strong>, ktorýkoľvek <strong>pracovný deň 30 minút po svätej omši</strong>,
+                        kde nám dáš svoj príspevok a my ti lístok aktivujeme.
+                    </p>
+                    <div style="height:2.25rem;"></div>
+                
+                
+                    <p><strong>Odporúčaný príspevok:</strong></p>
+                
+                    <pre>  -  10€  Študent</pre>
+                    <pre>  -  20€  Neštudent</pre>
+                    <div style="height:1.25rem;"></div>
+                """);
         return "rezervacia";
     }
 
