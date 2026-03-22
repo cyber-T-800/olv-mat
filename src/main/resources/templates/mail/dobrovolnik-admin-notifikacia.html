@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        body { font-family: sans-serif; }
+        .slot-tag {
+            display: inline-block;
+            background: #e8eeff;
+            border: 1px solid #c0ccf0;
+            border-radius: 4px;
+            padding: 2px 10px;
+            font-size: 0.9rem;
+            color: #2864f0;
+            margin: 2px;
+        }
+        .card {
+            border: 1px solid #dcdcdc;
+            border-left: 4px solid #2864f0;
+            border-radius: 8px;
+            padding: 1rem;
+            max-width: 480px;
+        }
+    </style>
+</head>
+<body>
+<p>Nový dobrovoľník sa prihlásil na OĽV:</p>
+
+<div style="height:0.5rem;"></div>
+
+<div class="card">
+    <p><strong th:text="${meno}">Meno</strong></p>
+    <p th:text="${email}" style="color:#555; font-size:0.9rem;"></p>
+
+    <div style="height:0.5rem;"></div>
+
+    <p th:if="${sloty != null and !#lists.isEmpty(sloty)}">
+        <strong>Dostupné časy:</strong><br>
+        <span th:each="slot : ${sloty}">
+            <span class="slot-tag" th:text="${slot}"></span>
+        </span>
+    </p>
+
+    <p th:if="${sluzby != null and !sluzby.isEmpty()}">
+        <strong>Preferované služby:</strong> <span th:text="${sluzby}"></span>
+    </p>
+</div>
+
+<div style="height:0.5rem;"></div>
+<p style="color:#888; font-size:0.85rem;">Táto správa bola vygenerovaná automaticky systémom OLV-MAT.</p>
+</body>
+</html>

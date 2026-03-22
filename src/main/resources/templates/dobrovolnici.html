@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="sk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dobrovoľníci – OĽV</title>
+    <link type="text/css" rel="stylesheet" href="/stylesheet.css">
+</head>
+
+<body>
+<div class="obal">
+    <h1>Dobrovoľníci</h1>
+
+    <p>
+        Ak sa chceš zapojiť do organizácie Ondrejskej ľudovej veselice,
+        vyplň formulár nižšie. Uveď svoje meno, e-mail, preferované služby
+        a časy, kedy si dostupný. Môžeš pridať ľubovoľný počet časových okien —
+        aj nepravidelné časy ako <strong>19:40 – 21:15</strong>.
+    </p>
+    <div style="height:1.5rem;"></div>
+
+
+    <!-- ── SCHEDULE CALENDAR ── -->
+    <h3>Prehľad dostupností</h3>
+    <div style="height:0.5rem;"></div>
+
+    <div class="cal-wrap" style="max-height: 420px; overflow-y: auto;">
+        <div class="cal-gutter">
+            <div class="cal-gutter-head"></div>
+            <div id="timeGutter"></div>
+        </div>
+        <div class="cal-cols-wrap">
+            <div class="cal-cols-head" id="colsHead"></div>
+            <div class="cal-cols-body" id="colsBody"></div>
+        </div>
+    </div>
+    <div style="height:2rem;"></div>
+
+
+    <!-- ── REGISTRATION FORM ── -->
+    <h3>Prihlásiť sa</h3>
+    <div style="height:0.5rem;"></div>
+
+    <div class="drag-hint">
+        💡 Klikni a ťahaj na kalendári pre rýchly výber, alebo zadaj čas ručne nižšie.
+    </div>
+
+    <!--
+        Submits POST /dobrovolnici.
+        - meno, email     → bound directly to DobrovolnikForm fields
+        - sluzby          → hidden checkboxes toggled by the visible pills
+        - casOd / casDo   → hidden inputs injected by prepareSubmit() before POST
+    -->
+    <form id="volForm" method="post" action="/dobrovolnici" onsubmit="return prepareSubmit(event)">
+
+        <label for="iName">Meno a priezvisko:</label>
+        <input type="text" id="iName" name="meno" placeholder="Ján Novák" required>
+
+        <label for="iEmail">Emailová adresa:</label>
+        <input type="email" id="iEmail" name="email" placeholder="jan@example.com" required>
+
+        <div style="height:0.75rem;"></div>
+
+        <fieldset style="border:1px solid #dcdcdc; border-radius:10px; padding:0.75rem 1rem;">
+            <legend style="font-size:0.9rem; color:#333; padding:0 4px;">Preferované služby:</legend>
+            <div class="svc-wrap" id="svcWrap"></div>
+            <!-- hidden checkboxes populated by buildServices() -->
+            <div id="svcInputs" style="display:none;"></div>
+        </fieldset>
+
+        <div style="height:0.75rem;"></div>
+
+        <label>Dostupné časy:</label>
+        <div id="slotsCont"></div>
+        <button type="button" class="btn-add-slot" onclick="addSlot()">＋ Pridať ďalší čas</button>
+
+        <!-- populated by prepareSubmit() just before POST -->
+        <div id="hiddenSlots"></div>
+
+        <div style="height:1rem;"></div>
+        <input class="button" style="width:100%;" type="submit" value="Odoslať dostupnosť">
+
+    </form>
+
+
+    <!-- ── REGISTERED LIST ── -->
+    <div style="height:2rem;"></div>
+    <h3>Prihlásení dobrovoľníci (<span id="bCount">0</span>)</h3>
+    <div style="height:0.5rem;"></div>
+    <div id="bList"><p class="vol-empty">Zatiaľ nikto nie je prihlásený.</p></div>
+</div>
+
+<div class="vol-toast" id="toast"></div>
+
+<script th:inline="javascript">
+// ── CONFIG ────────────────────────────────────────────
+const START_H  = 18;
+const END_H    = 26;        // 02:00 next day represented as hour 26
+const TOTAL    = (END_H - START_H) * 2;
+const SH       = 28;        // px per slot — must match .ts { height } in CSS
+
+const SERVICES = ['Vstup','SBS','Šatňa','Zmenáreň','Upratovanie','Bar','Výdaj jedla','Iné'];
+
+// Thymeleaf injects the real list on page load; falls back to [] for local dev
+const bookings = /*[[${bookings}]]*/ [];
+
+let rowId = 0;
+let dragA = false, dragS0 = null, dragCI = null;
+
+// ── HELPERS ───────────────────────────────────────────
+function slotToDisp(s) {
+    const mins = START_H * 60 + s * 30;
+    return String(Math.floor(mins / 60) % 24).padStart(2,'0') + ':' + String(mins % 60).padStart(2,'0');
+}
+function timeToSlot(t) {
+    const [h, m] = t.split(':').map(Number);
+    const ah = h < START_H ? h + 24 : h;
+    return (ah - START_H) * 2 + (m >= 30 ? 1 : 0);
+}
+
+// ── TIME GUTTER ──────────────────────────────────────
+function buildGutter() {
+    const g = document.getElementById('timeGutter');
+    for (let s = 0; s <= TOTAL; s++) {
+        const d = document.createElement('div');
+        d.className = 'tl' + (s % 2 === 0 ? '' : ' half');
+        d.style.height = SH + 'px';
+        if (s % 2 === 0) d.textContent = slotToDisp(s);
+        g.appendChild(d);
+    }
+}
+
+// ── SERVICES ─────────────────────────────────────────
+function buildServices() {
+    const wrap   = document.getElementById('svcWrap');
+    const inputs = document.getElementById('svcInputs');
+    SERVICES.forEach(s => {
+        // visible pill
+        const pill = document.createElement('div');
+        pill.className   = 'svc-pill';
+        pill.textContent = s;
+
+        // hidden checkbox that Spring binds to DobrovolnikForm.sluzby
+        const cb   = document.createElement('input');
+        cb.type    = 'checkbox';
+        cb.name    = 'sluzby';
+        cb.value   = s;
+
+        pill.onclick = () => {
+            pill.classList.toggle('on');
+            cb.checked = !cb.checked;
+        };
+
+        wrap.appendChild(pill);
+        inputs.appendChild(cb);
+    });
+}
+
+// ── SLOT ROWS (visual only — not named) ───────────────
+function addSlot(f, t) {
+    const id  = rowId++;
+    const row = document.createElement('div');
+    row.className  = 'slot-row';
+    row.dataset.id = id;
+    row.innerHTML =
+        '<input type="time" class="sf" value="' + (f||'') + '">' +
+        '<span class="slot-sep">→</span>' +
+        '<input type="time" class="st" value="' + (t||'') + '">' +
+        '<button type="button" class="btn-rm-slot" onclick="rmSlot(' + id + ')">✕</button>';
+    document.getElementById('slotsCont').appendChild(row);
+}
+function rmSlot(id) {
+    const r = document.querySelector('.slot-row[data-id="' + id + '"]');
+    if (r) r.remove();
+}
+function getSlots() {
+    return [...document.querySelectorAll('.slot-row')]
+        .map(r => ({ from: r.querySelector('.sf').value, to: r.querySelector('.st').value }))
+        .filter(r => r.from && r.to);
+}
+
+// ── PREPARE SUBMIT ────────────────────────────────────
+function prepareSubmit(e) {
+    const slots = getSlots();
+
+    if (!slots.length) {
+        e.preventDefault();
+        showToast('⚠ Pridaj aspoň jeden časový úsek.');
+        return false;
+    }
+    for (const sl of slots) {
+        if (timeToSlot(sl.from) >= timeToSlot(sl.to)) {
+            e.preventDefault();
+            showToast('⚠ Čas „do" musí byť neskôr ako „od" (' + sl.from + ').');
+            return false;
+        }
+    }
+
+    // inject named hidden inputs → Spring binds to DobrovolnikForm.casOd / casDo
+    const container = document.getElementById('hiddenSlots');
+    container.innerHTML = '';
+    slots.forEach(sl => {
+        const od  = document.createElement('input');
+        od.type   = 'hidden'; od.name = 'casOd'; od.value = sl.from;
+        const do_ = document.createElement('input');
+        do_.type  = 'hidden'; do_.name = 'casDo'; do_.value = sl.to;
+        container.appendChild(od);
+        container.appendChild(do_);
+    });
+
+    return true;
+}
+
+// ── CALENDAR ──────────────────────────────────────────
+function renderCal() {
+    const head = document.getElementById('colsHead');
+    const body = document.getElementById('colsBody');
+    head.innerHTML = '';
+    body.innerHTML = '';
+
+    const names   = bookings.length === 0 ? ['—'] : [...new Set(bookings.map(b => b.name))];
+    const midSlot = (24 - START_H) * 2;
+
+    names.forEach((name, ci) => {
+        // column header
+        const hdr = document.createElement('div');
+        hdr.className   = 'col-hdr' + (name === '—' ? ' empty' : '');
+        hdr.textContent = name === '—' ? 'žiadni dobrovoľníci' : name;
+        head.appendChild(hdr);
+
+        // column body
+        const col = document.createElement('div');
+        col.className  = 'vol-col';
+        col.dataset.ci = ci;
+
+        // midnight separator
+        const ml = document.createElement('div');
+        ml.className = 'midnight-line';
+        ml.style.top = (midSlot * SH) + 'px';
+        col.appendChild(ml);
+        const lb = document.createElement('div');
+        lb.className = 'midnight-label';
+        lb.style.top = (midSlot * SH + 3) + 'px';
+        lb.textContent = '00:00';
+        col.appendChild(lb);
+
+        // time slots for drag-to-select
+        for (let s = 0; s < TOTAL; s++) {
+            const ts = document.createElement('div');
+            ts.className    = 'ts' + (s % 2 === 0 ? ' on-hour' : '');
+            ts.style.height = SH + 'px';
+            ts.dataset.s    = s;
+            ts.dataset.ci   = ci;
+            ts.addEventListener('mousedown', () => { dragA=true; dragS0=s; dragCI=ci; hilite(s,s); });
+            ts.addEventListener('mouseover', () => { if(dragA && ci==dragCI) hilite(Math.min(dragS0,s), Math.max(dragS0,s)); });
+            ts.addEventListener('mouseup',   () => endDrag(s, ci));
+            col.appendChild(ts);
+        }
+
+        // overlay booked blocks for this volunteer
+        if (name !== '—') {
+            bookings.filter(b => b.name === name).forEach(b => {
+                (b.slots || []).forEach(sl => {
+                    const fs  = timeToSlot(sl.from);
+                    const ts2 = timeToSlot(sl.to);
+                    if (fs >= ts2) return;
+                    const blk = document.createElement('div');
+                    blk.className    = 'bblock';
+                    blk.style.top    = (fs * SH) + 'px';
+                    blk.style.height = ((ts2 - fs) * SH - 3) + 'px';
+                    blk.innerHTML =
+                        '<div class="bn">' + b.name + '</div>' +
+                        '<div class="bt">' + sl.from + '–' + sl.to + '</div>' +
+                        (b.svcs && b.svcs.length ? '<div class="bs">' + b.svcs.join(', ') + '</div>' : '');
+                    col.appendChild(blk);
+                });
+            });
+        }
+
+        body.appendChild(col);
+    });
+
+    document.getElementById('bCount').textContent = bookings.length;
+    renderList();
+}
+
+// ── DRAG ──────────────────────────────────────────────
+function hilite(lo, hi) {
+    document.querySelectorAll('.vol-col[data-ci="' + dragCI + '"] .ts').forEach(e => {
+        e.classList.toggle('sel', parseInt(e.dataset.s) >= lo && parseInt(e.dataset.s) <= hi);
+    });
+}
+function endDrag(s, ci) {
+    if (!dragA) return;
+    dragA = false;
+    const lo = Math.min(dragS0, s), hi = Math.max(dragS0, s) + 1;
+    const fv = slotToDisp(lo), tv = slotToDisp(Math.min(hi, TOTAL));
+    const empty = [...document.querySelectorAll('.slot-row')]
+        .find(r => !r.querySelector('.sf').value && !r.querySelector('.st').value);
+    if (empty) { empty.querySelector('.sf').value = fv; empty.querySelector('.st').value = tv; }
+    else addSlot(fv, tv);
+    document.querySelectorAll('.ts.sel').forEach(e => e.classList.remove('sel'));
+}
+document.addEventListener('mouseup', () => {
+    if (dragA) { dragA = false; document.querySelectorAll('.ts.sel').forEach(e => e.classList.remove('sel')); }
+});
+
+// ── NOW LINE ──────────────────────────────────────────
+function posNow() {
+    document.querySelectorAll('.now-line').forEach(e => e.remove());
+    const now = new Date(), h = now.getHours(), m = now.getMinutes();
+    const eh  = h < START_H ? h + 24 : h;
+    if (eh < START_H || eh >= END_H) return;
+    const px = ((eh - START_H) * 60 + m) / 30 * SH;
+    document.querySelectorAll('.vol-col').forEach(col => {
+        const ln = document.createElement('div');
+        ln.className = 'now-line'; ln.style.top = px + 'px';
+        col.appendChild(ln);
+    });
+}
+
+// ── REGISTERED LIST ───────────────────────────────────
+function renderList() {
+    const list = document.getElementById('bList');
+    if (!bookings.length) {
+        list.innerHTML = '<p class="vol-empty">Zatiaľ nikto nie je prihlásený.</p>';
+        return;
+    }
+    list.innerHTML = bookings.map(b =>
+        '<div class="vol-list-item">' +
+            '<div class="vn">' + b.name + '</div>' +
+            '<div class="ve">' + b.email + '</div>' +
+            '<div class="vol-slots">' +
+                (b.slots||[]).map(s => '<span class="vol-slot">' + s.from + '–' + s.to + '</span>').join('') +
+            '</div>' +
+            (b.svcs && b.svcs.length
+                ? '<div class="vol-svcs">' + b.svcs.map(s => '<span class="vol-svc">' + s + '</span>').join('') + '</div>'
+                : '') +
+        '</div>'
+    ).join('');
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── INIT ──────────────────────────────────────────────
+buildGutter();
+buildServices();
+addSlot();
+renderCal();
+posNow();
+setInterval(posNow, 60000);
+</script>
+</body>
+</html>
