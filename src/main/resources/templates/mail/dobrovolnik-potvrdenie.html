@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        .button {
+            display: inline-block;
+            padding: 0.75rem 1.25rem;
+            border-radius: 15px;
+            background: #2864f0;
+            color: #fafafa;
+            text-decoration: none;
+        }
+        .slot-tag {
+            display: inline-block;
+            background: #e8eeff;
+            border: 1px solid #c0ccf0;
+            border-radius: 4px;
+            padding: 2px 10px;
+            font-size: 0.9rem;
+            color: #2864f0;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+<p th:text="${'Ahoj ' + krstneMeno + '!'}">Ahoj!</p>
+
+<div style="height:0.25rem;"></div>
+
+<p>Ďakujeme, že si sa prihlásil/a ako dobrovoľník/dobrovoľníčka na <strong>Ondrejskú ľudovú veselicu</strong>!</p>
+<p>Tvoja dostupnosť bola zaznamenaná:</p>
+
+<div style="height:0.5rem;"></div>
+
+<p th:if="${sloty != null and !#lists.isEmpty(sloty)}">
+    <strong>Časy:</strong><br>
+    <span th:each="slot : ${sloty}">
+        <span class="slot-tag" th:text="${slot}"></span>
+    </span>
+</p>
+
+<p th:if="${sluzby != null and !sluzby.isEmpty()}">
+    <strong>Preferované služby:</strong> <span th:text="${sluzby}"></span>
+</p>
+
+<div style="height:0.5rem;"></div>
+
+<p>
+    O zaradení do konkrétnej služby ťa budeme informovať. Ak máš akékoľvek otázky,
+    neváhaj nás kontaktovať.
+</p>
+
+<div style="height:0.25rem;"></div>
+
+<p>
+    Tešíme sa na teba! 🤍🩵<br>
+    Grantovo-eventový tím UPeCe Bratislava
+</p>
+</body>
+</html>
