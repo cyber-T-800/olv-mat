@@ -206,6 +206,11 @@ public class AdminController {
 
     @PostMapping("/admin/event")
     public String saveEvent(EventEditForm eventEditForm) {
+        if(eventEditForm.getId() == null){
+            // vytvárame nový
+        }else{
+            // editujeme
+        }
         System.out.println(eventEditForm);
         return "redirect:/admin/events";
     }

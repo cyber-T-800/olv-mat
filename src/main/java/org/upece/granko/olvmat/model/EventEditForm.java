@@ -9,4 +9,5 @@ public class EventEditForm {
     private Long id;
     private String nazov;
     private String description;
+    private String capacity;
 }
