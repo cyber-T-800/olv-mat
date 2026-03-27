@@ -8,13 +8,13 @@
 </head>
 
 <body>
-<div class="obal" style="min-width: 844px;">
+<div class="obal" style="min-width: 847px;">
     <h1>Administrácia rezervácií</h1>
     <a class="button" href="/vstup">
         Prejdi na predaj lístkov
     </a>
 
-    <a class="button" href="/admin/events" style="align:right;">
+    <a class="button" href="/admin/events" style="float:right;">
         Prejdi na správu akcie
     </a>
     <div class="admin-info">
@@ -47,7 +47,7 @@
             <col style="width: 115px">
             <col style="width: 140px">
             <col style="width:  90px">
-            <col style="width:  20px">
+            <col style="width:  23px">
         </colgroup>
 
         <thead>
@@ -56,32 +56,11 @@
             <th>Email</th>
             <th>Typ lístka</th>
             <th>Stav</th>
-            <th>Akcia</th>
-            <th></th>
+            <th colspan="2">Akcia</th>
         </tr>
         </thead>
         <tbody></tbody>
     </table>
-
-    <h3>
-        Nahratie dobrovoľníkov a teamákov
-    </h3>
-    <form method="post" enctype="multipart/form-data">
-        <fieldset>
-            <legend>Nahrávam:</legend>
-            <div>
-                <input type="radio" name="typ" id="dobrovolnik" value="DOBROVOLNIK" style="display: inline-block"><label
-                    for="dobrovolnik" style="display: inline-block">Dobrovoľníkov</label>
-            </div>
-            <div>
-                <input type="radio" name="typ" id="team" value="TEAM" checked style="display: inline-block"><label
-                    style="display: inline-block" for="team">Teamákov</label>
-            </div>
-        </fieldset>
-        <input type="file" name="subor" placeholder="Tu nahraj súbor">
-
-        <button type="submit">Nahraj lístky</button>
-    </form>
 </div>
 
 <div id="actionsModal" class="modal hidden">
@@ -104,7 +83,7 @@
         content.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin: -20px -20px 0 -20px; padding: 20px;">
                 <h4 style="margin: 0;">${r.meno}</h4>
-                <button class="close-btn" onclick="closeModal()" style="margin: 0;">✕</button>
+                <button class="close-btn" onclick="closeModal()">✕</button>
             </div>
 
             <h3>Zmena typu lístka</h3>
@@ -119,7 +98,7 @@
                         <option value="TEAM">team</option>
                     </select>
 
-                    <button class="button" style="padding: 0.25rem 0.75rem;" onclick="changeType('${r.id}')">
+                    <button class="button-small" onclick="changeType('${r.id}')">
                         Potvrdiť
                     </button>
                 </div>
@@ -127,7 +106,7 @@
 
             <br><br>
 
-            <div style="margin-top:10px; text-align: center;">
+            <div style="text-align: center;">
                 <button class="button" onclick="deleteReservation('${r.id}')">Zrušiť rezerváciu</button>
             </div>
         `;
@@ -173,7 +152,7 @@
                                 ${r.stav}
                             </td>
                             <td>
-                                ${r.stav === "REZERVOVANY" ? `<button class="button" style="padding: 0.25rem 0.75rem;" onclick="confirmPayment('${r.id}')">Zaplatiť</button>` : ""}
+                                ${r.stav === "REZERVOVANY" ? `<button class="button-small" onclick="confirmPayment('${r.id}')">Zaplatiť</button>` : ""}
                             </td>
                             <td>
                                 <button class="more-btn" onclick="openActions('${r.id}')">⋮</button>
