@@ -84,7 +84,7 @@ body {
     font-weight: bold;
     vertical-align: center;
     padding-top: 10pt;
-    color: white;
+    color: #fafafa;
 }
 .bar-text {
     position: absolute;
@@ -196,7 +196,7 @@ tr:hover {
   display: none;
 }
 .modal-box {
-  background: white;
+  background: #fafafa;
   padding: 20px;
   border-radius: 8px;
   min-width: 300px;
@@ -206,7 +206,7 @@ tr:hover {
 }
 .close-btn {
   background: #ff0000;
-  color: white;
+  color: #fafafa;
   border: none;
   width: 28px;
   height: 28px;
@@ -267,5 +267,15 @@ tr:hover {
 
 /* ───── CALENDAR ───── */
 #calendar tr {
-    height: 7px;  /* výška každého riadku */
+    height: 11px;  /* výška každého riadku */
+}
+#claendar th, td {
+    border-bottom: 2px solid #dcdcdc;
+}
+#calendar td.active {
+    background-color: #64affa;
+    color: #fafafa;
+}
+#calendar tr:hover {
+    background-color: transparent;
 }

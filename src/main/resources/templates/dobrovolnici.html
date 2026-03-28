@@ -57,104 +57,74 @@
 const SERVICES = ['Vstup','SBS','Šatňa','Zmenáreň','Upratovanie','Bar','Výdaj jedla','Iné'];
 
 const program = [
-    { sh: 18, sm:  0, eh: 19, em:  0, text: 'Registrácia' },
-    { sh: 19, sm:  0, eh: 20, em:  0, text: 'Sv. omša' },
-    { sh: 20, sm:  0, eh: 20, em: 10, text: 'Otvorenie' },
-    { sh: 20, sm: 10, eh: 20, em: 40, text: 'Tanečné kolo' },
-    { sh: 20, sm: 40, eh: 20, em: 50, text: 'Prestávka' },
-    { sh: 20, sm: 50, eh: 21, em: 20, text: 'Škola tanca' },
-    { sh: 21, sm: 20, eh: 21, em: 50, text: 'Tanečné kolo' },
-    { sh: 21, sm: 50, eh: 22, em:  0, text: 'Prestávka' },
-    { sh: 22, sm:  0, eh: 22, em: 20, text: 'Súťaže' },
-    { sh: 22, sm: 20, eh: 22, em: 50, text: 'Tanečné kolo' },
-    { sh: 22, sm: 50, eh: 23, em:  5, text: 'Fotka' },
-    { sh: 23, sm:  5, eh: 23, em: 25, text: 'Limbo' },
-    { sh: 23, sm: 25, eh:  0, em:  0, text: 'Tanečné kolo' },
-    { sh:  0, sm:  0, eh:  0, em: 30, text: 'Tombola' },
-    { sh:  0, sm: 30, eh:  2, em:  0, text: 'Voľná zábava' },
+    { rowspan: 12, color: '#fa0000', text: 'Registrácia' },
+    { rowspan: 12, color: '#00fa00', text: 'Sv. omša' },
+    { rowspan:  3, color: '#0000fa', text: 'Otvorenie' },
+    { rowspan:  7, color: '#fa00fa', text: 'Tanečné kolo' },
+    { rowspan:  2, color: '#fafafa', text: '' },
+    { rowspan:  4, color: '#00fafa', text: 'Divadlo' },
+    { rowspan:  8, color: '#fa00fa', text: 'Tanečné kolo' },
+    { rowspan:  2, color: '#fafafa', text: '' },
+    { rowspan:  6, color: '#fa00fa', text: 'Škola tanca' },
+    { rowspan:  8, color: '#fa00fa', text: 'Tanečné kolo' },
+    { rowspan:  2, color: '#fafafa', text: '' },
+    { rowspan:  4, color: '#00fafa', text: 'Súťaže' },
+    { rowspan:  8, color: '#fa00fa', text: 'Tanečné kolo' },
+    { rowspan:  3, color: '#0000fa', text: 'Fotka' },
+    { rowspan:  6, color: '#00fafa', text: 'Vatra' },
+    { rowspan:  9, color: '#fa00fa', text: 'Tanečné kolo' },
 ];
 
 
 let startHour = 18;
 let endHour = 2;
+let totalHours = (endHour <= startHour)
+    ? (endHour + 24 - startHour)
+    : (endHour - startHour);
 
-let rowMinutes = 5;
 let blockMinutes = 120;
-
-function normalizeHour(h) {
-    return (h < startHour) ? h + 24 : h;
-}
-
-function timeToRow(h, m) {
-    let minutes = (normalizeHour(h) - startHour) * 60 + m;
-    return Math.floor(minutes / rowMinutes);
-}
+let blockRowspan = blockMinutes / 5;
 
 
 function renderTable() {
     let tbody = document.querySelector("#calendar tbody");
     tbody.innerHTML = "";
 
-    // výpočty
-    let timeRowspan = 60 / rowMinutes;
-    let blockRowspan = blockMinutes / rowMinutes;
+    let totalRows = totalHours * 12;
 
-    let totalHours = (endHour <= startHour)
-        ? (endHour + 24 - startHour)
-        : (endHour - startHour);
+    let programIndex = 0;
+    let remainingSpan = program[0]?.rowspan || 0;
 
-    let totalRows = totalHours * (60 / rowMinutes);
-
-    // ====== EVENT MAP ======
-    let eventMap = {};
-
-    program.forEach(p => {
-        let start = timeToRow(p.sh, p.sm);
-        let end = timeToRow(p.eh, p.em);
-        let length = end - start;
-
-        eventMap[start] = {
-            name: p.text,
-            rowspan: length
-        };
-    });
-
-    // ====== GENEROVANIE ======
     for (let row = 0; row < totalRows; row++) {
         let tr = document.createElement("tr");
 
-        let currentHour = Math.floor(row / timeRowspan) + startHour;
+        let currentHour = Math.floor(row / 12) + startHour;
         let displayHour = currentHour % 24;
-        let minute = (row % timeRowspan) * rowMinutes;
+        let minute = (row % 12) * 5;
 
         // ===== 1. STĹPEC – HODINY =====
         if (minute === 0) {
             let td = document.createElement("td");
-            td.rowSpan = timeRowspan;
+            td.rowSpan = 12;
             td.innerText = displayHour + ":00";
             tr.appendChild(td);
         }
 
         // ===== 2. STĹPEC – EVENTY =====
-        if (eventMap[row]) {
+        if (remainingSpan === program[programIndex].rowspan) {
             let td = document.createElement("td");
-            td.rowSpan = eventMap[row].rowspan;
-            td.innerText = eventMap[row].name;
+            td.rowSpan = program[programIndex].rowspan;
+            td.innerText = program[programIndex].text;
+            td.style.backgroundColor = program[programIndex].color;
             tr.appendChild(td);
-        } else {
-            let insideEvent = false;
+        }
 
-            for (let start in eventMap) {
-                let p = eventMap[start];
-                if (row > start && row < (+start + p.rowspan)) {
-                    insideEvent = true;
-                    break;
-                }
-            }
+        remainingSpan--;
 
-            if (!insideEvent) {
-                let td = document.createElement("td");
-                tr.appendChild(td);
+        if (remainingSpan === 0) {
+            programIndex++;
+            if (program[programIndex]) {
+                remainingSpan = program[programIndex].rowspan;
             }
         }
 
@@ -165,14 +135,22 @@ function renderTable() {
 
             let checkbox = document.createElement("input");
             checkbox.type = "checkbox";
+            checkbox.style.display = "none";
 
-            let startH = (Math.floor(row / timeRowspan) + startHour) % 24;
+            let startH = (Math.floor(row / 12) + startHour) % 24;
             let endH = (startH + blockMinutes / 60) % 24;
 
             checkbox.dataset.start = startH;
             checkbox.dataset.end = endH;
 
             td.appendChild(checkbox);
+
+            td.addEventListener("click", () => {
+                checkbox.checked = !checkbox.checked;
+                td.classList.toggle("active", checkbox.checked);
+            });
+
+            td.style.cursor = "pointer";
             tr.appendChild(td);
         }
 
