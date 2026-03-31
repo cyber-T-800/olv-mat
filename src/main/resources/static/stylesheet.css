@@ -269,13 +269,21 @@ tr:hover {
 #calendar tr {
     height: 11px;  /* výška každého riadku */
 }
-#claendar th, td {
-    border-bottom: 2px solid #dcdcdc;
-}
 #calendar td.active {
     background-color: #64affa;
     color: #fafafa;
 }
 #calendar tr:hover {
     background-color: transparent;
+}
+
+/* ───── SERVICES ───── */
+#services tr {
+    height: 30;
+}
+#services tr[draggable] {
+    cursor: grab;
+}
+#services tr.dragging {
+    opacity: 0.4;
 }

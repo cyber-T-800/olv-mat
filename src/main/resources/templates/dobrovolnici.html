@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dobrovoľníci – Majáles</title>
+    <title>Dobrovoľníci - Majáles</title>
     <link type="text/css" rel="stylesheet" href="/stylesheet.css">
 </head>
 
@@ -18,15 +18,16 @@
     </p>
     <div style="height:1.5rem;"></div>
 
-    <h3>Harmonogram a moja dostupnosť</h3>
-    <p>Pozri si harmonogram a zaklikni bloky, kedy môžeš prísť pomôcť.</p>
 
+    <h3>Program a dostupnosť</h3>
+    <p>Pozri si program a zaklikni bloky, kedy môžeš prísť pomôcť.</p>
+    <div style="height:1.5rem;"></div>
 
     <table id="calendar">
         <colgroup>
-            <col style="width: 30px">
-            <col style="width: 100px">
-            <col style="width: 100px">
+            <col style="width:  98px">
+            <col style="width: 264px">
+            <col style="width: 264px">
         </colgroup>
 
         <thead>
@@ -40,6 +41,28 @@
     </table>
     <div style="height:1.5rem;"></div>
 
+
+    <h3>Služby</h3>
+    <p>V nasledovnej tabuľke zoraď možné služby podľa priority.</p>
+    <div style="height:1.5rem;"></div>
+
+    <table id="services">
+        <colgroup>
+            <col style="width:  20px">
+            <col style="width: 606px">
+        </colgroup>
+
+        <tbody>
+            <tr draggable="true"><td class="handle">⠿</td><td>Bar</td></tr>
+            <tr draggable="true"><td class="handle">⠿</td><td>Šatňa</td></tr>
+            <tr draggable="true"><td class="handle">⠿</td><td>SBS</td></tr>
+            <tr draggable="true"><td class="handle">⠿</td><td>Upratovanie</td></tr>
+            <tr draggable="true"><td class="handle">⠿</td><td>Vstup</td></tr>
+            <tr draggable="true"><td class="handle">⠿</td><td>Výdaj jedla</td></tr>
+            <tr draggable="true"><td class="handle">⠿</td><td>Zmenáreň</td></tr>
+        </tbody>
+    </table>
+    <div style="height:1.5rem;"></div>
     
     <form method="post">
         <label for="name">Meno a priezvisko:</label>
@@ -54,7 +77,7 @@
 </div>
 
 <script th:inline="javascript">
-const SERVICES = ['Vstup','SBS','Šatňa','Zmenáreň','Upratovanie','Bar','Výdaj jedla','Iné'];
+// z databazy treba: program, startHour, endeHour, blockRowspan
 
 const program = [
     { rowspan: 12, color: '#fa0000', text: 'Registrácia' },
@@ -75,22 +98,18 @@ const program = [
     { rowspan:  9, color: '#fa00fa', text: 'Tanečné kolo' },
 ];
 
-
 let startHour = 18;
 let endHour = 2;
+let blockRowspan = 24; // 12 = 1 hodina
+
 let totalHours = (endHour <= startHour)
     ? (endHour + 24 - startHour)
     : (endHour - startHour);
-
-let blockMinutes = 120;
-let blockRowspan = blockMinutes / 5;
-
+let totalRows = totalHours * 12;
 
 function renderTable() {
     let tbody = document.querySelector("#calendar tbody");
     tbody.innerHTML = "";
-
-    let totalRows = totalHours * 12;
 
     let programIndex = 0;
     let remainingSpan = program[0]?.rowspan || 0;
@@ -98,17 +117,28 @@ function renderTable() {
     for (let row = 0; row < totalRows; row++) {
         let tr = document.createElement("tr");
 
-        let currentHour = Math.floor(row / 12) + startHour;
-        let displayHour = currentHour % 24;
-        let minute = (row % 12) * 5;
-
         // ===== 1. STĹPEC – HODINY =====
-        if (minute === 0) {
+        if ((row % 12) === 0) {
+            let now = (row / 12 + startHour) % 24;
+            let next = (now + 1) % 24;
+
             let td = document.createElement("td");
             td.rowSpan = 12;
-            td.innerText = displayHour + ":00";
+
+            td.innerHTML = `
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                ">
+                    <span>${now}:00</span>
+                    <span>–</span>
+                    <span>${next}:00</span>
+                </div>
+            `;
+
             tr.appendChild(td);
         }
+
 
         // ===== 2. STĹPEC – EVENTY =====
         if (remainingSpan === program[programIndex].rowspan) {
@@ -128,38 +158,116 @@ function renderTable() {
             }
         }
 
+
         // ===== 3. STĹPEC – CHECKBOXY =====
         if (row % blockRowspan === 0) {
             let td = document.createElement("td");
             td.rowSpan = blockRowspan;
-
-            let checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.style.display = "none";
-
-            let startH = (Math.floor(row / 12) + startHour) % 24;
-            let endH = (startH + blockMinutes / 60) % 24;
-
-            checkbox.dataset.start = startH;
-            checkbox.dataset.end = endH;
-
-            td.appendChild(checkbox);
-
-            td.addEventListener("click", () => {
-                checkbox.checked = !checkbox.checked;
-                td.classList.toggle("active", checkbox.checked);
-            });
-
-            td.style.cursor = "pointer";
+            td.className = "slot";
+            td.dataset.start = (row / 12 + startHour) % 24;
+            td.innerText = "—";
+            slotTds.push(td);
             tr.appendChild(td);
         }
+
 
         tbody.appendChild(tr);
     }
 }
 
+const slotTds = [];
 
 renderTable();
+
+// ===== DRAG-SELECT LOGIKA =====
+let isDragging = false;
+let dragIntent = null;
+
+function setSlot(td, active) {
+    td.classList.toggle("active", active);
+    td.innerText = active ? "✓" : "—";
+}
+
+slotTds.forEach(td => {
+    td.addEventListener("mousedown", e => {
+        e.preventDefault();
+        isDragging = true;
+        dragIntent = !td.classList.contains("active");
+        setSlot(td, dragIntent);
+    });
+
+    td.addEventListener("mouseenter", () => {
+        if (!isDragging) return;
+        setSlot(td, dragIntent);
+    });
+});
+
+document.addEventListener("mouseup", () => {
+    isDragging = false;
+    dragIntent = null;
+});
+
+
+// ===== TABULKA SLUZIEB =====
+const tbody = document.querySelector("#services tbody");
+let dragged = null;
+
+tbody.addEventListener('dragstart', e => {
+  dragged = e.target.closest('tr');
+  setTimeout(() => dragged.classList.add('dragging'), 0);
+});
+
+tbody.addEventListener('dragend', () => {
+  dragged.classList.remove('dragging');
+  dragged = null;
+  document.querySelectorAll('.drag-over').forEach(r => r.classList.remove('drag-over'));
+});
+
+tbody.addEventListener('dragover', e => {
+  e.preventDefault();
+  const row = e.target.closest('tr');
+  if (!row || row === dragged) return;
+  document.querySelectorAll('.drag-over').forEach(r => r.classList.remove('drag-over'));
+  row.classList.add('drag-over');
+});
+
+tbody.addEventListener('drop', e => {
+  e.preventDefault();
+  const row = e.target.closest('tr');
+  if (!row || row === dragged) return;
+  const rows = [...tbody.querySelectorAll('tr')];
+  const from = rows.indexOf(dragged);
+  const to = rows.indexOf(row);
+  if (from < to) row.after(dragged);
+  else row.before(dragged);
+  row.classList.remove('drag-over');
+});
+
+
+// ===== SUBMIT FORM =====
+document.querySelector("form").addEventListener("submit", function(e) {
+    // Odstráň staré hidden inputy
+    this.querySelectorAll("input[name='availability'], input[name='services']")
+        .forEach(el => el.remove());
+
+    // Zakliknuté checkboxy
+    const checked = [...document.querySelectorAll("#calendar td.slot.active")]
+        .map(td => td.dataset.start);
+    const availInput = document.createElement("input");
+    availInput.type = "hidden";
+    availInput.name = "availability";
+    availInput.value = checked.join(",");
+    this.appendChild(availInput);
+
+    // Poradie služieb → "Bar,Šatňa,SBS,..."
+    const services = [...document.querySelectorAll("#services tbody tr td:last-child")]
+        .map(td => td.textContent.trim());
+    const servInput = document.createElement("input");
+    servInput.type = "hidden";
+    servInput.name = "services";
+    servInput.value = services.join(",");
+    this.appendChild(servInput);
+});
 </script>
 </body>
 </html>
