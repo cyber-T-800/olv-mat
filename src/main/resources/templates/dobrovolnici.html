@@ -53,13 +53,10 @@
         </colgroup>
 
         <tbody>
-            <tr draggable="true"><td class="handle">⠿</td><td>Bar</td></tr>
-            <tr draggable="true"><td class="handle">⠿</td><td>Šatňa</td></tr>
-            <tr draggable="true"><td class="handle">⠿</td><td>SBS</td></tr>
-            <tr draggable="true"><td class="handle">⠿</td><td>Upratovanie</td></tr>
-            <tr draggable="true"><td class="handle">⠿</td><td>Vstup</td></tr>
-            <tr draggable="true"><td class="handle">⠿</td><td>Výdaj jedla</td></tr>
-            <tr draggable="true"><td class="handle">⠿</td><td>Zmenáreň</td></tr>
+            <tr th:each="service : ${services}" draggable="true">
+                <td class="handle">⠿</td>
+                <td th:text="${service}">Služba</td>
+            </tr>
         </tbody>
     </table>
     <div style="height:1.5rem;"></div>

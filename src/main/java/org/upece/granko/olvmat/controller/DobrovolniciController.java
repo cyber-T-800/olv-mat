@@ -39,6 +39,7 @@ public class DobrovolniciController {
         model.put("startHour", 18);
         model.put("endHour", 2);
         model.put("blockRowspan", 24); // 12 = 1 hodina
+        model.put("services", List.of("Bar", "Šatňa", "SBS", "Upratovanie", "Vstup", "Výdaj jedla", "Zmenáreň"));
 
         return "dobrovolnici";
     }
@@ -47,8 +48,9 @@ public class DobrovolniciController {
     public String odosliDobrovolnika(DobrovolnikForm form, ModelMap model) {
 
         if (form.getName() == null || form.getName().isBlank() ||
-            form.getEmail() == null || form.getEmail().isBlank()) {
-            model.put("error", "Meno a email sú povinné.");
+            form.getEmail() == null || form.getEmail().isBlank() ||
+            form.getAvailabilityList() == null || form.getAvailabilityList().isBlank()) {
+            model.put("error", "Meno, email a dostupnosť sú povinné.");
             return "dobrovolnici";
         }
 
