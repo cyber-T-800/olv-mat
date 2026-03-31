@@ -77,30 +77,10 @@
 </div>
 
 <script th:inline="javascript">
-// z databazy treba: program, startHour, endeHour, blockRowspan
-
-const program = [
-    { rowspan: 12, color: '#fa0000', text: 'Registrácia' },
-    { rowspan: 12, color: '#00fa00', text: 'Sv. omša' },
-    { rowspan:  3, color: '#0000fa', text: 'Otvorenie' },
-    { rowspan:  7, color: '#fa00fa', text: 'Tanečné kolo' },
-    { rowspan:  2, color: '#fafafa', text: '' },
-    { rowspan:  4, color: '#00fafa', text: 'Divadlo' },
-    { rowspan:  8, color: '#fa00fa', text: 'Tanečné kolo' },
-    { rowspan:  2, color: '#fafafa', text: '' },
-    { rowspan:  6, color: '#fa00fa', text: 'Škola tanca' },
-    { rowspan:  8, color: '#fa00fa', text: 'Tanečné kolo' },
-    { rowspan:  2, color: '#fafafa', text: '' },
-    { rowspan:  4, color: '#00fafa', text: 'Súťaže' },
-    { rowspan:  8, color: '#fa00fa', text: 'Tanečné kolo' },
-    { rowspan:  3, color: '#0000fa', text: 'Fotka' },
-    { rowspan:  6, color: '#00fafa', text: 'Vatra' },
-    { rowspan:  9, color: '#fa00fa', text: 'Tanečné kolo' },
-];
-
-let startHour = 18;
-let endHour = 2;
-let blockRowspan = 24; // 12 = 1 hodina
+const program = /*[[${program}]]*/ null;
+let startHour = /*[[${startHour}]]*/ 16;
+let endHour = /*[[${endHour}]]*/ 22;
+let blockRowspan = /*[[${blockRowspan}]]*/ 12;
 
 let totalHours = (endHour <= startHour)
     ? (endHour + 24 - startHour)
@@ -165,7 +145,6 @@ function renderTable() {
             td.rowSpan = blockRowspan;
             td.className = "slot";
             td.dataset.start = (row / 12 + startHour) % 24;
-            td.innerText = "—";
             slotTds.push(td);
             tr.appendChild(td);
         }
@@ -185,7 +164,6 @@ let dragIntent = null;
 
 function setSlot(td, active) {
     td.classList.toggle("active", active);
-    td.innerText = active ? "✓" : "—";
 }
 
 slotTds.forEach(td => {

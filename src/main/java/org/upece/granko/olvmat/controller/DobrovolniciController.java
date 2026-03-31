@@ -1,16 +1,45 @@
 package org.upece.granko.olvmat.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.upece.granko.olvmat.model.DobrovolnikForm;
 
+import java.util.List;
+import java.util.Map;
+
 @Controller
+@RequiredArgsConstructor
 public class DobrovolniciController {
 
     @GetMapping("dobrovolnici")
-    public String getDobrovolnici() {
+    public String getDobrovolnici(ModelMap model) {
+        List<Map<String, Object>> program = List.of(
+            Map.of("rowspan", 12, "color", "#fa0000", "text", "Registrácia"),
+            Map.of("rowspan", 12, "color", "#00fa00", "text", "Sv. omša"),
+            Map.of("rowspan",  3, "color", "#00fafa", "text", "Otvorenie"),
+            Map.of("rowspan",  7, "color", "#fa00fa", "text", "Tanečné kolo"),
+            Map.of("rowspan",  2, "color", "#fafafa", "text", ""),
+            Map.of("rowspan",  4, "color", "#00fafa", "text", "Divadlo"),
+            Map.of("rowspan",  8, "color", "#fa00fa", "text", "Tanečné kolo"),
+            Map.of("rowspan",  2, "color", "#fafafa", "text", ""),
+            Map.of("rowspan",  6, "color", "#fa00fa", "text", "Škola tanca"),
+            Map.of("rowspan",  8, "color", "#fa00fa", "text", "Tanečné kolo"),
+            Map.of("rowspan",  2, "color", "#fafafa", "text", ""),
+            Map.of("rowspan",  4, "color", "#00fafa", "text", "Súťaže"),
+            Map.of("rowspan",  8, "color", "#fa00fa", "text", "Tanečné kolo"),
+            Map.of("rowspan",  3, "color", "#00fafa", "text", "Fotka"),
+            Map.of("rowspan",  6, "color", "#00fafa", "text", "Vatra"),
+            Map.of("rowspan",  9, "color", "#fa00fa", "text", "Tanečné kolo")
+        );
+
+        model.put("program", program);
+        model.put("startHour", 18);
+        model.put("endHour", 2);
+        model.put("blockRowspan", 24); // 12 = 1 hodina
+
         return "dobrovolnici";
     }
 
