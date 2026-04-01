@@ -16,6 +16,18 @@ public class DobrovolniciController {
 
     @GetMapping("dobrovolnici")
     public String getDobrovolnici(ModelMap model) {
+        model.put("popisUdalosti", """
+                <h1>Dobrovoľníci</h1>
+                
+                    <p>
+                        Ak sa chceš zapojiť do organizácie Majálesu,
+                        vyplň formulár nižšie. Uveď svoje meno, e-mail, preferované služby
+                        a v harmonograme vyklikaj časy, kedy si dostupný.
+                    </p>
+                    <div style="height:1.5rem;"></div>
+            """);
+
+
         List<Map<String, Object>> program = List.of(
             Map.of("rowspan", 12, "color", "#fa0000", "text", "Registrácia"),
             Map.of("rowspan", 12, "color", "#00fa00", "text", "Sv. omša"),

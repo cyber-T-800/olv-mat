@@ -9,18 +9,14 @@
 
 <body>
 <div class="obal">
-    <h1>Dobrovoľníci</h1>
+    <div th:utext="${popisUdalosti}">
 
-    <p>
-        Ak sa chceš zapojiť do organizácie Majálesu,
-        vyplň formulár nižšie. Uveď svoje meno, p-mail, preferované služby
-        a v harmonograme vyklikaj časy, kedy si dostupný.
-    </p>
-    <div style="height:1.5rem;"></div>
+    </div>
 
 
     <h3>Program a dostupnosť</h3>
     <p>Pozri si program a zaklikni bloky, kedy môžeš prísť pomôcť.</p>
+    <p style="font-size: 0.75;">(V stĺpci dostupnosť, musia svietiť na modro)</p>
     <div style="height:1.5rem;"></div>
 
     <table id="calendar">
@@ -44,6 +40,7 @@
 
     <h3>Služby</h3>
     <p>V nasledovnej tabuľke zoraď možné služby podľa priority.</p>
+    <p style="font-size: 0.75;">(Hore je najvyššia priorita, dole najnižšia)</p>
     <div style="height:1.5rem;"></div>
 
     <table id="services">
