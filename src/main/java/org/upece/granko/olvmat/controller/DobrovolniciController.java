@@ -49,7 +49,7 @@ public class DobrovolniciController {
 
         if (form.getName() == null || form.getName().isBlank() ||
             form.getEmail() == null || form.getEmail().isBlank() ||
-            form.getAvailabilityList() == null || form.getAvailabilityList().isBlank()) {
+            form.getAvailabilityList() == null || form.getAvailabilityList().isEmpty()) {
             model.put("error", "Meno, email a dostupnosť sú povinné.");
             return "dobrovolnici";
         }
