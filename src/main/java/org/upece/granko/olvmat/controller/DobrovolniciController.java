@@ -5,14 +5,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.model.DobrovolnikForm;
+import org.upece.granko.olvmat.repository.TicketRepository;
+import org.upece.granko.olvmat.service.EmailService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
 public class DobrovolniciController {
+
+    private final TicketRepository ticketRepository;
+    private final EmailService emailService;
 
     @GetMapping("dobrovolnici")
     public String getDobrovolnici(ModelMap model) {
@@ -58,23 +66,24 @@ public class DobrovolniciController {
 
     @PostMapping("dobrovolnici")
     public String odosliDobrovolnika(DobrovolnikForm form, ModelMap model) {
-
-        if (form.getName() == null || form.getName().isBlank() ||
-            form.getEmail() == null || form.getEmail().isBlank() ||
-            form.getAvailabilityList() == null || form.getAvailabilityList().isEmpty()) {
+        if (form.getName() == null || form.getEmail() == null || form.getAvailability() == null) {
             model.put("error", "Meno, email a dostupnosť sú povinné.");
-            return "dobrovolnici";
+            return "redirect:/dobrovolnici";
         }
 
         // --- Zatiaľ len výpis do konzoly ---
+        System.out.println("");
+        System.out.println("");
         System.out.println("=== Nový dobrovoľník ===");
         System.out.println("Meno:       " + form.getName());
         System.out.println("Email:      " + form.getEmail());
-        System.out.println("Dostupnosť: " + form.getAvailabilityList());
-        System.out.println("Služby:     " + form.getServicesList());
+        System.out.println("Dostupnosť: " + form.getAvailability());
+        System.out.println("Služby:     " + form.getServices());
         System.out.println("=======================");
+        System.out.println("");
+        System.out.println("");
 
         model.put("success", true);
-        return "dobrovolnici";
+        return "redirect:/dobrovolnici";
     }
 }
