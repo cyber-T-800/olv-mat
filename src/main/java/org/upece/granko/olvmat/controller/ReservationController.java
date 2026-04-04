@@ -23,7 +23,7 @@ public class ReservationController {
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
 
-    private final int maxPocetListkov = 200;
+    private final int maxPocetListkov = 600;
     private final int lastListkyPocet = 25;
 
     @GetMapping("")
@@ -39,24 +39,29 @@ public class ReservationController {
                 <h1>Rezervácia lístka na Majáles</h1>
                 
                 
-                    <p>Švárni šuhaji, driečne devy,</p>
+                    <p>Ohniví tanečníci, krásne señoritas,</p>
                     <div style="height:0.75rem;"></div>
                 
                     <p>
-                        Pozývame Vás na Ondrejskú ľudovú veselicu plnú farieb, vzorov a zábavy!
-                        Už <strong>28. novembra</strong> bude naše UPeCe znieť ľudovými tancami a piesňami.
-                        Ak si toto nechceš nechať ujsť, tu si môžeš zarezervovať lístok.
-                        Jednoducho <strong>vyplň formulár</strong> a lístok budeš mať rezervovaný.
-                        Následne prídeš do <strong>Libressa</strong>, ktorýkoľvek <strong>pracovný deň 30 minút po svätej omši</strong>,
+                        Pozývame vás na horúci latino majáles plný rytmov, vášne a nezabudnuteľnej energie! 
+                        Už <strong>30. apríla</strong> sa naše UPeCe rozozvučí v tónoch salsy, bachaty a latino hitov, ktoré ťa 
+                        nenechajú sedieť. Čaká ťa večer plný tanca, úsmevov a letnej atmosféry, kde sa necháš 
+                        unášať hudbou a možno objavíš aj svoj nový obľúbený krok. 
+                    </p>
+                    <p> Tak si to nenechaj ujsť! </p>
+                    <p>
+                        Ak chceš byť pri tom, rezervuj si svoj lístok jednoducho <strong>vyplnením formulára</strong>. 
+                        Následne prídeš do <strong>Libressa</strong>, ktorýkoľvek <strong>pracovný deň 30 minút po svätej omši</strong>, 
                         kde nám dáš svoj príspevok a my ti lístok aktivujeme.
                     </p>
+                    <p> Príď sa naladiť na vlnu latina – bude to noc, ktorá ťa rozprúdi 💃🕺🔥 </p>
                     <div style="height:2.25rem;"></div>
                 
                 
                     <p><strong>Odporúčaný príspevok:</strong></p>
                 
-                    <pre>  -  10€  Študent</pre>
-                    <pre>  -  20€  Neštudent</pre>
+                    <pre>  -   9€  Študent</pre>
+                    <pre>  -  18€  Neštudent</pre>
                     <div style="height:1.25rem;"></div>
                 """);
         return "rezervacia";
