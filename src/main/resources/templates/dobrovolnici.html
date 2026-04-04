@@ -3,16 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dobrovoľníci - Majáles</title>
+    <title>Dobrovoľníci – Majáles</title>
     <link type="text/css" rel="stylesheet" href="/stylesheet.css">
 </head>
 
 <body>
 <div class="obal">
-    <div th:utext="${popisUdalosti}">
-
-    </div>
-
+    <div th:utext="${popisUdalosti}"></div>
 
     <h3>Program a dostupnosť</h3>
     <p>Pozri si program a zaklikni bloky, kedy môžeš prísť pomôcť.</p>
@@ -39,7 +36,7 @@
 
 
     <h3>Služby</h3>
-    <p>V nasledovnej tabuľke zoraď možné služby podľa priority.</p>
+    <p>V nasledovnej tabuľke zoraď dostupné služby podľa priority.</p>
     <p style="font-size: 0.75;">(Hore je najvyššia priorita, dole najnižšia)</p>
     <div style="height:1.5rem;"></div>
 
@@ -65,16 +62,19 @@
         <label for="email">Emailová adresa:</label>
         <input type="email" id="email" name="email" required>
 
+        <label for="text">Poznámka:</label>
+        <input type="text" id="text" name="text">
+
         <div style="height:1rem;"></div>
-        <input class="button" style="width:100%;" type="submit" value="Odoslať dobrovoľníka">
+        <input class="button" style="width:100%;" type="submit" value="Odoslať dostupnosť">
     </form>
 </div>
 
 <script th:inline="javascript">
 const program = /*[[${program}]]*/ null;
-let startHour = /*[[${startHour}]]*/ 16;
-let endHour = /*[[${endHour}]]*/ 22;
-let blockRowspan = /*[[${blockRowspan}]]*/ 12;
+const startHour = /*[[${startHour}]]*/ 16;
+const endHour = /*[[${endHour}]]*/ 22;
+const blockRowspan = /*[[${blockRowspan}]]*/ 12;
 
 let totalHours = (endHour <= startHour)
     ? (endHour + 24 - startHour)
@@ -218,13 +218,20 @@ tbody.addEventListener('drop', e => {
 
 // ===== SUBMIT FORM =====
 document.querySelector("form").addEventListener("submit", function(e) {
+    const checked = [...document.querySelectorAll("#calendar td.slot.active")]
+        .map(td => td.dataset.start);
+
+    if (checked.length === 0) {
+        e.preventDefault();
+        alert("Nie je zakliknutá žiadna dostupnosť. Prosím vyber aspoň jeden blok.");
+        return;
+    }
+
     // Odstráň staré hidden inputy
     this.querySelectorAll("input[name='availability'], input[name='services']")
         .forEach(el => el.remove());
 
     // Zakliknuté checkboxy
-    const checked = [...document.querySelectorAll("#calendar td.slot.active")]
-        .map(td => td.dataset.start);
     const availInput = document.createElement("input");
     availInput.type = "hidden";
     availInput.name = "availability";

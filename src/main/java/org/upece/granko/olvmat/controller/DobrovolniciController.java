@@ -67,11 +67,11 @@ public class DobrovolniciController {
     @PostMapping("dobrovolnici")
     public String odosliDobrovolnika(DobrovolnikForm form, ModelMap model) {
         if (form.getName() == null || form.getEmail() == null || form.getAvailability() == null) {
-            model.put("error", "Meno, email a dostupnosť sú povinné.");
-            return "redirect:/dobrovolnici";
+            return "dobrovolnici";
         }
 
         // --- Zatiaľ len výpis do konzoly ---
+        System.out.println("");
         System.out.println("");
         System.out.println("");
         System.out.println("=== Nový dobrovoľník ===");
@@ -79,7 +79,9 @@ public class DobrovolniciController {
         System.out.println("Email:      " + form.getEmail());
         System.out.println("Dostupnosť: " + form.getAvailability());
         System.out.println("Služby:     " + form.getServices());
+        System.out.println("Poznámka:   " + form.getText());
         System.out.println("=======================");
+        System.out.println("");
         System.out.println("");
         System.out.println("");
 
