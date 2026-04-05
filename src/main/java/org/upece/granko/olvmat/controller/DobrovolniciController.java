@@ -5,15 +5,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.model.DobrovolnikForm;
 import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.service.EmailService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,15 +22,15 @@ public class DobrovolniciController {
     @GetMapping("dobrovolnici")
     public String getDobrovolnici(ModelMap model) {
         model.put("popisUdalosti", """
-                <h1>Dobrovoľníci</h1>
+                    <h1>Dobrovoľníci</h1>
                 
-                    <p>
-                        Ak sa chceš zapojiť do organizácie Majálesu,
-                        vyplň formulár nižšie. Uveď svoje meno, e-mail, preferované služby
-                        a v harmonograme vyklikaj časy, kedy si dostupný.
-                    </p>
-                    <div style="height:1.5rem;"></div>
-            """);
+                        <p>
+                            Ak sa chceš zapojiť do organizácie Majálesu,
+                            vyplň formulár nižšie. Uveď svoje meno, e-mail, preferované služby
+                            a v harmonograme vyklikaj časy, kedy si dostupný.
+                        </p>
+                        <div style="height:1.5rem;"></div>
+                """);
 
         // rowspan 1 = 5 minút
         List<Map<String, Object>> program = List.of(
@@ -84,7 +81,6 @@ public class DobrovolniciController {
         System.out.println("");
         System.out.println("");
 
-        model.put("success", true);
-        return "redirect:/dobrovolnici";
+        return "dobrovolnici-potvrdenie";
     }
 }

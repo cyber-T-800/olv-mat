@@ -9,14 +9,18 @@
 
 <body>
 <div class="obal" style="min-width: 847px;">
+    <div th:if="${vacantSuperadminPosition}">
+        <a class="button" href="/admin/claim-super">Prevziať superadmin pozíciu</a>
+    </div>
     <h1>Administrácia rezervácií</h1>
     <a class="button" href="/vstup">
-        Prejdi na predaj lístkov
+        Prejdi na kontrolu lístkov
     </a>
 
-    <a class="button" href="/admin/events" style="float:right;">
-        Prejdi na správu akcie
+    <a class="button" th:if="${adminLevel == 'SUPER'}" href="/superadmin">
+        Prejdi na superadmina
     </a>
+
     <div class="admin-info">
         Prihlásený ako: <strong th:text="${user}">admin@upc.sk</strong> |
         <a href="/logout">

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Superadmin</title>
+    <link type="text/css" rel="stylesheet" href="/stylesheet.css">
+
+</head>
+<body>
+<div class="obal" style="min-width: 847px;">
+    <h1>Administratíva adminov</h1>
+    <a class="button" href="/vstup">
+        Prejdi na predaj lístkov
+    </a>
+    <a class="button" href="/admin/events" style="float:right;">
+        Prejdi na správu akcie
+    </a>
+    <div class="admin-info">
+        Prihlásený ako: <strong th:text="${user}">admin@upc.sk</strong> |
+        <a href="/logout">
+            Odhlásiť sa
+        </a>
+    </div>
+    <table id="reservations">
+        <colgroup>
+            <col style="width: 50%">
+            <col style="width: 50%">
+        </colgroup>
+
+        <thead>
+        <tr>
+            <th>Email</th>
+            <th>Rola</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="e : ${admins}">
+            <td th:text="${e.getEmail()}"></td>
+            <td th:text="${e.getRola()}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <form method="post" action="/superadmin/vytvor-admina">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <div>
+            <input type="radio" name="typ" value="ADMIN" id="admin" style="display: inline-block">
+            <label for="admin" style="display: inline-block">ADMIN</label>
+        </div>
+        <div>
+            <input type="radio" name="typ" value="VSTUP" id="vstup" style="display: inline-block" checked>
+            <label for="vstup" style="display: inline-block">VSTUP</label>
+        </div>
+
+        <button class="button" style="width: 100%; text-align: center;" type="submit">Registrovať</button>
+    </form>
+</div>
+
+</body>
+</html>

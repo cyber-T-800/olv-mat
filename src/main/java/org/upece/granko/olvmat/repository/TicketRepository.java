@@ -11,24 +11,31 @@ import java.util.UUID;
 @Repository
 public interface TicketRepository extends JpaRepository<TicketEntity, UUID> {
 
-    @Query("select count(*) from TicketEntity t where (t.typListka = 'STUDENT' or t.typListka = 'NESTUDENT') and t.stav != 'ZRUSENY'")
-    int countUcastnicke();
+    @Query("select count(*) from TicketEntity t where (t.typListka = 'STUDENT' or t.typListka = 'NESTUDENT') and t.stav != 'ZRUSENY' and t.event.id=:eventID")
+    int countUcastnicke(UUID eventID);
 
-    @Query("select count(*) from TicketEntity t where (t.typListka = 'DOBROVOLNIK') and t.stav != 'ZRUSENY'")
-    int countDobrovolnicke();
+    @Query("select count(*) from TicketEntity t where (t.typListka = 'DOBROVOLNIK') and t.stav != 'ZRUSENY' and t.event.id=:eventID")
+    int countDobrovolnicke(UUID eventID);
 
-    @Query("select count(*) from TicketEntity t where (t.typListka = 'TEAM') and t.stav != 'ZRUSENY'")
-    int countTeamacke();
+    @Query("select count(*) from TicketEntity t where (t.typListka = 'TEAM') and t.stav != 'ZRUSENY' and t.event.id=:eventID")
+    int countTeamacke(UUID eventID);
 
-    @Query("select count(*) from TicketEntity t where  t.stav != 'ZRUSENY'")
-    int countAll();
+    @Query("select count(*) from TicketEntity t where  t.stav != 'ZRUSENY' and t.event.id=:eventID")
+    int countAll(UUID eventID);
 
-    @Query("select count(*) from TicketEntity t where t.stav = 'ZAPLATENY' or t.stav = 'POUZITY'")
-    int countZaplatene();
+    @Query("select count(*) from TicketEntity t where t.stav = 'ZAPLATENY' or t.stav = 'POUZITY' and t.event.id=:eventID")
+    int countZaplatene(UUID eventID);
 
-    @Query("select count(*) from TicketEntity t where t.stav = 'POUZITY'")
-    int countPouzite();
+    @Query("select count(*) from TicketEntity t where t.stav = 'POUZITY' and t.event.id=:eventID")
+    int countPouzite(UUID eventID);
 
-    @Query("select t from TicketEntity t where t.stav != 'ZRUSENY'")
-    List<TicketEntity> findAllExceptZrusene();
+    @Query("select t from TicketEntity t where t.stav != 'ZRUSENY' and t.event.id=:eventID")
+    List<TicketEntity> findAllExceptZrusene(UUID eventID);
+
+    @Query("select count(t) > 0 from TicketEntity t where t.stav != 'ZRUSENY' and (t.email = :email and t.meno = :meno) and t.event.id=:eventID")
+    Boolean findDuplicity(
+            String email,
+            String meno,
+            UUID eventID
+    );
 }

@@ -3,17 +3,21 @@ package org.upece.granko.olvmat.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.upece.granko.olvmat.entity.EventEntity;
 import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.model.ReservationForm;
 import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.service.EmailService;
+import org.upece.granko.olvmat.service.EventService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -22,20 +26,14 @@ public class ReservationController {
 
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
+    private final EventService eventService;
 
     private final int maxPocetListkov = 600;
     private final int lastListkyPocet = 25;
 
     @GetMapping("")
     public String rezervacia(ModelMap model) {
-
-        int pocetUcastnickych = ticketRepository.countUcastnicke();
-        model.put("percentObsadene", 100.0f * ticketRepository.countUcastnicke() / maxPocetListkov);
-
-        if(maxPocetListkov - pocetUcastnickych <= lastListkyPocet){
-            model.put("lastListky", maxPocetListkov - pocetUcastnickych);
-        }
-        model.put("popisUdalosti", """
+        String popis = """
                 <h1>Rezervácia lístka na Majáles</h1>
                 
                 
@@ -63,17 +61,35 @@ public class ReservationController {
                     <pre>  -   9€  Študent</pre>
                     <pre>  -  18€  Neštudent</pre>
                     <div style="height:1.25rem;"></div>
-                """);
+                """;
+
+        Optional<EventEntity> event = eventService.findSelected();
+        if (event.isPresent()) {
+            popis = event.get().getPopis();
+            int pocetUcastnickych = ticketRepository.countUcastnicke(event.get().getId());
+            model.put("percentObsadene", 100.0f * ticketRepository.countUcastnicke(event.get().getId()) / maxPocetListkov);
+
+            if (maxPocetListkov - pocetUcastnickych <= lastListkyPocet) {
+                model.put("lastListky", maxPocetListkov - pocetUcastnickych);
+            }
+        }
+
+        model.put("popisUdalosti", popis);
         return "rezervacia";
     }
 
     @PostMapping("")
-    public String odosliRezervaciu(ReservationForm form, ModelMap model) {
+    public String odosliRezervaciu(ReservationForm form, ModelMap model, BindingResult bindingResult) {
         if (form.getName() == null || form.getEmail() == null) {
             return "redirect:/";
         }
 
-        TicketEntity entity = ticketRepository.save(new TicketEntity(form.getName(), form.getEmail(), form.getTicketType()));
+        if (ticketRepository.findDuplicity(form.getEmail(), form.getName(), eventService.findSelected().orElseThrow().getId())) {
+            model.addAttribute("duplicitaError", true);
+            return rezervacia(model);
+        }
+
+        TicketEntity entity = ticketRepository.save(new TicketEntity(form.getName(), form.getEmail(), form.getTicketType(), eventService.findSelected().orElseThrow()));
 
         Map<String, Object> mailModel = new HashMap<>();
         mailModel.put("krstneMeno", form.getName().split(" ")[0]);
@@ -83,6 +99,8 @@ public class ReservationController {
 
         model.put("ticketId", entity.getId());
         model.put("securityKey", entity.getSecurityKey());
+
+
         return "potvrdenie";
     }
 
