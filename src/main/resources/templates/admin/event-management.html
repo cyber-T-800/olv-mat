@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sk">
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,12 +22,19 @@
         <thead>
         <tr>
             <th>Názov</th>
-            <th>Dátum</th>
-            <th>Akcie</th>
+            <th>Stav</th>
+            <th>Upraviť</th>
         </tr>
         </thead>
         <tbody>
-        <!-- Tu bude dynamicky generovaný obsah s udalosťami -->
+            <tr th:each="e : ${events}">
+                <td th:text="${e.getNazov()}"></td>
+                <td>
+                    <a th:if="${e.getStav() != 'SELECTED'}" th:href="${'/superadmin/events/select/' + e.getId()}" class="button">Vybrať</a>
+                    <span th:if="${e.getStav() == 'SELECTED'}"> Vybratý</span>
+                </td>
+                <td th:text="${'/superadmin/event/' + e.getId()}"></td>
+            </tr>
         </tbody>
     </table>
 </div>

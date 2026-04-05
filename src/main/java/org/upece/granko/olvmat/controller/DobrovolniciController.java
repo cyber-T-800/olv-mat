@@ -5,15 +5,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.model.DobrovolnikForm;
 import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.service.EmailService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,34 +22,34 @@ public class DobrovolniciController {
     @GetMapping("dobrovolnici")
     public String getDobrovolnici(ModelMap model) {
         model.put("popisUdalosti", """
-                <h1>Dobrovoľníci</h1>
+                    <h1>Dobrovoľníci</h1>
                 
-                    <p>
-                        Ak sa chceš zapojiť do organizácie Majálesu,
-                        vyplň formulár nižšie. Uveď svoje meno, e-mail, preferované služby
-                        a v harmonograme vyklikaj časy, kedy si dostupný.
-                    </p>
-                    <div style="height:1.5rem;"></div>
-            """);
+                        <p>
+                            Ak sa chceš zapojiť do organizácie Majálesu,
+                            vyplň formulár nižšie. Uveď svoje meno, e-mail, preferované služby
+                            a v harmonograme vyklikaj časy, kedy si dostupný.
+                        </p>
+                        <div style="height:1.5rem;"></div>
+                """);
 
 
         List<Map<String, Object>> program = List.of(
-            Map.of("rowspan", 12, "color", "#fa0000", "text", "Registrácia"),
-            Map.of("rowspan", 12, "color", "#00fa00", "text", "Sv. omša"),
-            Map.of("rowspan",  3, "color", "#00fafa", "text", "Otvorenie"),
-            Map.of("rowspan",  7, "color", "#fa00fa", "text", "Tanečné kolo"),
-            Map.of("rowspan",  2, "color", "#fafafa", "text", ""),
-            Map.of("rowspan",  4, "color", "#00fafa", "text", "Divadlo"),
-            Map.of("rowspan",  8, "color", "#fa00fa", "text", "Tanečné kolo"),
-            Map.of("rowspan",  2, "color", "#fafafa", "text", ""),
-            Map.of("rowspan",  6, "color", "#fa00fa", "text", "Škola tanca"),
-            Map.of("rowspan",  8, "color", "#fa00fa", "text", "Tanečné kolo"),
-            Map.of("rowspan",  2, "color", "#fafafa", "text", ""),
-            Map.of("rowspan",  4, "color", "#00fafa", "text", "Súťaže"),
-            Map.of("rowspan",  8, "color", "#fa00fa", "text", "Tanečné kolo"),
-            Map.of("rowspan",  3, "color", "#00fafa", "text", "Fotka"),
-            Map.of("rowspan",  6, "color", "#00fafa", "text", "Vatra"),
-            Map.of("rowspan",  9, "color", "#fa00fa", "text", "Tanečné kolo")
+                Map.of("rowspan", 12, "color", "#fa0000", "text", "Registrácia"),
+                Map.of("rowspan", 12, "color", "#00fa00", "text", "Sv. omša"),
+                Map.of("rowspan", 3, "color", "#00fafa", "text", "Otvorenie"),
+                Map.of("rowspan", 7, "color", "#fa00fa", "text", "Tanečné kolo"),
+                Map.of("rowspan", 2, "color", "#fafafa", "text", ""),
+                Map.of("rowspan", 4, "color", "#00fafa", "text", "Divadlo"),
+                Map.of("rowspan", 8, "color", "#fa00fa", "text", "Tanečné kolo"),
+                Map.of("rowspan", 2, "color", "#fafafa", "text", ""),
+                Map.of("rowspan", 6, "color", "#fa00fa", "text", "Škola tanca"),
+                Map.of("rowspan", 8, "color", "#fa00fa", "text", "Tanečné kolo"),
+                Map.of("rowspan", 2, "color", "#fafafa", "text", ""),
+                Map.of("rowspan", 4, "color", "#00fafa", "text", "Súťaže"),
+                Map.of("rowspan", 8, "color", "#fa00fa", "text", "Tanečné kolo"),
+                Map.of("rowspan", 3, "color", "#00fafa", "text", "Fotka"),
+                Map.of("rowspan", 6, "color", "#00fafa", "text", "Vatra"),
+                Map.of("rowspan", 9, "color", "#fa00fa", "text", "Tanečné kolo")
         );
 
         model.put("program", program);
@@ -85,7 +82,6 @@ public class DobrovolniciController {
         System.out.println("");
         System.out.println("");
 
-        model.put("success", true);
-        return "redirect:/dobrovolnici";
+        return "dobrovolnici-potvrdenie";
     }
 }

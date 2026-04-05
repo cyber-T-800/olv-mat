@@ -23,7 +23,9 @@ import org.upece.granko.olvmat.model.EventEditForm;
 import org.upece.granko.olvmat.repository.AdminRegistraciaZiadostRepository;
 import org.upece.granko.olvmat.repository.AdminRepository;
 import org.upece.granko.olvmat.repository.TicketRepository;
+import org.upece.granko.olvmat.service.AdminDetailService;
 import org.upece.granko.olvmat.service.EmailService;
+import org.upece.granko.olvmat.service.EventService;
 import org.upece.granko.olvmat.service.VytvorenieHeslaSession;
 
 import java.io.IOException;
@@ -42,32 +44,51 @@ public class AdminController {
     private final PasswordEncoder passwordEncoder;
     private final VytvorenieHeslaSession vytvorenieHeslaSession;
     private final TicketRepository ticketRepository;
+    private final EventService eventService;
+    private final AdminDetailService adminDetailService;
 
     @Value("${super.admin.email}")
     private String superAdminEmail;
     @Value("${hostport}")
     private String hostport;
 
-    private final int maxPocetListkov = 200;
+    private final int maxPocetListkov = 300;
 
     @GetMapping("/admin/login")
     public String getLogin() {
-
         return "admin/login";
     }
 
 
+    @GetMapping("/admin/claim-super")
+    public String claimSuper(){
+        if(adminRepository.vacantSuperadminPosition()){
+            AdminEntity entity = adminRepository.findById(((AdminDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAdminEntity().getId()).orElseThrow();
+
+            entity.setRola(AdminRoleEnum.SUPERADMIN);
+
+            adminRepository.save(entity);
+
+            return "redirect:/superadmin";
+        }
+        return "redirect:/admin";
+    }
+
     @GetMapping("/admin")
     public String getAdminPage(ModelMap modelMap) {
-        modelMap.put("pocetObsadenych", ticketRepository.countUcastnicke());
+        if(adminRepository.vacantSuperadminPosition()){
+            modelMap.addAttribute("vacantSuperadminPosition", true);
+        }
+        modelMap.put("pocetObsadenych", ticketRepository.countUcastnicke(eventService.findSelected().orElseThrow().getId()));
         modelMap.put("maxPocet", maxPocetListkov);
 
-        modelMap.put("pocetDobrovolnikov", ticketRepository.countDobrovolnicke());
-        modelMap.put("pocetTeamakov", ticketRepository.countTeamacke());
-        modelMap.put("pocetPouzite", ticketRepository.countPouzite());
-        modelMap.put("pocetZaplatene", ticketRepository.countZaplatene());
-        modelMap.put("pocetCelkovo", ticketRepository.countAll());
+        modelMap.put("pocetDobrovolnikov", ticketRepository.countDobrovolnicke(eventService.findSelected().orElseThrow().getId()));
+        modelMap.put("pocetTeamakov", ticketRepository.countTeamacke(eventService.findSelected().orElseThrow().getId()));
+        modelMap.put("pocetPouzite", ticketRepository.countPouzite(eventService.findSelected().orElseThrow().getId()));
+        modelMap.put("pocetZaplatene", ticketRepository.countZaplatene(eventService.findSelected().orElseThrow().getId()));
+        modelMap.put("pocetCelkovo", ticketRepository.countAll(eventService.findSelected().orElseThrow().getId()));
         modelMap.put("user", ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
+        modelMap.put("adminLevel", adminDetailService.hasAuthority(AdminRoleEnum.SUPERADMIN) ? "SUPER" : "ADMIN");
         return "admin/admin";
     }
 
@@ -83,7 +104,7 @@ public class AdminController {
             String meno = values[1].trim();
             String priezvisko = values[2].trim();
 
-            TicketEntity entity = ticketRepository.save(new TicketEntity(meno + " " + priezvisko, email, typListka));
+            TicketEntity entity = ticketRepository.save(new TicketEntity(meno + " " + priezvisko, email, typListka, eventService.findSelected().orElseThrow()));
 
             Map<String, Object> mailModel = new HashMap<>();
             mailModel.put("krstneMeno", meno);
@@ -96,63 +117,6 @@ public class AdminController {
 
         }
         return "redirect:/admin";
-    }
-
-
-    @GetMapping("/nejaka-dlha-url-ze-by-nam-tu-randomaci-nechodili")
-    public String getRegistracia() {
-        return "admin/registracia";
-    }
-
-    @PostMapping("/nejaka-dlha-url-ze-by-nam-tu-randomaci-nechodili")
-    public String postRegistracia(@Param("email") String email, @Param("typ") String typ) {
-        Map<String, Object> model = new HashMap<>();
-
-        AdminRegistraciaZiadostEntity entity = adminRegistraciaZiadostRepository.save(
-                new AdminRegistraciaZiadostEntity(email, AdminRoleEnum.valueOf(typ))
-        );
-
-        String url = hostport + "/admin-ziadost/" + entity.getId() + "/potvrdit" + "?sa=" + superAdminEmail + "&em=" + email + "&secret=" + entity.getSecret();
-
-        model.put("email", email);
-        model.put("url", url);
-
-        emailService.sendMail(superAdminEmail, "Žiadosť o registráciu admina", "admin-registracia-superadmin", model);
-        return "admin/registracia-potvrdenie";
-    }
-
-    @GetMapping("/admin-ziadost/{id}/potvrdit")
-    public String potvrdenieSuperUserom(
-            @PathVariable("id") UUID id,
-            @RequestParam(value = "secret") UUID secret,
-            @RequestParam(value = "sa") String SAEmail,
-            @RequestParam(value = "em") String email
-    ) {
-        if (!SAEmail.equals(superAdminEmail)) {
-            throw new RuntimeException();
-        }
-        AdminRegistraciaZiadostEntity entity = adminRegistraciaZiadostRepository.findById(id).orElseThrow();
-        if (entity.getSecret().equals(secret) && entity.getEmail().equals(email)) {
-            if (entity.getStav() == AdminRegistraciaZiadostStavEnum.PODANA) {
-                entity.setStav(AdminRegistraciaZiadostStavEnum.POTVRDENA);
-
-                adminRegistraciaZiadostRepository.save(entity);
-                String url = hostport + "/admin-ziadost/" + entity.getId() + "/vytvorenie-hesla" + "?em=" + email + "&secret=" + entity.getSecret();
-
-                Map<String, Object> model = new HashMap<>();
-                model.put("email", email);
-                model.put("url", url);
-
-                emailService.sendMail(email, "Vaša žiadosť bola schválená", "admin-registracia-mail-heslo", model);
-
-
-                return "admin/registracia-schvalenie";
-            } else {
-                throw new RuntimeException();
-            }
-        } else {
-            throw new RuntimeException();
-        }
     }
 
     @GetMapping("/admin-ziadost/{id}/vytvorenie-hesla")
@@ -195,7 +159,8 @@ public class AdminController {
     }
 
     @GetMapping("/admin/events")
-    public String getEventManagement() {
+    public String getEventManagement(ModelMap model) {
+        model.addAttribute("events", eventService.findAll());
         return "admin/event-management";
     }
 
@@ -206,11 +171,8 @@ public class AdminController {
 
     @PostMapping("/admin/event")
     public String saveEvent(EventEditForm eventEditForm) {
-        if(eventEditForm.getId() == null){
-            // vytvárame nový
-        }else{
-            // editujeme
-        }
+        eventService.save(eventEditForm);
+
         System.out.println(eventEditForm);
         return "redirect:/admin/events";
     }

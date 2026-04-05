@@ -12,6 +12,7 @@ import org.upece.granko.olvmat.model.AdminDetails;
 import org.upece.granko.olvmat.model.Ticket;
 import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.service.EmailService;
+import org.upece.granko.olvmat.service.EventService;
 import org.upece.granko.olvmat.utils.QRCodeGenerator;
 
 import java.util.*;
@@ -24,10 +25,11 @@ public class AdminRestController {
 
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
+    private final EventService eventService;
 
     @GetMapping()
     public List<Ticket> getTickets() {
-        return ticketRepository.findAllExceptZrusene().stream().map(this::ticketFromEntity).toList();
+        return ticketRepository.findAllExceptZrusene(eventService.findSelected().orElseThrow().getId()).stream().map(this::ticketFromEntity).toList();
     }
 
     @PutMapping("/{id}/zaplatenie")

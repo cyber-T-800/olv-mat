@@ -26,8 +26,9 @@ public class SpringSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/admin", "/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/vstup", "/vstup/**").hasAnyAuthority("ADMIN", "VSTUP")
+                        .requestMatchers("/superadmin", "/superadmin/**").hasAuthority("SUPERADMIN")
+                        .requestMatchers("/admin", "/admin/**").hasAnyAuthority("ADMIN", "SUPERADMIN")
+                        .requestMatchers("/vstup", "/vstup/**").hasAnyAuthority("ADMIN", "VSTUP", "SUPERADMIN")
                         .anyRequest().permitAll()
                 )
                 .csrf(AbstractHttpConfigurer::disable)

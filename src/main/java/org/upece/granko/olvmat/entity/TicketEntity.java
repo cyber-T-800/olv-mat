@@ -33,7 +33,11 @@ public class TicketEntity {
     @ManyToOne
     private AdminEntity schvalil;
 
-    public TicketEntity(String meno, String email, TypListkaEnum typListka) {
+    @JoinColumn(name = "event_id",referencedColumnName = "id")
+    @ManyToOne
+    private EventEntity event;
+
+    public TicketEntity(String meno, String email, TypListkaEnum typListka, EventEntity eventEntity) {
         id = UUID.randomUUID();
         securityKey = UUID.randomUUID();
 
@@ -41,5 +45,6 @@ public class TicketEntity {
         this.meno = meno;
         this.stav = StavRezervacieEnum.REZERVOVANY;
         this.typListka = typListka;
+        this.event = eventEntity;
     }
 }

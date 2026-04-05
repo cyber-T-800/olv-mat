@@ -10,4 +10,5 @@ public class ReservationForm {
     private String name;
     private String email;
     private TypListkaEnum ticketType;
+
 }
