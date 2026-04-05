@@ -9,24 +9,18 @@
 
 <body>
 <div class="obal">
-    <h1>Dobrovoľníci</h1>
+    <div th:utext="${popisUdalosti}"></div>
 
-    <p>
-        Ak sa chceš zapojiť do organizácie Majálesu,
-        vyplň formulár nižšie. Uveď svoje meno, p-mail, preferované služby
-        a v harmonograme vyklikaj časy, kedy si dostupný.
-    </p>
+    <h3>Program a dostupnosť</h3>
+    <p>Pozri si program a zaklikni bloky, kedy môžeš prísť pomôcť.</p>
+    <p style="font-size: 0.75;">(V stĺpci dostupnosť, musia svietiť na modro)</p>
     <div style="height:1.5rem;"></div>
-
-    <h3>Harmonogram a moja dostupnosť</h3>
-    <p>Pozri si harmonogram a zaklikni bloky, kedy môžeš prísť pomôcť.</p>
-
 
     <table id="calendar">
         <colgroup>
-            <col style="width: 30px">
-            <col style="width: 100px">
-            <col style="width: 100px">
+            <col style="width:  98px">
+            <col style="width: 264px">
+            <col style="width: 264px">
         </colgroup>
 
         <thead>
@@ -40,6 +34,26 @@
     </table>
     <div style="height:1.5rem;"></div>
 
+
+    <h3>Služby</h3>
+    <p>V nasledovnej tabuľke zoraď dostupné služby podľa priority.</p>
+    <p style="font-size: 0.75;">(Hore je najvyššia priorita, dole najnižšia)</p>
+    <div style="height:1.5rem;"></div>
+
+    <table id="services">
+        <colgroup>
+            <col style="width:  20px">
+            <col style="width: 606px">
+        </colgroup>
+
+        <tbody>
+            <tr th:each="service : ${services}" draggable="true">
+                <td class="handle">⠿</td>
+                <td th:text="${service}">Služba</td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="height:1.5rem;"></div>
     
     <form method="post">
         <label for="name">Meno a priezvisko:</label>
@@ -48,140 +62,191 @@
         <label for="email">Emailová adresa:</label>
         <input type="email" id="email" name="email" required>
 
+        <label for="text">Poznámka:</label>
+        <input type="text" id="text" name="text">
+
         <div style="height:1rem;"></div>
-        <input class="button" style="width:100%;" type="submit" value="Odoslať">
+        <input class="button" style="width:100%;" type="submit" value="Odoslať dostupnosť">
     </form>
 </div>
 
 <script th:inline="javascript">
-const SERVICES = ['Vstup','SBS','Šatňa','Zmenáreň','Upratovanie','Bar','Výdaj jedla','Iné'];
+const program = /*[[${program}]]*/ null;
+const startHour = /*[[${startHour}]]*/ 16;
+const endHour = /*[[${endHour}]]*/ 22;
+const blockRowspan = /*[[${blockRowspan}]]*/ 12;
 
-const program = [
-    { sh: 18, sm:  0, eh: 19, em:  0, text: 'Registrácia' },
-    { sh: 19, sm:  0, eh: 20, em:  0, text: 'Sv. omša' },
-    { sh: 20, sm:  0, eh: 20, em: 10, text: 'Otvorenie' },
-    { sh: 20, sm: 10, eh: 20, em: 40, text: 'Tanečné kolo' },
-    { sh: 20, sm: 40, eh: 20, em: 50, text: 'Prestávka' },
-    { sh: 20, sm: 50, eh: 21, em: 20, text: 'Škola tanca' },
-    { sh: 21, sm: 20, eh: 21, em: 50, text: 'Tanečné kolo' },
-    { sh: 21, sm: 50, eh: 22, em:  0, text: 'Prestávka' },
-    { sh: 22, sm:  0, eh: 22, em: 20, text: 'Súťaže' },
-    { sh: 22, sm: 20, eh: 22, em: 50, text: 'Tanečné kolo' },
-    { sh: 22, sm: 50, eh: 23, em:  5, text: 'Fotka' },
-    { sh: 23, sm:  5, eh: 23, em: 25, text: 'Limbo' },
-    { sh: 23, sm: 25, eh:  0, em:  0, text: 'Tanečné kolo' },
-    { sh:  0, sm:  0, eh:  0, em: 30, text: 'Tombola' },
-    { sh:  0, sm: 30, eh:  2, em:  0, text: 'Voľná zábava' },
-];
-
-
-let startHour = 18;
-let endHour = 2;
-
-let rowMinutes = 5;
-let blockMinutes = 120;
-
-function normalizeHour(h) {
-    return (h < startHour) ? h + 24 : h;
-}
-
-function timeToRow(h, m) {
-    let minutes = (normalizeHour(h) - startHour) * 60 + m;
-    return Math.floor(minutes / rowMinutes);
-}
-
+let totalHours = (endHour <= startHour)
+    ? (endHour + 24 - startHour)
+    : (endHour - startHour);
+let totalRows = totalHours * 12;
 
 function renderTable() {
     let tbody = document.querySelector("#calendar tbody");
     tbody.innerHTML = "";
 
-    // výpočty
-    let timeRowspan = 60 / rowMinutes;
-    let blockRowspan = blockMinutes / rowMinutes;
+    let programIndex = 0;
+    let remainingSpan = program[0]?.rowspan || 0;
 
-    let totalHours = (endHour <= startHour)
-        ? (endHour + 24 - startHour)
-        : (endHour - startHour);
-
-    let totalRows = totalHours * (60 / rowMinutes);
-
-    // ====== EVENT MAP ======
-    let eventMap = {};
-
-    program.forEach(p => {
-        let start = timeToRow(p.sh, p.sm);
-        let end = timeToRow(p.eh, p.em);
-        let length = end - start;
-
-        eventMap[start] = {
-            name: p.text,
-            rowspan: length
-        };
-    });
-
-    // ====== GENEROVANIE ======
     for (let row = 0; row < totalRows; row++) {
         let tr = document.createElement("tr");
 
-        let currentHour = Math.floor(row / timeRowspan) + startHour;
-        let displayHour = currentHour % 24;
-        let minute = (row % timeRowspan) * rowMinutes;
-
         // ===== 1. STĹPEC – HODINY =====
-        if (minute === 0) {
+        if ((row % 12) === 0) {
+            let now = (row / 12 + startHour) % 24;
+            let next = (now + 1) % 24;
+
             let td = document.createElement("td");
-            td.rowSpan = timeRowspan;
-            td.innerText = displayHour + ":00";
+            td.rowSpan = 12;
+
+            td.innerHTML = `
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                ">
+                    <span>${now}:00</span>
+                    <span>–</span>
+                    <span>${next}:00</span>
+                </div>
+            `;
+
             tr.appendChild(td);
         }
+
 
         // ===== 2. STĹPEC – EVENTY =====
-        if (eventMap[row]) {
+        if (remainingSpan === program[programIndex].rowspan) {
             let td = document.createElement("td");
-            td.rowSpan = eventMap[row].rowspan;
-            td.innerText = eventMap[row].name;
+            td.rowSpan = program[programIndex].rowspan;
+            td.innerText = program[programIndex].text;
+            td.style.backgroundColor = program[programIndex].color;
             tr.appendChild(td);
-        } else {
-            let insideEvent = false;
+        }
 
-            for (let start in eventMap) {
-                let p = eventMap[start];
-                if (row > start && row < (+start + p.rowspan)) {
-                    insideEvent = true;
-                    break;
-                }
-            }
+        remainingSpan--;
 
-            if (!insideEvent) {
-                let td = document.createElement("td");
-                tr.appendChild(td);
+        if (remainingSpan === 0) {
+            programIndex++;
+            if (program[programIndex]) {
+                remainingSpan = program[programIndex].rowspan;
             }
         }
+
 
         // ===== 3. STĹPEC – CHECKBOXY =====
         if (row % blockRowspan === 0) {
             let td = document.createElement("td");
             td.rowSpan = blockRowspan;
-
-            let checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-
-            let startH = (Math.floor(row / timeRowspan) + startHour) % 24;
-            let endH = (startH + blockMinutes / 60) % 24;
-
-            checkbox.dataset.start = startH;
-            checkbox.dataset.end = endH;
-
-            td.appendChild(checkbox);
+            td.className = "slot";
+            td.dataset.start = (row / 12 + startHour) % 24;
+            slotTds.push(td);
             tr.appendChild(td);
         }
+
 
         tbody.appendChild(tr);
     }
 }
 
+const slotTds = [];
 
 renderTable();
+
+// ===== DRAG-SELECT LOGIKA =====
+let isDragging = false;
+let dragIntent = null;
+
+function setSlot(td, active) {
+    td.classList.toggle("active", active);
+}
+
+slotTds.forEach(td => {
+    td.addEventListener("mousedown", e => {
+        e.preventDefault();
+        isDragging = true;
+        dragIntent = !td.classList.contains("active");
+        setSlot(td, dragIntent);
+    });
+
+    td.addEventListener("mouseenter", () => {
+        if (!isDragging) return;
+        setSlot(td, dragIntent);
+    });
+});
+
+document.addEventListener("mouseup", () => {
+    isDragging = false;
+    dragIntent = null;
+});
+
+
+// ===== TABULKA SLUZIEB =====
+const tbody = document.querySelector("#services tbody");
+let dragged = null;
+
+tbody.addEventListener('dragstart', e => {
+  dragged = e.target.closest('tr');
+  setTimeout(() => dragged.classList.add('dragging'), 0);
+});
+
+tbody.addEventListener('dragend', () => {
+  dragged.classList.remove('dragging');
+  dragged = null;
+  document.querySelectorAll('.drag-over').forEach(r => r.classList.remove('drag-over'));
+});
+
+tbody.addEventListener('dragover', e => {
+  e.preventDefault();
+  const row = e.target.closest('tr');
+  if (!row || row === dragged) return;
+  document.querySelectorAll('.drag-over').forEach(r => r.classList.remove('drag-over'));
+  row.classList.add('drag-over');
+});
+
+tbody.addEventListener('drop', e => {
+  e.preventDefault();
+  const row = e.target.closest('tr');
+  if (!row || row === dragged) return;
+  const rows = [...tbody.querySelectorAll('tr')];
+  const from = rows.indexOf(dragged);
+  const to = rows.indexOf(row);
+  if (from < to) row.after(dragged);
+  else row.before(dragged);
+  row.classList.remove('drag-over');
+});
+
+
+// ===== SUBMIT FORM =====
+document.querySelector("form").addEventListener("submit", function(e) {
+    const checked = [...document.querySelectorAll("#calendar td.slot.active")]
+        .map(td => td.dataset.start);
+
+    if (checked.length === 0) {
+        e.preventDefault();
+        alert("Nie je zakliknutá žiadna dostupnosť. Prosím vyber aspoň jeden blok.");
+        return;
+    }
+
+    // Odstráň staré hidden inputy
+    this.querySelectorAll("input[name='availability'], input[name='services']")
+        .forEach(el => el.remove());
+
+    // Zakliknuté checkboxy
+    const availInput = document.createElement("input");
+    availInput.type = "hidden";
+    availInput.name = "availability";
+    availInput.value = checked.join(",");
+    this.appendChild(availInput);
+
+    // Poradie služieb → "Bar,Šatňa,SBS,..."
+    const services = [...document.querySelectorAll("#services tbody tr td:last-child")]
+        .map(td => td.textContent.trim());
+    const servInput = document.createElement("input");
+    servInput.type = "hidden";
+    servInput.name = "services";
+    servInput.value = services.join(",");
+    this.appendChild(servInput);
+});
 </script>
 </body>
 </html>
