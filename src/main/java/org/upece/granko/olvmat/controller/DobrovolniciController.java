@@ -5,12 +5,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.upece.granko.olvmat.entity.VolunteerEntity;
 import org.upece.granko.olvmat.model.DobrovolnikForm;
 import org.upece.granko.olvmat.repository.TicketRepository;
+import org.upece.granko.olvmat.repository.VolunteerRepository;
 import org.upece.granko.olvmat.service.EmailService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ public class DobrovolniciController {
 
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
+    private final VolunteerRepository volunteerRepository;
 
     @GetMapping("dobrovolnici")
     public String getDobrovolnici(ModelMap model) {
@@ -66,20 +70,23 @@ public class DobrovolniciController {
             return "dobrovolnici";
         }
 
-        // --- Zatiaľ len výpis do konzoly ---
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
-        System.out.println("=== Nový dobrovoľník ===");
-        System.out.println("Meno:       " + form.getName());
-        System.out.println("Email:      " + form.getEmail());
-        System.out.println("Dostupnosť: " + form.getAvailability());
-        System.out.println("Služby:     " + form.getServices());
-        System.out.println("Poznámka:   " + form.getText());
-        System.out.println("=======================");
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
+
+        StringBuilder avaibilityBuilder = new StringBuilder("");
+        StringBuilder servicesBuilder = new StringBuilder("");
+
+        form.getAvailability().forEach(it -> avaibilityBuilder.append(it).append(","));
+        form.getServices().forEach(it -> servicesBuilder.append(it).append(","));
+
+        VolunteerEntity entity = new VolunteerEntity(
+                UUID.randomUUID(),
+                form.getName(),
+                form.getEmail(),
+                form.getText(),
+                avaibilityBuilder.toString(),
+                servicesBuilder.toString()
+        );
+
+        volunteerRepository.save(entity);
 
         return "dobrovolnici-potvrdenie";
     }

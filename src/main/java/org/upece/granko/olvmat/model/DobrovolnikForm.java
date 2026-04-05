@@ -11,6 +11,6 @@ public class DobrovolnikForm {
     private String name;
     private String email;
     private String text;
-    private List availability;
-    private List services;
+    private List<String> availability;
+    private List<String> services;
 }
