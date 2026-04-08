@@ -38,21 +38,21 @@ public class DobrovolniciController {
 
         // rowspan 1 = 5 minút
         List<Map<String, Object>> program = List.of(
-            Map.of("rowspan", 12, "color", "#fa0000", "text", "Registrácia"),
-            Map.of("rowspan", 12, "color", "#00fa00", "text", "Sv. omša"),
-            Map.of("rowspan",  2, "color", "#00fafa", "text", "Otvorenie"),
-            Map.of("rowspan",  6, "color", "#fa00fa", "text", "Tanečné kolo"),
+            Map.of("rowspan", 12, "color", "#6e8c8c", "text", "Registrácia"),
+            Map.of("rowspan", 12, "color", "#5082d7", "text", "Sv. omša"),
+            Map.of("rowspan",  2, "color", "#87bed2", "text", "Otvorenie"),
+            Map.of("rowspan",  6, "color", "#32affa", "text", "Tanečné kolo"),
             Map.of("rowspan",  2, "color", "#fafafa", "text", ""),
-            Map.of("rowspan",  6, "color", "#00fafa", "text", "Škola tanca"),
-            Map.of("rowspan",  6, "color", "#fa00fa", "text", "Tanečné kolo"),
+            Map.of("rowspan",  6, "color", "#64affa", "text", "Škola tanca"),
+            Map.of("rowspan",  6, "color", "#32affa", "text", "Tanečné kolo"),
             Map.of("rowspan",  2, "color", "#fafafa", "text", ""),
-            Map.of("rowspan",  4, "color", "#fa00fa", "text", "Súťaže"),
-            Map.of("rowspan",  6, "color", "#fa00fa", "text", "Tanečné kolo"),
-            Map.of("rowspan",  3, "color", "#fafafa", "text", "Fotka"),
-            Map.of("rowspan",  4, "color", "#00fafa", "text", "Limbo"),
-            Map.of("rowspan",  7, "color", "#fa00fa", "text", "Tanečné kolo"),
-            Map.of("rowspan",  6, "color", "#00fafa", "text", "Tombola"),
-            Map.of("rowspan", 18, "color", "#00fafa", "text", "Voľná zábava")
+            Map.of("rowspan",  4, "color", "#a5bed2", "text", "Súťaže"),
+            Map.of("rowspan",  6, "color", "#32affa", "text", "Tanečné kolo"),
+            Map.of("rowspan",  3, "color", "#87bed2", "text", "Fotka"),
+            Map.of("rowspan",  4, "color", "#a5bed2", "text", "Limbo"),
+            Map.of("rowspan",  7, "color", "#32affa", "text", "Tanečné kolo"),
+            Map.of("rowspan",  6, "color", "#87bed2", "text", "Tombola"),
+            Map.of("rowspan", 18, "color", "#64affa", "text", "Voľná zábava")
             );
 
         model.put("program", program);
