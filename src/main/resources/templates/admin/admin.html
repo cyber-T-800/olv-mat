@@ -91,27 +91,33 @@
             </div>
 
             <h3>Zmena typu lístka</h3>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <label for="actionSelect">Zmeniť na:</label>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <select id="actionSelect">
-                        <option value="">-- vyber --</option>
-                        <option value="STUDENT">študent</option>
-                        <option value="NESTUDENT">neštudent</option>
-                        <option value="DOBROVOLNIK">dobrovoľník</option>
-                        <option value="TEAM">team</option>
-                    </select>
+            <form action="/admin/zmen-typ-listka" method="post">
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <label for="actionSelect">Zmeniť na:</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="hidden" name="id" value="${r.id}">
+                        <select id="actionSelect" name="typ">
+                            <option selected value="STUDENT">študent</option>
+                            <option value="NESTUDENT">neštudent</option>
+                            <option value="DOBROVOLNIK">dobrovoľník</option>
+                            <option value="TEAM">team</option>
+                        </select>
 
-                    <button class="button-small" onclick="changeType('${r.id}')">
-                        Potvrdiť
-                    </button>
+                        <button class="button-small" type="submit">
+                            Potvrdiť
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </form>
 
             <br><br>
 
+
             <div style="text-align: center;">
-                <button class="button" onclick="deleteReservation('${r.id}')">Zrušiť rezerváciu</button>
+                <form action="/admin/zrus-rezervaciu" method="post">
+                    <input type="hidden" name="id" value="${r.id}">
+                    <button class="button" type="submit">Zrušiť rezerváciu</button>
+                </form>
             </div>
         `;
 

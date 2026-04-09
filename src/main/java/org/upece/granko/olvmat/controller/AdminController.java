@@ -17,6 +17,7 @@ import org.upece.granko.olvmat.entity.AdminRegistraciaZiadostEntity;
 import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.entity.enums.AdminRegistraciaZiadostStavEnum;
 import org.upece.granko.olvmat.entity.enums.AdminRoleEnum;
+import org.upece.granko.olvmat.entity.enums.StavRezervacieEnum;
 import org.upece.granko.olvmat.entity.enums.TypListkaEnum;
 import org.upece.granko.olvmat.model.AdminDetails;
 import org.upece.granko.olvmat.model.EventEditForm;
@@ -61,9 +62,9 @@ public class AdminController {
 
 
     @GetMapping("/admin/claim-super")
-    public String claimSuper(){
-        if(adminRepository.vacantSuperadminPosition()){
-            AdminEntity entity = adminRepository.findById(((AdminDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAdminEntity().getId()).orElseThrow();
+    public String claimSuper() {
+        if (adminRepository.vacantSuperadminPosition()) {
+            AdminEntity entity = adminRepository.findById(((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAdminEntity().getId()).orElseThrow();
 
             entity.setRola(AdminRoleEnum.SUPERADMIN);
 
@@ -76,7 +77,7 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String getAdminPage(ModelMap modelMap) {
-        if(adminRepository.vacantSuperadminPosition()){
+        if (adminRepository.vacantSuperadminPosition()) {
             modelMap.addAttribute("vacantSuperadminPosition", true);
         }
         modelMap.put("pocetObsadenych", ticketRepository.countUcastnicke(eventService.findSelected().orElseThrow().getId()));
@@ -175,5 +176,22 @@ public class AdminController {
 
         System.out.println(eventEditForm);
         return "redirect:/admin/events";
+    }
+
+    @PostMapping("/admin/zrus-rezervaciu")
+    public String zrusRezervaciu(@Param("id") UUID id) {
+        TicketEntity entity = ticketRepository.findById(id).orElseThrow();
+        entity.setStav(StavRezervacieEnum.ZRUSENY);
+        ticketRepository.save(entity);
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/zmen-typ-listka")
+    public String zmenTypListkaRezervaciu(@Param("id") UUID id, @Param("typ") TypListkaEnum typ) {
+        TicketEntity entity = ticketRepository.findById(id).orElseThrow();
+        entity.setTypListka(typ);
+        ticketRepository.save(entity);
+
+        return "redirect:/admin";
     }
 }

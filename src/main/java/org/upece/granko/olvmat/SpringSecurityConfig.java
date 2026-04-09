@@ -62,7 +62,7 @@ public class SpringSecurityConfig {
             for (GrantedAuthority auth : authentication.getAuthorities()) {
                 String role = auth.getAuthority();
 
-                if (role.equals("ADMIN")) {
+                if (role.equals("ADMIN") || role.equals("SUPERADMIN")) {
                     redirectURL = "/admin";
                     break;
                 } else if (role.equals("VSTUP")) {
