@@ -198,6 +198,7 @@
     });
 
     document.getElementById('filter-nezaplatene').addEventListener('input', function () {
+        localStorage.setItem('filterNezaplatene', this.checked);
         runFilter();
     });
 
@@ -222,6 +223,12 @@
             }
             row.style.display = disp;
         });
+    }
+
+
+    const savedFilter = localStorage.getItem('filterNezaplatene');
+    if (savedFilter !== null) {
+        document.getElementById('filter-nezaplatene').checked = savedFilter === 'true';
     }
 
     renderTable();
