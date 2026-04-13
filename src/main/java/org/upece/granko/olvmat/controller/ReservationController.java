@@ -42,13 +42,13 @@ public class ReservationController {
                 <h1>Rezervácia lístka na Majáles</h1>
                 
                 
-                    <p>Ohniví tanečníci, krásne señoritas,</p>
+                    <p>Ohniví muchachos, krásne señoritas,</p>
                     <div style="height:0.75rem;"></div>
                 
                     <p>
                         Pozývame vás na horúci latino majáles plný rytmov, vášne a nezabudnuteľnej energie! 
                         Už <strong>30. apríla</strong> sa naše UPeCe rozozvučí v tónoch salsy, bachaty a latino hitov, ktoré ťa 
-                        nenechajú sedieť. Čaká ťa večer plný tanca, úsmevov a letnej atmosféry, kde sa necháš 
+                        nenechajú sedieť. Čaká ťa večer plný tanca, zábavy a letnej atmosféry, kde sa necháš 
                         unášať hudbou a možno objavíš aj svoj nový obľúbený krok. 
                     </p>
                     <p> Tak si to nenechaj ujsť! </p>

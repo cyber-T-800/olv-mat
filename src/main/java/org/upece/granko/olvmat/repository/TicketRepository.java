@@ -38,4 +38,7 @@ public interface TicketRepository extends JpaRepository<TicketEntity, UUID> {
             String meno,
             UUID eventID
     );
+
+    @Query("select t from TicketEntity t where t.event.id=:eventID")
+    List<TicketEntity> findAllByEventId(UUID eventID);
 }
