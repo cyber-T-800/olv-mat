@@ -29,7 +29,7 @@ public class AdminRestController {
 
     @GetMapping()
     public List<Ticket> getTickets() {
-        return ticketRepository.findAllExceptZrusene(eventService.findSelected().orElseThrow().getId()).stream().map(this::ticketFromEntity).toList();
+        return ticketRepository.findAllByEventId(eventService.findSelected().orElseThrow().getId()).stream().map(this::ticketFromEntity).toList();
     }
 
     @PutMapping("/{id}/zaplatenie")

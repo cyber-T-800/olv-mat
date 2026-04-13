@@ -35,6 +35,11 @@
         <span class="toggle"></span>
         <span class="text">Zobraziť iba nezaplatené</span>
     </label>
+    <label class="toggle-line" style="margin-top: 0">
+        <input type="checkbox" id="filter-zrusene">
+        <span class="toggle"></span>
+        <span class="text">Zobraziť aj zrušené</span>
+    </label>
     <p>Aktuálna obsadenosť účastníkov: <strong
             th:text="${pocetObsadenych + '/' + maxPocet}">20/54</strong></p>
     <p>Počet dobrovoľníkov: <strong
@@ -201,9 +206,14 @@
         runFilter();
     });
 
+        document.getElementById('filter-zrusene').addEventListener('input', function () {
+        runFilter();
+    });
+
     function runFilter() {
         const filter = document.getElementById('search').value.toLowerCase();
         const nezaplateneFilterChecked = document.getElementById('filter-nezaplatene').checked;
+        const zruseneFilterChecked = document.getElementById('filter-zrusene').checked;
         const rows = document.querySelectorAll('#reservations tbody tr');
         rows.forEach(row => {
             let disp = '';
@@ -215,6 +225,11 @@
                 }
             }
 
+            if (!zruseneFilterChecked) {
+                if (row.cells[3].textContent.trim() == 'ZRUSENY') {
+                    disp = 'none'
+                }
+            }
 
             if (disp !== 'none') {
                 const name = row.cells[0].textContent.toLowerCase();
@@ -222,6 +237,16 @@
             }
             row.style.display = disp;
         });
+    }
+
+    const savedFilterNezaplatene = localStorage.getItem('filterNezaplatene');
+    if (savedFilterNezaplatene !== null) {
+        document.getElementById('filter-nezaplatene').checked = savedFilterNezaplatene === 'true';
+    }
+
+    const savedFilterZrusene = localStorage.getItem('filterZrusene');
+    if (savedFilterZrusene !== null) {
+        document.getElementById('filter-zrusene').checked = savedFilterZrusene === 'true';
     }
 
     renderTable();
