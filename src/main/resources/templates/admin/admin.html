@@ -203,6 +203,7 @@
     });
 
     document.getElementById('filter-nezaplatene').addEventListener('input', function () {
+        localStorage.setItem('filterNezaplatene', this.checked);
         runFilter();
     });
 
