@@ -9,56 +9,13 @@
 
 <body>
 <div class="obal">
-    <div th:utext="${popisUdalosti}"></div>
-
     <a href="/"
-       class="button" style="margin-left: 0.75rem;">
+       class="button-secondary" style="margin-left: 0.75rem;">
         <strong>Späť na hlavnú stránku</strong>
     </a>
-    <div style="height:2.5rem;"></div>
+    <div style="height:1rem;"></div>
 
-    <h3>Program a dostupnosť</h3>
-    <p>Pozri si program a zaklikni bloky, kedy môžeš prísť pomôcť.</p>
-    <p style="font-size: 0.75;">(V stĺpci dostupnosť, musia svietiť na modro)</p>
-    <div style="height:1.5rem;"></div>
-
-    <table id="calendar">
-        <colgroup>
-            <col style="width: 15.65%">
-            <col style="width: 42.17%">
-            <col style="width: 42.17%">
-        </colgroup>
-
-        <thead>
-        <tr>
-            <th>Čas</th>
-            <th>Program</th>
-            <th>Dostupnosť</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-    <div style="height:1.5rem;"></div>
-
-
-    <h3>Služby</h3>
-    <p>V nasledovnej tabuľke zoraď dostupné služby podľa priority.</p>
-    <p style="font-size: 0.75;">(Hore je najvyššia priorita, dole najnižšia)</p>
-    <div style="height:1.5rem;"></div>
-
-    <table id="services">
-        <colgroup>
-            <col style="width: 20px">
-            <col style="width: auto">
-        </colgroup>
-
-        <tbody>
-            <tr th:each="service : ${services}" draggable="true">
-                <td class="handle">⠿</td>
-                <td th:text="${service}">Služba</td>
-            </tr>
-        </tbody>
-    </table>
+    <div th:utext="${popisUdalosti}"></div>
     <div style="height:1.5rem;"></div>
     
     <form method="post">
@@ -71,10 +28,58 @@
         <label for="text">Poznámka:</label>
         <input type="text" id="text" name="text">
 
+
+        <h3>Služby</h3>
+        <p>Vyber služby zaškrtnutím. Každá označená služba sa presunie pod najnižšiu už zaškrtnutú položku.</p>
+        <p>(Hore sú služby, ktoré si vybral ako prvé.)</p>
+        <div style="height:1.5rem;"></div>
+
+        <table id="services">
+            <colgroup>
+                <col style="width: auto">
+                <col style="width: 20px">
+            </colgroup>
+
+            <tbody>
+            <tr th:each="service : ${services}" class="service-row">
+                <td th:text="${service}">Služba</td>
+                <td>
+                    <input type="checkbox" class="service-checkbox" aria-label="Vybrať službu">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div style="height:2.5rem;"></div>
+
+
+        <h3>Program a dostupnosť</h3>
+        <p>Pozri si program a zaklikni bloky, kedy môžeš prísť pomôcť.</p>
+        <div style="height:1.5rem;"></div>
+
+        <table id="calendar">
+            <colgroup>
+                <col style="width: 15.65%">
+                <col style="width: 42.17%">
+                <col style="width: 42.17%">
+            </colgroup>
+
+            <thead>
+            <tr>
+                <th>Čas</th>
+                <th>Program</th>
+                <th>Dostupnosť</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+
         <div style="height:1rem;"></div>
         <input class="button" style="width:100%;" type="submit" value="Odoslať dostupnosť">
     </form>
+    <div style="height:1.5rem;"></div>
 </div>
+
 
 <script th:inline="javascript">
 const program = /*[[${program}]]*/ null;
@@ -145,6 +150,7 @@ function renderTable() {
             td.rowSpan = blockRowspan;
             td.className = "slot";
             td.dataset.start = (row / 12 + startHour) % 24;
+            td.innerText = "klikni sem pre výber času";
             slotTds.push(td);
             tr.appendChild(td);
         }
@@ -155,8 +161,9 @@ function renderTable() {
 }
 
 const slotTds = [];
-
 renderTable();
+
+
 
 // ===== DRAG-SELECT LOGIKA =====
 let isDragging = false;
@@ -164,6 +171,9 @@ let dragIntent = null;
 
 function setSlot(td, active) {
     td.classList.toggle("active", active);
+    td.innerText = active
+        ? "čas zvolený"
+        : "klikni sem pre výber času";
 }
 
 slotTds.forEach(td => {
@@ -186,40 +196,44 @@ document.addEventListener("mouseup", () => {
 });
 
 
+
 // ===== TABULKA SLUZIEB =====
-const tbody = document.querySelector("#services tbody");
-let dragged = null;
+const servicesTbody = document.querySelector("#services tbody");
 
-tbody.addEventListener('dragstart', e => {
-  dragged = e.target.closest('tr');
-  setTimeout(() => dragged.classList.add('dragging'), 0);
+servicesTbody.addEventListener('change', e => {
+    const checkbox = e.target.closest('.service-checkbox');
+    if (!checkbox) return;
+
+    const row = checkbox.closest('tr');
+    const checkedCheckboxes = [...servicesTbody.querySelectorAll('.service-checkbox:checked')];
+    const checkedRowsExceptCurrent = checkedCheckboxes
+        .filter(c => c !== checkbox)
+        .map(c => c.closest('tr'));
+
+    if (checkbox.checked) {
+        if (checkedRowsExceptCurrent.length > 0) {
+            checkedRowsExceptCurrent[checkedRowsExceptCurrent.length - 1].after(row);
+        } else {
+            servicesTbody.prepend(row);
+        }
+    } else {
+        servicesTbody.append(row);
+    }
+
+    row.classList.add('moved');
+    window.setTimeout(() => row.classList.remove('moved'), 400);
 });
 
-tbody.addEventListener('dragend', () => {
-  dragged.classList.remove('dragging');
-  dragged = null;
-  document.querySelectorAll('.drag-over').forEach(r => r.classList.remove('drag-over'));
+servicesTbody.addEventListener('click', e => {
+    const row = e.target.closest('tr');
+    if (!row || !row.classList.contains('service-row')) return;
+    if (e.target.closest('.service-checkbox')) return;
+
+    const checkbox = row.querySelector('.service-checkbox');
+    if (!checkbox) return;
+    checkbox.click();
 });
 
-tbody.addEventListener('dragover', e => {
-  e.preventDefault();
-  const row = e.target.closest('tr');
-  if (!row || row === dragged) return;
-  document.querySelectorAll('.drag-over').forEach(r => r.classList.remove('drag-over'));
-  row.classList.add('drag-over');
-});
-
-tbody.addEventListener('drop', e => {
-  e.preventDefault();
-  const row = e.target.closest('tr');
-  if (!row || row === dragged) return;
-  const rows = [...tbody.querySelectorAll('tr')];
-  const from = rows.indexOf(dragged);
-  const to = rows.indexOf(row);
-  if (from < to) row.after(dragged);
-  else row.before(dragged);
-  row.classList.remove('drag-over');
-});
 
 
 // ===== SUBMIT FORM =====
@@ -245,8 +259,11 @@ document.querySelector("form").addEventListener("submit", function(e) {
     this.appendChild(availInput);
 
     // Poradie služieb → "Bar,Šatňa,SBS,..."
-    const services = [...document.querySelectorAll("#services tbody tr td:last-child")]
-        .map(td => td.textContent.trim());
+    const services = [...document.querySelectorAll("#services tbody tr")]
+        .map(tr => tr.querySelector("td:last-child input").checked ? tr.querySelector("td:first-child").innerText : "")
+        .filter(it => it !== "");
+
+    console.log(services)
     const servInput = document.createElement("input");
     servInput.type = "hidden";
     servInput.name = "services";

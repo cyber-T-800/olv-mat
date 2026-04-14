@@ -283,9 +283,6 @@ tr:hover {
 #services tr {
     height: 30;
 }
-#services tr[draggable] {
-    cursor: grab;
-}
-#services tr.dragging {
-    opacity: 0.4;
+#services tbody tr.moved {
+    animation: moved-row 0.35s ease-out;
 }

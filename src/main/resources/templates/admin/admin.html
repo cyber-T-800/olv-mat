@@ -207,7 +207,8 @@
         runFilter();
     });
 
-        document.getElementById('filter-zrusene').addEventListener('input', function () {
+    document.getElementById('filter-zrusene').addEventListener('input', function () {
+        localStorage.setItem('filterZrusene', this.checked);
         runFilter();
     });
 
