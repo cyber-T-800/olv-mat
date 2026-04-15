@@ -52,12 +52,12 @@ public class DobrovolniciController {
             Map.of("rowspan",  4, "color", "#a5bed2", "text", "Limbo"),
             Map.of("rowspan",  7, "color", "#32affa", "text", "Tanečné kolo"),
             Map.of("rowspan",  6, "color", "#87bed2", "text", "Tombola"),
-            Map.of("rowspan", 18, "color", "#64affa", "text", "Voľná zábava")
+            Map.of("rowspan", 42, "color", "#64affa", "text", "Voľná zábava")
             );
 
         model.put("program", program);
         model.put("startHour", 18);
-        model.put("endHour", 2);
+        model.put("endHour", 4);
         model.put("blockRowspan", 24); // 12 = 1 hodina
         model.put("services", List.of("Bar", "Šatňa", "SBS", "Upratovanie", "Vstup", "Výdaj jedla", "Zmenáreň"));
 
