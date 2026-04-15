@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.upece.granko.olvmat.entity.AdminEntity;
 import org.upece.granko.olvmat.entity.AdminRegistraciaZiadostEntity;
 import org.upece.granko.olvmat.entity.TicketEntity;
+import org.upece.granko.olvmat.entity.VolunteerEntity;
 import org.upece.granko.olvmat.entity.enums.AdminRegistraciaZiadostStavEnum;
 import org.upece.granko.olvmat.entity.enums.AdminRoleEnum;
 import org.upece.granko.olvmat.entity.enums.StavRezervacieEnum;
@@ -24,6 +25,7 @@ import org.upece.granko.olvmat.model.EventEditForm;
 import org.upece.granko.olvmat.repository.AdminRegistraciaZiadostRepository;
 import org.upece.granko.olvmat.repository.AdminRepository;
 import org.upece.granko.olvmat.repository.TicketRepository;
+import org.upece.granko.olvmat.repository.VolunteerRepository;
 import org.upece.granko.olvmat.service.AdminDetailService;
 import org.upece.granko.olvmat.service.EmailService;
 import org.upece.granko.olvmat.service.EventService;
@@ -32,6 +34,7 @@ import org.upece.granko.olvmat.service.VytvorenieHeslaSession;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -47,6 +50,7 @@ public class AdminController {
     private final TicketRepository ticketRepository;
     private final EventService eventService;
     private final AdminDetailService adminDetailService;
+    private final VolunteerRepository volunteerRepository;
 
     @Value("${super.admin.email}")
     private String superAdminEmail;
@@ -76,21 +80,11 @@ public class AdminController {
     }
 
     @GetMapping("/admin")
-    public String getAdminPage(ModelMap modelMap) {
+    public String getAdminPage(ModelMap model) {
         if (adminRepository.vacantSuperadminPosition()) {
-            modelMap.addAttribute("vacantSuperadminPosition", true);
+            model.addAttribute("vacantSuperadminPosition", true);
         }
-        modelMap.put("pocetObsadenych", ticketRepository.countUcastnicke(eventService.findSelected().orElseThrow().getId()));
-        modelMap.put("maxPocet", maxPocetListkov);
-
-        modelMap.put("pocetDobrovolnikov", ticketRepository.countDobrovolnicke(eventService.findSelected().orElseThrow().getId()));
-        modelMap.put("pocetTeamakov", ticketRepository.countTeamacke(eventService.findSelected().orElseThrow().getId()));
-        modelMap.put("pocetPouzite", ticketRepository.countPouzite(eventService.findSelected().orElseThrow().getId()));
-        modelMap.put("pocetZaplatene", ticketRepository.countZaplatene(eventService.findSelected().orElseThrow().getId()));
-        modelMap.put("pocetCelkovo", ticketRepository.countAll(eventService.findSelected().orElseThrow().getId()));
-        modelMap.put("user", ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
-        modelMap.put("adminLevel", adminDetailService.hasAuthority(AdminRoleEnum.SUPERADMIN) ? "SUPER" : "ADMIN");
-        return "admin/admin";
+        return renderPage("admin/admin", model);
     }
 
     @PostMapping("/admin")
@@ -193,5 +187,26 @@ public class AdminController {
         ticketRepository.save(entity);
 
         return "redirect:/admin";
+    }
+
+    @GetMapping("/admin/volunteers")
+    public String volunteers(ModelMap model) {
+        List<VolunteerEntity> entities = volunteerRepository.findAll();
+        model.addAttribute("volunteers", entities);
+        return renderPage("admin/volunteers", model);
+    }
+
+    public String renderPage(String pageId, ModelMap model) {
+        model.put("pocetObsadenych", ticketRepository.countUcastnicke(eventService.findSelected().orElseThrow().getId()));
+        model.put("maxPocet", maxPocetListkov);
+
+        model.put("pocetDobrovolnikov", ticketRepository.countDobrovolnicke(eventService.findSelected().orElseThrow().getId()));
+        model.put("pocetTeamakov", ticketRepository.countTeamacke(eventService.findSelected().orElseThrow().getId()));
+        model.put("pocetPouzite", ticketRepository.countPouzite(eventService.findSelected().orElseThrow().getId()));
+        model.put("pocetZaplatene", ticketRepository.countZaplatene(eventService.findSelected().orElseThrow().getId()));
+        model.put("pocetCelkovo", ticketRepository.countAll(eventService.findSelected().orElseThrow().getId()));
+        model.put("user", ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
+        model.put("adminLevel", adminDetailService.hasAuthority(AdminRoleEnum.SUPERADMIN) ? "SUPER" : "ADMIN");
+        return pageId;
     }
 }
