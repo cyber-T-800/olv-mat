@@ -23,7 +23,7 @@ public interface TicketRepository extends JpaRepository<TicketEntity, UUID> {
     @Query("select count(*) from TicketEntity t where  t.stav != 'ZRUSENY' and t.event.id=:eventID")
     int countAll(UUID eventID);
 
-    @Query("select count(*) from TicketEntity t where t.stav = 'ZAPLATENY' or t.stav = 'POUZITY' and t.event.id=:eventID")
+    @Query("select count(*) from TicketEntity t where (t.stav = 'ZAPLATENY' or t.stav = 'POUZITY') and t.event.id=:eventID")
     int countZaplatene(UUID eventID);
 
     @Query("select count(*) from TicketEntity t where t.stav = 'POUZITY' and t.event.id=:eventID")
