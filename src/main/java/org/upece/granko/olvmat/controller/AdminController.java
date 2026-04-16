@@ -33,10 +33,8 @@ import org.upece.granko.olvmat.service.VytvorenieHeslaSession;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -57,7 +55,7 @@ public class AdminController {
     @Value("${hostport}")
     private String hostport;
 
-    private final int maxPocetListkov = 300;
+    private final int maxPocetListkov = 600;
 
     @GetMapping("/admin/login")
     public String getLogin() {
@@ -192,6 +190,16 @@ public class AdminController {
     @GetMapping("/admin/volunteers")
     public String volunteers(ModelMap model) {
         List<VolunteerEntity> entities = volunteerRepository.findAll();
+        entities.forEach(it->{
+            it.setServices(it.getServices().replace(",", "\n"));
+            it.setAvailability(Arrays.stream(it.getAvailability()
+                    .split(","))
+                    .map(st -> {
+                        int time = Integer.parseInt(st);
+                        return String.format("%d - %d", time, time + 2);
+                    }).collect(Collectors.joining("\n"))
+            );
+        });
         model.addAttribute("volunteers", entities);
         return renderPage("admin/volunteers", model);
     }
