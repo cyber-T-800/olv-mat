@@ -1,7 +1,6 @@
 package org.upece.granko.olvmat.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -16,8 +15,6 @@ import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.service.EmailService;
 import org.upece.granko.olvmat.service.EventService;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,9 +28,6 @@ public class ReservationController {
 
     private final int maxPocetListkov = 600;
     private final int lastListkyPocet = 25;
-
-    @Value("${hostport}")
-    private String hostport;
 
 
     @GetMapping("")
@@ -96,12 +90,7 @@ public class ReservationController {
 
         TicketEntity entity = ticketRepository.save(new TicketEntity(form.getName(), form.getEmail(), form.getTicketType(), eventService.findSelected().orElseThrow()));
 
-        Map<String, Object> mailModel = new HashMap<>();
-        mailModel.put("krstneMeno", form.getName().split(" ")[0]);
-        mailModel.put("ticketId", entity.getId());
-        mailModel.put("securityKey", entity.getSecurityKey());
-        mailModel.put("hostPort", hostport);
-        emailService.sendMail(form.getEmail(), "Potvrdenie rezervácie listka", "potvrdenie-rezervacie", mailModel);
+        emailService.odosliListok(entity);
 
         model.put("ticketId", entity.getId());
         model.put("securityKey", entity.getSecurityKey());

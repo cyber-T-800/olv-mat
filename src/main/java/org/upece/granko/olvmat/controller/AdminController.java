@@ -190,10 +190,10 @@ public class AdminController {
     @GetMapping("/admin/volunteers")
     public String volunteers(ModelMap model) {
         List<VolunteerEntity> entities = volunteerRepository.findAll();
-        entities.forEach(it->{
+        entities.forEach(it -> {
             it.setServices(it.getServices().replace(",", "\n"));
             it.setAvailability(Arrays.stream(it.getAvailability()
-                    .split(","))
+                            .split(","))
                     .map(st -> {
                         int time = Integer.parseInt(st);
                         return String.format("%d - %d", time, time + 2);
@@ -202,6 +202,20 @@ public class AdminController {
         });
         model.addAttribute("volunteers", entities);
         return renderPage("admin/volunteers", model);
+    }
+
+    @GetMapping("/admin/volunteers/send-neodoslane")
+    public String sendNeodoslaneDobrovolnickeListky() {
+        List<VolunteerEntity> entities = volunteerRepository.findEmailNotSend();
+        List<TicketEntity> tickets = entities.stream().map(it -> new TicketEntity(it.getName(), it.getEmail(), TypListkaEnum.DOBROVOLNIK, eventService.findSelected().orElseThrow())).toList();
+        tickets.forEach(emailService::odosliListok);
+        ticketRepository.saveAll(tickets);
+
+        entities.forEach(it -> {
+            it.setEmailSend(true);
+        });
+        volunteerRepository.saveAll(entities);
+        return "redirect:/admin";
     }
 
     public String renderPage(String pageId, ModelMap model) {
@@ -215,6 +229,7 @@ public class AdminController {
         model.put("pocetCelkovo", ticketRepository.countAll(eventService.findSelected().orElseThrow().getId()));
         model.put("user", ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         model.put("adminLevel", adminDetailService.hasAuthority(AdminRoleEnum.SUPERADMIN) ? "SUPER" : "ADMIN");
+        model.put("dobrovolniciNeodoslaneListky", !volunteerRepository.findEmailNotSend().isEmpty());
         return pageId;
     }
 }

@@ -25,4 +25,5 @@ public class VolunteerEntity {
     private String text;
     private String availability;
     private String services;
+    private boolean emailSend;
 }

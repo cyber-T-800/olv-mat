@@ -1,0 +1,1 @@
+alter table volunteer add column email_send bool not null default false;

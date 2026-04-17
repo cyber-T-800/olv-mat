@@ -7,9 +7,12 @@
     <link type="text/css" rel="stylesheet" href="/stylesheet.css">
 </head>
 <body>
-    <div class="obal" style="min-width: 847px;">
+<div class="obal" style="min-width: 847px;">
     <div th:if="${vacantSuperadminPosition}">
         <a class="button" href="/admin/claim-super">Prevziať superadmin pozíciu</a>
+    </div>
+    <div th:if="${dobrovolniciNeodoslaneListky}">
+        <a class="button" href="/admin/volunteers/send-neodoslane">odošli dobrovoľníkom lískty</a>
     </div>
     <h1>Administrácia rezervácií</h1>
     <a class="button" href="/admin">
@@ -57,25 +60,26 @@
             <col style="width:  23px">
         </colgroup>
         <thead>
-            <tr>
-                <th>Meno</th>
-                <th>Email</th>
-                <th>Dostupnosť</th>
-                <th>Služby</th>
-                <th>Poznámka</th>
-                <th>Akcia</th>
-            </tr>
+        <tr>
+            <th>Meno</th>
+            <th>Email</th>
+            <th>Dostupnosť</th>
+            <th>Služby</th>
+            <th>Poznámka</th>
+            <th>Akcia</th>
+        </tr>
         </thead>
         <tbody>
-            <tr th:each="volunteer : ${volunteers}">
-                <td th:text="${volunteer.name}">Meno</td>
-                <td th:text="${volunteer.email}">Email</td>
-                <td th:text="${volunteer.availability}">Dostupnosť</td>
-                <td th:text="${volunteer.services}">Služby</td>
-                <td th:text="${volunteer.text}">Poznámka</td>
-                <!--<td><a th:href="@{/admin/volunteer/{id}(id=${volunteer.id})}">Upraviť</a></td>-->
-            </tr>
+        <tr th:each="volunteer : ${volunteers}">
+            <td th:text="${volunteer.name}">Meno</td>
+            <td th:text="${volunteer.email}">Email</td>
+            <td th:text="${volunteer.availability}">Dostupnosť</td>
+            <td th:text="${volunteer.services}">Služby</td>
+            <td th:text="${volunteer.text}">Poznámka</td>
+            <!--<td><a th:href="@{/admin/volunteer/{id}(id=${volunteer.id})}">Upraviť</a></td>-->
+        </tr>
         </tbody>
     </table>
+</div>
 </body>
 </html>
