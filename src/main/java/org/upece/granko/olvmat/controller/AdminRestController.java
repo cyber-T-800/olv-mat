@@ -52,7 +52,7 @@ public class AdminRestController {
 
         byte[] qrImage = QRCodeGenerator.generateQrPng(entity.getId().toString());
 
-        emailService.sendMail(entity.getEmail(), "Tvoj lístok na OĽV", "potvrdenie-zaplatenie", mailModel, qrImage);
+        emailService.sendMail(entity.getEmail(), "Tvoj lístok na Majáles", "potvrdenie-zaplatenie", mailModel, qrImage);
 
         AdminEntity admin = ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAdminEntity();
         entity.setSchvalil(admin);
