@@ -1,0 +1,1 @@
+alter table volunteer add column stav varchar(20) not null default 'AKTIVNY';

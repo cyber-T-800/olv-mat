@@ -14,7 +14,7 @@
     <div th:if="${dobrovolniciNeodoslaneListky}">
         <a class="button" href="/admin/volunteers/send-neodoslane">odošli dobrovoľníkom lískty</a>
     </div>
-    <h1>Administrácia rezervácií</h1>
+    <h1>Administrácia dobrovoľníkov</h1>
     <a class="button" href="/admin">
         Prejdi na správu lístkov
     </a>
@@ -76,7 +76,7 @@
             <td th:text="${volunteer.availability}">Dostupnosť</td>
             <td th:text="${volunteer.services}">Služby</td>
             <td th:text="${volunteer.text}">Poznámka</td>
-            <!--<td><a th:href="@{/admin/volunteer/{id}(id=${volunteer.id})}">Upraviť</a></td>-->
+            <td><a th:href="${'/admin/volunteers/cancel/' + volunteer.id}" class="button-small">Zrušiť</a></td>
         </tr>
         </tbody>
     </table>

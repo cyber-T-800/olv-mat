@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.entity.VolunteerEntity;
 import org.upece.granko.olvmat.entity.enums.TypListkaEnum;
+import org.upece.granko.olvmat.entity.enums.VolunteerStavEnum;
 import org.upece.granko.olvmat.model.DobrovolnikForm;
 import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.repository.VolunteerRepository;
@@ -88,7 +89,8 @@ public class DobrovolniciController {
                 form.getText(),
                 avaibilityBuilder.toString(),
                 servicesBuilder.toString(),
-                true
+                true,
+                VolunteerStavEnum.AKTIVNY
         );
 
         TicketEntity ticket = new TicketEntity(form.getName(), form.getEmail(), TypListkaEnum.DOBROVOLNIK, eventService.findSelected().orElseThrow());

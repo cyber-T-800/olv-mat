@@ -16,10 +16,7 @@ import org.upece.granko.olvmat.entity.AdminEntity;
 import org.upece.granko.olvmat.entity.AdminRegistraciaZiadostEntity;
 import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.entity.VolunteerEntity;
-import org.upece.granko.olvmat.entity.enums.AdminRegistraciaZiadostStavEnum;
-import org.upece.granko.olvmat.entity.enums.AdminRoleEnum;
-import org.upece.granko.olvmat.entity.enums.StavRezervacieEnum;
-import org.upece.granko.olvmat.entity.enums.TypListkaEnum;
+import org.upece.granko.olvmat.entity.enums.*;
 import org.upece.granko.olvmat.model.AdminDetails;
 import org.upece.granko.olvmat.model.EventEditForm;
 import org.upece.granko.olvmat.repository.AdminRegistraciaZiadostRepository;
@@ -203,6 +200,15 @@ public class AdminController {
         model.addAttribute("volunteers", entities);
         return renderPage("admin/volunteers", model);
     }
+
+    @GetMapping("/admin/volunteers/cancel/{id}")
+    public String sendNeodoslaneDobrovolnickeListky(@PathVariable UUID id) {
+        VolunteerEntity entity = volunteerRepository.findById(id).orElseThrow();
+        entity.setStav(VolunteerStavEnum.ZRUSENY);
+        volunteerRepository.save(entity);
+        return "redirect:/admin/volunteers";
+    }
+
 
     @GetMapping("/admin/volunteers/send-neodoslane")
     public String sendNeodoslaneDobrovolnickeListky() {
