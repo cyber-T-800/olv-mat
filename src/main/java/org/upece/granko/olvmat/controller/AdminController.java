@@ -1,5 +1,6 @@
 package org.upece.granko.olvmat.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
@@ -185,7 +186,7 @@ public class AdminController {
     }
 
     @GetMapping("/admin/volunteers")
-    public String volunteers(ModelMap model) {
+    public String volunteers(ModelMap model, HttpServletRequest request) {
         List<VolunteerEntity> entities = volunteerRepository.findNezaradene();
         entities.forEach(it -> {
             it.setServices(it.getServices().replace(",", "\n"));
@@ -197,8 +198,15 @@ public class AdminController {
                     }).collect(Collectors.joining("\n"))
             );
         });
+
+        boolean isSearchData = "true".equals(request.getHeader("HX-Request"));
+
         model.addAttribute("volunteers", entities);
-        return renderPage("admin/volunteers", model);
+        if(isSearchData){
+            return renderPage("admin/volunteers :: volunteers", model);
+        }else{
+            return renderPage("admin/volunteers", model);
+        }
     }
 
     @GetMapping("/admin/volunteers/cancel/{id}")

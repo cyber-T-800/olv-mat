@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volunteers - Admin Panel</title>
     <link type="text/css" rel="stylesheet" href="/stylesheet.css">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </head>
 <body>
 <div class="obal" style="min-width: 847px;">
@@ -50,7 +51,8 @@
             th:text="${pocetTeamakov}">20/54</strong></p>
     <p>Použité / Zaplatené / Celkovo: <strong
             th:text="${pocetPouzite + '/' + pocetZaplatene + '/' + pocetCelkovo}">20/50/120</strong></p>
-    <table id="volunteers">
+
+    <table id="volunteers" th:fragment="volunteers">
         <colgroup>
             <col style="width: 165px">
             <col style="width: 250px">
@@ -69,15 +71,15 @@
             <th>Akcia</th>
         </tr>
         </thead>
-        <tbody>
-        <tr th:each="volunteer : ${volunteers}">
-            <td th:text="${volunteer.name}">Meno</td>
-            <td th:text="${volunteer.email}">Email</td>
-            <td th:text="${volunteer.availability}">Dostupnosť</td>
-            <td th:text="${volunteer.services}">Služby</td>
-            <td th:text="${volunteer.text}">Poznámka</td>
-            <td><a th:href="${'/admin/volunteers/zarad/' + volunteer.id}" class="button-small">Zaraď</a></td>
-        </tr>
+        <tbody >
+            <tr th:each="volunteer : ${volunteers}">
+                <td th:text="${volunteer.name}">Meno</td>
+                <td th:text="${volunteer.email}">Email</td>
+                <td th:text="${volunteer.availability}">Dostupnosť</td>
+                <td th:text="${volunteer.services}">Služby</td>
+                <td th:text="${volunteer.text}">Poznámka</td>
+                <td><a th:hx-get="${'/admin/volunteers/zarad/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML" class="button-small">Zaraď</a></td>
+            </tr>
         </tbody>
     </table>
 </div>
