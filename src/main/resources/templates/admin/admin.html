@@ -8,7 +8,7 @@
 </head>
 
 <body>
-<div class="obal" style="min-width: 847px;">
+<div class="obal" style="min-width: 900px;">
     <div th:if="${vacantSuperadminPosition}">
         <a class="button" href="/admin/claim-super">Prevziať superadmin pozíciu</a>
     </div>
@@ -18,7 +18,7 @@
     </a>
 
     <a class="button" href="/admin/volunteers">
-        Prejdi na dobrovoľním
+        Prejdi na dobrovoľníkov
     </a>
 
     <a class="button" th:if="${adminLevel == 'SUPER'}" href="/superadmin">
@@ -55,12 +55,12 @@
 
     <table id="reservations">
         <colgroup>
-            <col style="width: 165px">
-            <col style="width: 250px">
-            <col style="width: 115px">
-            <col style="width: 140px">
+            <col style="width: 175px">
+            <col style="width: 275px">
+            <col style="width: 135px">
+            <col style="width: 135px">
             <col style="width:  90px">
-            <col style="width:  23px">
+            <col style="width:  26px">
         </colgroup>
 
         <thead>
@@ -125,7 +125,7 @@
             <div style="text-align: center;">
                 <form action="/admin/zrus-rezervaciu" method="post">
                     <input type="hidden" name="id" value="${r.id}">
-                    <button class="button" type="submit">Zrušiť rezerváciu</button>
+                    <button class="button-zrusit" type="submit">Zrušiť rezerváciu</button>
                 </form>
             </div>
         `;
