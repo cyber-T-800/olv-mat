@@ -52,7 +52,7 @@ public class AdminController {
     @Value("${hostport}")
     private String hostport;
 
-    private final int maxPocetListkov = 600;
+    private final int maxPocetListkov = 400;
 
     @GetMapping("/admin/login")
     public String getLogin() {
@@ -186,7 +186,7 @@ public class AdminController {
 
     @GetMapping("/admin/volunteers")
     public String volunteers(ModelMap model) {
-        List<VolunteerEntity> entities = volunteerRepository.findAll();
+        List<VolunteerEntity> entities = volunteerRepository.findNezaradene();
         entities.forEach(it -> {
             it.setServices(it.getServices().replace(",", "\n"));
             it.setAvailability(Arrays.stream(it.getAvailability()
@@ -202,9 +202,17 @@ public class AdminController {
     }
 
     @GetMapping("/admin/volunteers/cancel/{id}")
-    public String sendNeodoslaneDobrovolnickeListky(@PathVariable UUID id) {
+    public String zrusRezervaciuDobrovolnika(@PathVariable UUID id) {
         VolunteerEntity entity = volunteerRepository.findById(id).orElseThrow();
         entity.setStav(VolunteerStavEnum.ZRUSENY);
+        volunteerRepository.save(entity);
+        return "redirect:/admin/volunteers";
+    }
+
+    @GetMapping("/admin/volunteers/zarad/{id}")
+    public String zaradDobrovolnika(@PathVariable UUID id) {
+        VolunteerEntity entity = volunteerRepository.findById(id).orElseThrow();
+        entity.setStav(VolunteerStavEnum.ZARADENY);
         volunteerRepository.save(entity);
         return "redirect:/admin/volunteers";
     }

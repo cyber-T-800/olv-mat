@@ -26,7 +26,7 @@ public class ReservationController {
     private final EmailService emailService;
     private final EventService eventService;
 
-    private final int maxPocetListkov = 600;
+    private final int maxPocetListkov = 400;
     private final int lastListkyPocet = 25;
 
 
@@ -65,11 +65,11 @@ public class ReservationController {
         Optional<EventEntity> event = eventService.findSelected();
         if (event.isPresent()) {
             popis = event.get().getPopis();
-            int pocetUcastnickych = ticketRepository.countUcastnicke(event.get().getId());
-            model.put("percentObsadene", 100.0f * ticketRepository.countUcastnicke(event.get().getId()) / maxPocetListkov);
+            int pocetCelkovo = ticketRepository.countUcastnicke(event.get().getId());
+            model.put("percentObsadene", 100.0f * pocetCelkovo / maxPocetListkov);
 
-            if (maxPocetListkov - pocetUcastnickych <= lastListkyPocet) {
-                model.put("lastListky", maxPocetListkov - pocetUcastnickych);
+            if (maxPocetListkov - pocetCelkovo <= lastListkyPocet) {
+                model.put("lastListky", maxPocetListkov - pocetCelkovo);
             }
         }
 

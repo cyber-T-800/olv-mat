@@ -117,6 +117,17 @@ label {
     background: #c8c8c8;
 }
 
+.button-negative {
+    display: inline-block;
+    padding: 0.75rem 1.25rem;
+    border-radius: 15px;
+
+    background: #ff0000;
+    color: #fafafa;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.25s ease;
+}
 
 /* ───── BAR ───── */
 .bar-bg{

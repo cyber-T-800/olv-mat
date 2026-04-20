@@ -11,6 +11,9 @@ import java.util.UUID;
 @Repository
 public interface VolunteerRepository extends JpaRepository<VolunteerEntity, UUID> {
 
+    @Query("select v from VolunteerEntity v where v.stav = 'AKTIVNY'")
+    List<VolunteerEntity> findNezaradene();
+
     @Override
     @Query("select v from VolunteerEntity v where v.stav != 'ZRUSENY'")
     List<VolunteerEntity> findAll();
