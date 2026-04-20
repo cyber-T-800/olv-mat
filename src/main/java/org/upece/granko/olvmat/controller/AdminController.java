@@ -189,13 +189,13 @@ public class AdminController {
     public String volunteers(ModelMap model, HttpServletRequest request) {
         List<VolunteerEntity> entities = volunteerRepository.findNezaradene();
         entities.forEach(it -> {
-            it.setServices(it.getServices().replace(",", "\n"));
+            it.setServices(it.getServices().replace(",", "<br>"));
             it.setAvailability(Arrays.stream(it.getAvailability()
                             .split(","))
                     .map(st -> {
                         int time = Integer.parseInt(st);
                         return String.format("%d - %d", time, time + 2);
-                    }).collect(Collectors.joining("\n"))
+                    }).collect(Collectors.joining("<br>"))
             );
         });
 

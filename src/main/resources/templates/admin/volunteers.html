@@ -75,8 +75,8 @@
             <tr th:each="volunteer : ${volunteers}">
                 <td th:text="${volunteer.name}">Meno</td>
                 <td th:text="${volunteer.email}">Email</td>
-                <td th:text="${volunteer.availability}">Dostupnosť</td>
-                <td th:text="${volunteer.services}">Služby</td>
+                <td th:utext="${volunteer.availability}">Dostupnosť</td>
+                <td th:utext="${volunteer.services}">Služby</td>
                 <td th:text="${volunteer.text}">Poznámka</td>
                 <td><a th:hx-get="${'/admin/volunteers/zarad/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML" class="button-small">Zaraď</a></td>
             </tr>
