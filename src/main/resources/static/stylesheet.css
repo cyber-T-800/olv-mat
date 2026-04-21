@@ -128,6 +128,9 @@ label {
     cursor: pointer;
     transition: background 0.25s ease;
 }
+.button-negative:hover {
+    background: #aa0000;
+}
 
 /* ───── BAR ───── */
 .bar-bg{
