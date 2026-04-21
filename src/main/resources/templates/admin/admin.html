@@ -96,7 +96,7 @@
         content.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin: -20px -20px 0 -20px; padding: 20px;">
                 <h4 style="margin: 0;">${r.meno}</h4>
-                <button class="close-btn" onclick="closeModal()">✕</button>
+                <button class="button-close" onclick="closeModal()">✕</button>
             </div>
 
             <h3>Zmena typu lístka</h3>
@@ -125,7 +125,7 @@
             <div style="text-align: center;">
                 <form action="/admin/zrus-rezervaciu" method="post">
                     <input type="hidden" name="id" value="${r.id}">
-                    <button class="button-zrusit" type="submit">Zrušiť rezerváciu</button>
+                    <button class="button-negative" type="submit">Zrušiť rezerváciu</button>
                 </form>
             </div>
         `;
