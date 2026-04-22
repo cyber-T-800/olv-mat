@@ -89,13 +89,17 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:if="${volunteers != null}" th:each="volunteer : ${volunteers}">
+        <tr th:if="${volunteers != null}" th:each="volunteer : ${volunteers}"
+            th:class="${
+        volunteer.stav == T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).AKTIVNY ? 'volunteers-green' :
+        volunteer.stav == T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).ZRUSENY ? 'volunteers-red' :
+        'volunteers-skyblue'}">
             <td th:text="${volunteer.name}">Meno</td>
             <td th:text="${volunteer.email}">Email</td>
             <td th:utext="${volunteer.availability}">Dostupnosť</td>
             <td th:utext="${volunteer.services}">Služby</td>
             <td th:text="${volunteer.text}">Poznámka</td>
-            <td><a th:if="${volunteer.stav == 'AKTIVNY'}" th:hx-get="${'/admin/volunteers/zarad/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
+            <td><a th:if="${volunteer.stav == T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).AKTIVNY}" th:hx-get="${'/admin/volunteers/zarad/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
                    class="button-small" hx-include="#zaradene, #zrusene, #search">Zaraď</a></td>
         </tr>
         </tbody>

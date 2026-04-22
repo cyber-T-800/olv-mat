@@ -287,3 +287,17 @@ tr:hover {
 #services tbody tr.moved {
     animation: moved-row 0.35s ease-out;
 }
+
+
+.volunteers-green{
+    background-color: #90ee90;
+}
+
+.volunteers-skyblue{
+    background-color: #87ceeb;
+}
+
+
+.volunteers-red{
+    background-color: #ee4444;
+}
