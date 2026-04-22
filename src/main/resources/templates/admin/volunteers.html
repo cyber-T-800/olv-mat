@@ -83,5 +83,16 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    document.getElementById('search').addEventListener('input', function () {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#volunteers tbody tr');
+        rows.forEach(row => {
+            const name = row.cells[0].textContent.toLowerCase();
+            row.style.display = name.includes(filter) ? '' : 'none';
+        });
+    });
+</script>
 </body>
 </html>

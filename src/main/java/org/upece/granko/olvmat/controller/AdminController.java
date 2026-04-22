@@ -80,6 +80,8 @@ public class AdminController {
         if (adminRepository.vacantSuperadminPosition()) {
             model.addAttribute("vacantSuperadminPosition", true);
         }
+        List<TicketEntity> tickets = ticketRepository.findAllByEventId(eventService.findSelected().orElseThrow().getId());
+        model.addAttribute("reservations", tickets);
         return renderPage("admin/admin", model);
     }
 
