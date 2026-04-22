@@ -65,7 +65,7 @@ public class ReservationController {
         Optional<EventEntity> event = eventService.findSelected();
         if (event.isPresent()) {
             popis = event.get().getPopis();
-            int pocetCelkovo = ticketRepository.countUcastnicke(event.get().getId());
+            int pocetCelkovo = ticketRepository.countAll(event.get().getId());
             model.put("percentObsadene", 100.0f * pocetCelkovo / maxPocetListkov);
 
             if (maxPocetListkov - pocetCelkovo <= lastListkyPocet) {
