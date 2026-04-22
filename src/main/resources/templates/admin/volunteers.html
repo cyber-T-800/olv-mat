@@ -31,15 +31,23 @@
         </a>
     </div>
 
-    <input type="text" id="search" placeholder="Vyhľadať podľa mena alebo priezviska...">
+    <input type="text" id="search" name="search" placeholder="Vyhľadať podľa mena alebo priezviska..."
+           th:hx-get="${'/admin/volunteers'}" hx-target="#volunteers" hx-swap="innerHTML"
+           hx-include="#zaradene, #zrusene, #search" hx-trigger="keyup changed">
 
     <label class="toggle-line" style="margin-top: 0">
-        <input type="checkbox" id="filter-nezaplatene" checked>
+        <input type="checkbox" id="zaradene" name="zaradene"
+               th:hx-get="${'/admin/volunteers'}" hx-target="#volunteers" hx-swap="innerHTML"
+               hx-include="#zaradene, #zrusene, #search"
+               hx-trigger="change">
         <span class="toggle"></span>
-        <span class="text">Zobraziť iba nezaplatené</span>
+        <span class="text">Zobraziť aj zaradene</span>
     </label>
     <label class="toggle-line" style="margin-top: 0">
-        <input type="checkbox" id="filter-zrusene">
+        <input type="checkbox" id="zrusene" name="zrusene"
+               th:hx-get="${'/admin/volunteers'}" hx-target="#volunteers" hx-swap="innerHTML"
+               hx-include="#zaradene, #zrusene, #search"
+               hx-trigger="change">
         <span class="toggle"></span>
         <span class="text">Zobraziť aj zrušené</span>
     </label>
@@ -52,7 +60,16 @@
     <p>Použité / Zaplatené / Celkovo: <strong
             th:text="${pocetPouzite + '/' + pocetZaplatene + '/' + pocetCelkovo}">20/50/120</strong></p>
 
-    <table id="volunteers" th:fragment="volunteers">
+    <div
+            hx-get="/admin/volunteers"
+            hx-trigger="load"
+            hx-target="#volunteers"
+            hx-swap="innerHTML"
+            hx-include="#zaradene, #zrusene, #search"
+            >
+    </div>
+
+    <table id="volunteers"  th:fragment="volunteers">
         <colgroup>
             <col style="width: 175px">
             <col style="width: 275px">
@@ -71,15 +88,16 @@
             <th>Akcia</th>
         </tr>
         </thead>
-        <tbody >
-            <tr th:each="volunteer : ${volunteers}">
-                <td th:text="${volunteer.name}">Meno</td>
-                <td th:text="${volunteer.email}">Email</td>
-                <td th:utext="${volunteer.availability}">Dostupnosť</td>
-                <td th:utext="${volunteer.services}">Služby</td>
-                <td th:text="${volunteer.text}">Poznámka</td>
-                <td><a th:hx-get="${'/admin/volunteers/zarad/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML" class="button-small">Zaraď</a></td>
-            </tr>
+        <tbody>
+        <tr th:if="${volunteers != null}" th:each="volunteer : ${volunteers}">
+            <td th:text="${volunteer.name}">Meno</td>
+            <td th:text="${volunteer.email}">Email</td>
+            <td th:utext="${volunteer.availability}">Dostupnosť</td>
+            <td th:utext="${volunteer.services}">Služby</td>
+            <td th:text="${volunteer.text}">Poznámka</td>
+            <td><a th:if="${volunteer.stav == 'AKTIVNY'}" th:hx-get="${'/admin/volunteers/zarad/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
+                   class="button-small" hx-include="#zaradene, #zrusene, #search">Zaraď</a></td>
+        </tr>
         </tbody>
     </table>
 </div>

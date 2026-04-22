@@ -8,10 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.upece.granko.olvmat.entity.AdminEntity;
 import org.upece.granko.olvmat.entity.AdminRegistraciaZiadostEntity;
@@ -186,25 +183,37 @@ public class AdminController {
     }
 
     @GetMapping("/admin/volunteers")
-    public String volunteers(ModelMap model, HttpServletRequest request) {
-        List<VolunteerEntity> entities = volunteerRepository.findNezaradene();
-        entities.forEach(it -> {
-            it.setServices(it.getServices().replace(",", "<br>"));
-            it.setAvailability(Arrays.stream(it.getAvailability()
-                            .split(","))
-                    .map(st -> {
-                        int time = Integer.parseInt(st);
-                        return String.format("%d - %d", time, time + 2);
-                    }).collect(Collectors.joining("<br>"))
-            );
-        });
+    public String volunteers(ModelMap model, HttpServletRequest request,
+                             @RequestHeader(required = false, defaultValue = "false", name = "HX-request") boolean hxRequest,
+                             @RequestParam(required = false, defaultValue = "false") boolean zrusene,
+                             @RequestParam(required = false, defaultValue = "false") boolean zaradene,
+                             @RequestParam(required = false) String search) {
 
-        boolean isSearchData = "true".equals(request.getHeader("HX-Request"));
+        if (hxRequest) {
+            List<VolunteerStavEnum> stavy = new ArrayList<>(List.of(VolunteerStavEnum.AKTIVNY));
+            if (zrusene)
+                stavy.add(VolunteerStavEnum.ZRUSENY);
+            if (zaradene)
+                stavy.add(VolunteerStavEnum.ZARADENY);
+            List<VolunteerEntity> entities = volunteerRepository.findAllByNameAndStav(search, stavy);
 
-        model.addAttribute("volunteers", entities);
-        if(isSearchData){
+
+            entities.forEach(it -> {
+                it.setServices(it.getServices().replace(",", "<br>"));
+                it.setAvailability(Arrays.stream(it.getAvailability()
+                                .split(","))
+                        .map(st -> {
+                            int time = Integer.parseInt(st);
+                            return String.format("%d - %d", time, time + 2);
+                        }).collect(Collectors.joining("<br>"))
+                );
+            });
+
+            model.addAttribute("volunteers", entities);
+        }
+        if (hxRequest) {
             return renderPage("admin/volunteers :: volunteers", model);
-        }else{
+        } else {
             return renderPage("admin/volunteers", model);
         }
     }
