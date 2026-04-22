@@ -100,7 +100,14 @@
             <td th:utext="${volunteer.services}">Služby</td>
             <td th:text="${volunteer.text}">Poznámka</td>
             <td><a th:if="${volunteer.stav == T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).AKTIVNY}" th:hx-get="${'/admin/volunteers/zarad/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
-                   class="button-small" hx-include="#zaradene, #zrusene, #search">Zaraď</a></td>
+                   class="button-small" hx-include="#zaradene, #zrusene, #search">Zaraď</a>
+                <a th:if="${volunteer.stav != T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).ZRUSENY}" th:hx-get="${'/admin/volunteers/cancel/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
+                   class="button-negative" hx-include="#zaradene, #zrusene, #search">Zrušiť</a>
+                <a th:if="${volunteer.stav == T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).ZRUSENY}" th:hx-get="${'/admin/volunteers/revire/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
+                   class="button-small" hx-include="#zaradene, #zrusene, #search">Obnoviť</a>
+                <a th:if="${volunteer.stav == T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).ZARADENY}" th:hx-get="${'/admin/volunteers/revire/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
+                   class="button-negative" hx-include="#zaradene, #zrusene, #search">Zrušiť zaradenie</a>
+            </td>
         </tr>
         </tbody>
     </table>

@@ -183,7 +183,7 @@ public class AdminController {
     }
 
     @GetMapping("/admin/volunteers")
-    public String volunteers(ModelMap model, HttpServletRequest request,
+    public String volunteers(ModelMap model,
                              @RequestHeader(required = false, defaultValue = "false", name = "HX-request") boolean hxRequest,
                              @RequestParam(required = false, defaultValue = "false") boolean zrusene,
                              @RequestParam(required = false, defaultValue = "false") boolean zaradene,
@@ -219,19 +219,27 @@ public class AdminController {
     }
 
     @GetMapping("/admin/volunteers/cancel/{id}")
-    public String zrusRezervaciuDobrovolnika(@PathVariable UUID id) {
+    public String zrusRezervaciuDobrovolnika(@PathVariable UUID id, ModelMap model, boolean zrusene, boolean zaradene, String search) {
         VolunteerEntity entity = volunteerRepository.findById(id).orElseThrow();
         entity.setStav(VolunteerStavEnum.ZRUSENY);
         volunteerRepository.save(entity);
-        return "redirect:/admin/volunteers";
+        return volunteers(model, true, zrusene, zaradene, search);
     }
 
     @GetMapping("/admin/volunteers/zarad/{id}")
-    public String zaradDobrovolnika(@PathVariable UUID id) {
+    public String zaradDobrovolnika(@PathVariable UUID id, ModelMap model, boolean zrusene, boolean zaradene, String search) {
         VolunteerEntity entity = volunteerRepository.findById(id).orElseThrow();
         entity.setStav(VolunteerStavEnum.ZARADENY);
         volunteerRepository.save(entity);
-        return "redirect:/admin/volunteers";
+        return volunteers(model, true, zrusene, zaradene, search);
+    }
+
+    @GetMapping("/admin/volunteers/revire/{id}")
+    public String obnovListok(@PathVariable UUID id, ModelMap model, boolean zrusene, boolean zaradene, String search) {
+        VolunteerEntity entity = volunteerRepository.findById(id).orElseThrow();
+        entity.setStav(VolunteerStavEnum.AKTIVNY);
+        volunteerRepository.save(entity);
+        return volunteers(model, true, zrusene, zaradene, search);
     }
 
 

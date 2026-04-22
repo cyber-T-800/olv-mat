@@ -293,11 +293,22 @@ tr:hover {
     background-color: #90ee90;
 }
 
+.volunteers-green:hover{
+    background-color: #90ee90 !important;
+}
+
 .volunteers-skyblue{
     background-color: #87ceeb;
 }
 
+.volunteers-skyblue:hover{
+    background-color: #87ceeb !important;
+}
 
 .volunteers-red{
     background-color: #ee4444;
+}
+
+.volunteers-red:hover{
+    background-color: #ee4444 !important;
 }
