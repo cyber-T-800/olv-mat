@@ -81,16 +81,16 @@ public class AdminController {
     }
 
     @PostMapping("/admin")
-    public String nahrajListky(@Param("typ") String typ, @Param("subor") MultipartFile subor, ModelMap modelMap) throws IOException {
-        TypListkaEnum typListka = TypListkaEnum.valueOf(typ);
+    public String nahrajListky(@Param("subor") MultipartFile subor) throws IOException {
+        TypListkaEnum typListka = TypListkaEnum.TEAM;
 
         String inputString = new String(subor.getBytes(), StandardCharsets.UTF_8);
         String[] lines = inputString.split("\n");
         for (String line : lines) {
-            String[] values = line.split(",");
-            String email = values[0].trim();
-            String meno = values[1].trim();
-            String priezvisko = values[2].trim();
+            String[] values = line.split(";");
+            String email = values[2].trim();
+            String meno = values[0].trim();
+            String priezvisko = values[1].trim();
 
             TicketEntity entity = ticketRepository.save(new TicketEntity(meno + " " + priezvisko, email, typListka, eventService.findSelected().orElseThrow()));
 
