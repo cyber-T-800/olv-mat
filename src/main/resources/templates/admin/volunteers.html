@@ -41,7 +41,7 @@
                hx-include="#zaradene, #zrusene, #search"
                hx-trigger="change">
         <span class="toggle"></span>
-        <span class="text">Zobraziť aj zaradene</span>
+        <span class="text">Zobraziť aj zaradené</span>
     </label>
     <label class="toggle-line" style="margin-top: 0">
         <input type="checkbox" id="zrusene" name="zrusene"
@@ -105,5 +105,26 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    document.getElementById('zaradene').addEventListener('input', function () {
+        localStorage.setItem('filterZaradene', this.checked);
+    });
+
+    const savedFilterZaradene = localStorage.getItem('filterZaradene');
+    if (savedFilterZaradene !== null) {
+        document.getElementById('zaradene').checked = savedFilterZaradene === 'true';
+    }
+
+
+    document.getElementById('zrusene').addEventListener('input', function () {
+        localStorage.setItem('filterZruseneV', this.checked);
+    });
+
+    const savedFilterZruseneV = localStorage.getItem('filterZruseneV');
+    if (savedFilterZruseneV !== null) {
+        document.getElementById('zrusene').checked = savedFilterZruseneV === 'true';
+    }
+</script>
 </body>
 </html>

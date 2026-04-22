@@ -202,19 +202,34 @@
     }
 
 
+
     document.getElementById('search').addEventListener('input', function () {
         runFilter();
     });
+
 
     document.getElementById('filter-nezaplatene').addEventListener('input', function () {
         localStorage.setItem('filterNezaplatene', this.checked);
         runFilter();
     });
 
+    const savedFilterNezaplatene = localStorage.getItem('filterNezaplatene');
+    if (savedFilterNezaplatene !== null) {
+        document.getElementById('filter-nezaplatene').checked = savedFilterNezaplatene === 'true';
+    }
+
+
     document.getElementById('filter-zrusene').addEventListener('input', function () {
         localStorage.setItem('filterZrusene', this.checked);
         runFilter();
     });
+
+    const savedFilterZrusene = localStorage.getItem('filterZrusene');
+    if (savedFilterZrusene !== null) {
+        document.getElementById('filter-zrusene').checked = savedFilterZrusene === 'true';
+    }
+
+
 
     function runFilter() {
         const filter = document.getElementById('search').value.toLowerCase();
@@ -245,15 +260,7 @@
         });
     }
 
-    const savedFilterNezaplatene = localStorage.getItem('filterNezaplatene');
-    if (savedFilterNezaplatene !== null) {
-        document.getElementById('filter-nezaplatene').checked = savedFilterNezaplatene === 'true';
-    }
 
-    const savedFilterZrusene = localStorage.getItem('filterZrusene');
-    if (savedFilterZrusene !== null) {
-        document.getElementById('filter-zrusene').checked = savedFilterZrusene === 'true';
-    }
 
     renderTable();
 </script>
