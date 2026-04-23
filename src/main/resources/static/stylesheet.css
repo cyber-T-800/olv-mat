@@ -75,7 +75,7 @@ label {
 
 
 /* ───── BUTTONS ───── */
-.button, .button-small, .button-secondary, .button-negative, .button-negative-small, .button-close {
+.button {
     text-decoration: none;
     display: inline-block;
     cursor: pointer;
@@ -84,32 +84,32 @@ label {
     background: var(--bg);
     color: #fafafa;
 }
-.button:hover, .button-small:hover, .button-secondary:hover, .button-negative:hover, .button-negative-small:hover, .button-close:hover {
+.button:hover {
     background: var(--bg-hover);
 }
 
-.button, .button-secondary, .button-negative {
+.big {
     padding: 0.75rem 1.25rem;
 }
-.button-small, .button-negative-small {
+.small {
     padding: 0.25rem 0.75rem;
 }
-.button-close {
+.close {
     border: none;
     width: 28px;
     height: 28px;
 }
 
-.button, .button-small {
+.blue {
     --bg: #2864f0;
     --bg-hover: #1e3cb4;
 }
-.button-secondary {
+.white {
     --bg: #e0e0e0;
     --bg-hover: #c8c8c8;
     color: #000000;
 }
-.button-negative, .button-negative-small, .button-close {
+.red {
     --bg: #ff0000;
     --bg-hover: #aa0000;
 }

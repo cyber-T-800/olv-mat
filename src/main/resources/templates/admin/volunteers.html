@@ -10,17 +10,17 @@
 <body>
 <div class="obal" style="min-width: 885px;">
     <div th:if="${vacantSuperadminPosition}">
-        <a class="button" href="/admin/claim-super">Prevziať superadmin pozíciu</a>
+        <a class="button big blue" href="/admin/claim-super">Prevziať superadmin pozíciu</a>
     </div>
     <div th:if="${dobrovolniciNeodoslaneListky}">
-        <a class="button" href="/admin/volunteers/send-neodoslane">odošli dobrovoľníkom lískty</a>
+        <a class="button big blue" href="/admin/volunteers/send-neodoslane">odošli dobrovoľníkom lískty</a>
     </div>
     <h1>Administrácia dobrovoľníkov</h1>
-    <a class="button" href="/admin">
+    <a class="button big blue" href="/admin">
         Prejdi na správu lístkov
     </a>
 
-    <a class="button" th:if="${adminLevel == 'SUPER'}" href="/superadmin">
+    <a class="button big blue" th:if="${adminLevel == 'SUPER'}" href="/superadmin">
         Prejdi na superadmina
     </a>
 
@@ -100,13 +100,13 @@
             <td th:utext="${volunteer.services}">Služby</td>
             <td th:text="${volunteer.text}">Poznámka</td>
             <td><a th:if="${volunteer.stav == T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).AKTIVNY}" th:hx-get="${'/admin/volunteers/zarad/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
-                   class="button-small" hx-include="#zaradene, #zrusene, #search">Zaraď</a>
+                   class="button small blue" hx-include="#zaradene, #zrusene, #search">Zaradiť</a>
                 <a th:if="${volunteer.stav != T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).ZRUSENY}" th:hx-get="${'/admin/volunteers/cancel/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
-                   class="button-negative-small" hx-include="#zaradene, #zrusene, #search">Zrušiť</a>
+                   class="button small red" hx-include="#zaradene, #zrusene, #search">Zrušiť</a>
                 <a th:if="${volunteer.stav == T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).ZRUSENY}" th:hx-get="${'/admin/volunteers/revire/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
-                   class="button-small" hx-include="#zaradene, #zrusene, #search">Obnoviť</a>
+                   class="button small blue" hx-include="#zaradene, #zrusene, #search">Obnoviť</a>
                 <a th:if="${volunteer.stav == T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).ZARADENY}" th:hx-get="${'/admin/volunteers/revire/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
-                   class="button-negative-small" hx-include="#zaradene, #zrusene, #search">Zrušiť zaradenie</a>
+                   class="button small red" hx-include="#zaradene, #zrusene, #search">Vyradiť</a>
             </td>
         </tr>
         </tbody>
