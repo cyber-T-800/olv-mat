@@ -75,59 +75,43 @@ label {
 
 
 /* ───── BUTTONS ───── */
-.button, .button-small, .button-secondary, .button-negative {
+.button {
+    text-decoration: none;
     display: inline-block;
-    border-radius: 15px;
     cursor: pointer;
+    border-radius: 15px;
     transition: background 0.25s ease;
+    background: var(--bg);
+    color: #fafafa;
+}
+.button:hover {
+    background: var(--bg-hover);
 }
 
-.button, .button-small {
-    background: #2864f0;
-    color: #fafafa;
-    text-decoration: none;
-}
-.button {
+.big {
     padding: 0.75rem 1.25rem;
 }
-.button-small {
+.small {
     padding: 0.25rem 0.75rem;
 }
-.button:hover, .button-small:hover {
-    background: #1e3cb4;
-}
-
-.button-secondary {
-    background: #e0e0e0;
-    color: #000000;
-    text-decoration: none;
-    padding: 0.75rem 1.25rem;
-}
-.button-secondary:hover {
-    background: #c8c8c8;
-}
-
-.button-negative {
-    background: #ff0000;
-    color: #fafafa;
-    text-decoration: none;
-    padding: 0.75rem 1.25rem;
-}
-.button-close {
-    background: #ff0000;
-    color: #fafafa;
+.close {
     border: none;
     width: 28px;
     height: 28px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background 0.2s;
-    padding: 0;
-    flex-shrink: 0;
-    align-self: flex-end;
 }
-.button-negative:hover, .button-close:hover {
-    background: #aa0000;
+
+.blue {
+    --bg: #2864f0;
+    --bg-hover: #1e3cb4;
+}
+.white {
+    --bg: #e0e0e0;
+    --bg-hover: #c8c8c8;
+    color: #000000;
+}
+.red {
+    --bg: #ff0000;
+    --bg-hover: #aa0000;
 }
 
 
