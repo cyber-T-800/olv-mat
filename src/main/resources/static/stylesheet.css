@@ -75,7 +75,7 @@ label {
 
 
 /* ───── BUTTONS ───── */
-.button {
+[class^="button"] {
     text-decoration: none;
     display: inline-block;
     cursor: pointer;
@@ -84,32 +84,32 @@ label {
     background: var(--bg);
     color: #fafafa;
 }
-.button:hover {
+[class^="button"]:hover {
     background: var(--bg-hover);
 }
 
-.big {
+.button, .button-secondary, .button-negative {
     padding: 0.75rem 1.25rem;
 }
-.small {
+.button-small, .button-small-negative {
     padding: 0.25rem 0.75rem;
 }
-.close {
+.button-close {
     border: none;
     width: 28px;
     height: 28px;
 }
 
-.blue {
+.button, .button-small {
     --bg: #2864f0;
     --bg-hover: #1e3cb4;
 }
-.white {
+.button-secondary {
     --bg: #e0e0e0;
     --bg-hover: #c8c8c8;
     color: #000000;
 }
-.red {
+.button-negative, .button-small-negative, .button-close {
     --bg: #ff0000;
     --bg-hover: #aa0000;
 }
@@ -273,6 +273,8 @@ tr:hover {
 }
 
 
+
+/* ───── VOLUNTEERS TABLE ───── */
 .volunteers-green{
     background-color: #90ee90;
 }

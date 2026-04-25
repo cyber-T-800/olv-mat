@@ -8,12 +8,12 @@
 </head>
 <body>
 <div class="obal">
-    <a href="/admin" class="button big white">Späť na administráciu</a>
+    <a href="/admin" class="button-secondary">Späť na administráciu</a>
     <h1>Správa udalostí</h1>
 
     <p>Tu môžete spravovať udalosti, ktoré sa zobrazujú na hlavnej stránke.</p>
 
-    <a href="/admin/event" class="button big blue">Vytvoriť novú udalosť</a>
+    <a href="/admin/event" class="button">Vytvoriť novú udalosť</a>
 
     <div style="height: 2rem;"></div>
 
@@ -30,7 +30,7 @@
             <tr th:each="e : ${events}">
                 <td th:text="${e.getNazov()}"></td>
                 <td>
-                    <a th:if="${e.getStav() != 'SELECTED'}" th:href="${'/superadmin/events/select/' + e.getId()}" class="button big blue">Vybrať</a>
+                    <a th:if="${e.getStav() != 'SELECTED'}" th:href="${'/superadmin/events/select/' + e.getId()}" class="button">Vybrať</a>
                     <span th:if="${e.getStav() == 'SELECTED'}"> Vybratý</span>
                 </td>
                 <td th:text="${'/superadmin/event/' + e.getId()}"></td>
