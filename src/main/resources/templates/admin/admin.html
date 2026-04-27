@@ -10,18 +10,18 @@
 <body>
 <div class="obal" style="min-width: 900px;">
     <div th:if="${vacantSuperadminPosition}">
-        <a class="button" href="/admin/claim-super">Prevziať superadmin pozíciu</a>
+        <a class="button big blue" href="/admin/claim-super">Prevziať superadmin pozíciu</a>
     </div>
     <h1>Administrácia rezervácií</h1>
-    <a class="button" href="/vstup">
+    <a class="button big blue" href="/vstup">
         Prejdi na kontrolu lístkov
     </a>
 
-    <a class="button" href="/admin/volunteers">
+    <a class="button big blue" href="/admin/volunteers">
         Prejdi na dobrovoľníkov
     </a>
 
-    <a class="button" th:if="${adminLevel == 'SUPER'}" href="/superadmin">
+    <a class="button big blue" th:if="${adminLevel == 'SUPER'}" href="/superadmin">
         Prejdi na superadmina
     </a>
 
@@ -102,7 +102,7 @@
         content.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin: -20px -20px 0 -20px; padding: 20px;">
                 <h4 style="margin: 0;">${r.meno}</h4>
-                <button class="button-close" onclick="closeModal()">✕</button>
+                <button class="button close red" onclick="closeModal()">✕</button>
             </div>
 
             <h3>Zmena typu lístka</h3>
@@ -118,7 +118,7 @@
                             <option value="TEAM">team</option>
                         </select>
 
-                        <button class="button-small" type="submit">
+                        <button class="button small blue" type="submit">
                             Potvrdiť
                         </button>
                     </div>
@@ -131,7 +131,7 @@
             <div style="text-align: center;">
                 <form action="/admin/zrus-rezervaciu" method="post">
                     <input type="hidden" name="id" value="${r.id}">
-                    <button class="button-negative" type="submit">Zrušiť rezerváciu</button>
+                    <button class="button big red" type="submit">Zrušiť rezerváciu</button>
                 </form>
             </div>
         `;
@@ -177,7 +177,7 @@
                                 ${r.stav}
                             </td>
                             <td>
-                                ${r.stav === "REZERVOVANY" ? `<button class="button-small" onclick="confirmPayment('${r.id}')">Zaplatiť</button>` : ""}
+                                ${r.stav === "REZERVOVANY" ? `<button class="button small blue" onclick="confirmPayment('${r.id}')">Zaplatiť</button>` : ""}
                             </td>
                             <td>
                                 <button class="more-btn" onclick="openActions('${r.id}')">⋮</button>
