@@ -26,7 +26,7 @@ public class ReservationController {
     private final EmailService emailService;
     private final EventService eventService;
 
-    private final int maxPocetListkov = 400;
+    private final int maxPocetListkov = 550;
     private final int lastListkyPocet = 25;
 
 

@@ -50,7 +50,7 @@ public class AdminController {
     @Value("${hostport}")
     private String hostport;
 
-    private final int maxPocetListkov = 400;
+    private final int maxPocetListkov = 550;
 
     @GetMapping("/admin/login")
     public String getLogin() {
