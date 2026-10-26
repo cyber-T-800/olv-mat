@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface VolunteerRepository extends JpaRepository<VolunteerEntity, UUID> {
 
 
-    @Query("select v from VolunteerEntity v where not(v.emailSend) and v.stav != 'ZRUSENY'")
+    @Query("select v from VolunteerEntity v where not(v.emailSend) and v.stav != 'ZRUSENY' and v.eventId = :eventId")
     List<VolunteerEntity> findEmailNotSend();
 
     @Query("""
