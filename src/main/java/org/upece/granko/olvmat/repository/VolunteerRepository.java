@@ -20,6 +20,7 @@ public interface VolunteerRepository extends JpaRepository<VolunteerEntity, UUID
                 select v from VolunteerEntity v
                 where (:stavy is null or v.stav in :stavy)
                   and v.name like %:search%
+                  and v.eventId = :eventId
             """)
-    List<VolunteerEntity> findAllByNameAndStav(String search, List<VolunteerStavEnum> stavy);
+    List<VolunteerEntity> findAllByEventIdNameAndStav(UUID eventId, String search, List<VolunteerStavEnum> stavy);
 }

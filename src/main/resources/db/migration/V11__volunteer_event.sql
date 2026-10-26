@@ -1,0 +1,1 @@
+alter table volunteer add column event_id uuid not null default '690eddd9-ba0e-45b8-9002-d666482ada20';

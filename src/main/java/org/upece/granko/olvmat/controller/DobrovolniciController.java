@@ -90,6 +90,7 @@ public class DobrovolniciController {
                 avaibilityBuilder.toString(),
                 servicesBuilder.toString(),
                 true,
+                eventService.findSelected().orElseThrow().getId(),
                 VolunteerStavEnum.AKTIVNY
         );
 

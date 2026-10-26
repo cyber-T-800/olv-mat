@@ -195,7 +195,7 @@ public class AdminController {
                 stavy.add(VolunteerStavEnum.ZRUSENY);
             if (zaradene)
                 stavy.add(VolunteerStavEnum.ZARADENY);
-            List<VolunteerEntity> entities = volunteerRepository.findAllByNameAndStav(search, stavy);
+            List<VolunteerEntity> entities = volunteerRepository.findAllByEventIdNameAndStav(eventService.findSelected().orElseThrow().getId(), search, stavy);
 
 
             entities.forEach(it -> {
@@ -258,14 +258,16 @@ public class AdminController {
     }
 
     public String renderPage(String pageId, ModelMap model) {
-        model.put("pocetObsadenych", ticketRepository.countUcastnicke(eventService.findSelected().orElseThrow().getId()));
+        UUID selectedEventId = eventService.findSelected().orElseThrow().getId();
+
+        model.put("pocetObsadenych", ticketRepository.countUcastnicke(selectedEventId));
         model.put("maxPocet", maxPocetListkov);
 
-        model.put("pocetDobrovolnikov", ticketRepository.countDobrovolnicke(eventService.findSelected().orElseThrow().getId()));
-        model.put("pocetTeamakov", ticketRepository.countTeamacke(eventService.findSelected().orElseThrow().getId()));
-        model.put("pocetPouzite", ticketRepository.countPouzite(eventService.findSelected().orElseThrow().getId()));
-        model.put("pocetZaplatene", ticketRepository.countZaplatene(eventService.findSelected().orElseThrow().getId()));
-        model.put("pocetCelkovo", ticketRepository.countAll(eventService.findSelected().orElseThrow().getId()));
+        model.put("pocetDobrovolnikov", ticketRepository.countDobrovolnicke(selectedEventId));
+        model.put("pocetTeamakov", ticketRepository.countTeamacke(selectedEventId));
+        model.put("pocetPouzite", ticketRepository.countPouzite(selectedEventId));
+        model.put("pocetZaplatene", ticketRepository.countZaplatene(selectedEventId));
+        model.put("pocetCelkovo", ticketRepository.countAll(selectedEventId));
         model.put("user", ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         model.put("adminLevel", adminDetailService.hasAuthority(AdminRoleEnum.SUPERADMIN) ? "SUPER" : "ADMIN");
         model.put("dobrovolniciNeodoslaneListky", !volunteerRepository.findEmailNotSend().isEmpty());

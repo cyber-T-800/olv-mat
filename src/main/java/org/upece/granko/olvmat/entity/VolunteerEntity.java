@@ -25,6 +25,7 @@ public class VolunteerEntity {
     private String availability;
     private String services;
     private boolean emailSend;
+    private UUID eventId;
     @Enumerated(value = EnumType.STRING)
     private VolunteerStavEnum stav;
 }
