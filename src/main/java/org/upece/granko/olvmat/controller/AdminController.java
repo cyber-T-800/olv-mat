@@ -195,7 +195,7 @@ public class AdminController {
                 stavy.add(VolunteerStavEnum.ZRUSENY);
             if (zaradene)
                 stavy.add(VolunteerStavEnum.ZARADENY);
-            List<VolunteerEntity> entities = volunteerRepository.findAllByEventIdNameAndStav(eventService.findSelected().orElseThrow().getId(), search, stavy);
+                List<VolunteerEntity> entities = volunteerRepository.findAllByEventIdNameAndStav(eventService.findSelected().orElseThrow().getId(), search, stavy);
 
 
             entities.forEach(it -> {
@@ -245,7 +245,7 @@ public class AdminController {
 
     @GetMapping("/admin/volunteers/send-neodoslane")
     public String sendNeodoslaneDobrovolnickeListky() {
-        List<VolunteerEntity> entities = volunteerRepository.findEmailNotSend();
+        List<VolunteerEntity> entities = volunteerRepository.findEmailNotSend(eventService.findSelected().orElseThrow().getId());
         List<TicketEntity> tickets = entities.stream().map(it -> new TicketEntity(it.getName(), it.getEmail(), TypListkaEnum.DOBROVOLNIK, eventService.findSelected().orElseThrow())).toList();
         tickets.forEach(emailService::odosliListok);
         ticketRepository.saveAll(tickets);
@@ -270,7 +270,7 @@ public class AdminController {
         model.put("pocetCelkovo", ticketRepository.countAll(selectedEventId));
         model.put("user", ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         model.put("adminLevel", adminDetailService.hasAuthority(AdminRoleEnum.SUPERADMIN) ? "SUPER" : "ADMIN");
-        model.put("dobrovolniciNeodoslaneListky", !volunteerRepository.findEmailNotSend().isEmpty());
+        model.put("dobrovolniciNeodoslaneListky", !volunteerRepository.findEmailNotSend(selectedEventId).isEmpty());
         return pageId;
     }
 }
