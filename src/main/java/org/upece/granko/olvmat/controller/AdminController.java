@@ -1,6 +1,5 @@
 package org.upece.granko.olvmat.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
@@ -157,11 +156,17 @@ public class AdminController {
         return "admin/event";
     }
 
+    @GetMapping("/admin/event/{eventId}")
+    public String getEvent(@PathVariable UUID eventId, ModelMap model){
+        model.addAttribute("eventEditForm", eventService.getAsForm(eventId));
+
+        return "admin/event";
+    }
+
     @PostMapping("/admin/event")
     public String saveEvent(EventEditForm eventEditForm) {
         eventService.save(eventEditForm);
 
-        System.out.println(eventEditForm);
         return "redirect:/admin/events";
     }
 
@@ -195,7 +200,7 @@ public class AdminController {
                 stavy.add(VolunteerStavEnum.ZRUSENY);
             if (zaradene)
                 stavy.add(VolunteerStavEnum.ZARADENY);
-                List<VolunteerEntity> entities = volunteerRepository.findAllByEventIdNameAndStav(eventService.findSelected().orElseThrow().getId(), search, stavy);
+            List<VolunteerEntity> entities = volunteerRepository.findAllByEventIdNameAndStav(eventService.findSelected().orElseThrow().getId(), search, stavy);
 
 
             entities.forEach(it -> {

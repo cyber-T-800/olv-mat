@@ -34,7 +34,7 @@ public class DobrovolniciController {
                     <h1>Dobrovoľníci</h1>
                 
                         <p>
-                            Ak sa chceš zapojiť do organizácie Majálesu,
+                            Ak sa chceš zapojiť do organizácie OĽV,
                             vyplň formulár nižšie. Uveď svoje meno, e-mail, preferované služby
                             a v harmonograme vyklikaj časy, kedy si dostupný.
                         </p>

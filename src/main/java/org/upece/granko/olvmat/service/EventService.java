@@ -16,8 +16,17 @@ import java.util.UUID;
 public class EventService {
     private final EventRepository eventRepository;
 
+    public EventEditForm getAsForm(UUID id){
+        EventEntity entity = eventRepository.findById(id).orElseThrow();
+        EventEditForm form = new EventEditForm();
+        form.setId(entity.getId());
+        form.setName(entity.getNazov());
+        form.setDescription(entity.getPopis());
+        return form;
+    }
+
     public void save(EventEditForm form) {
-        EventEntity entity = null;
+        EventEntity entity;
         if (form.getId() == null) {
             entity = new EventEntity();
             entity.setStav("UNSELECTED");

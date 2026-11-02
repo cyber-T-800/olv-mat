@@ -33,7 +33,9 @@
                     <a th:if="${e.getStav() != 'SELECTED'}" th:href="${'/superadmin/events/select/' + e.getId()}" class="button big blue">Vybrať</a>
                     <span th:if="${e.getStav() == 'SELECTED'}"> Vybratý</span>
                 </td>
-                <td th:text="${'/superadmin/event/' + e.getId()}"></td>
+                <td>
+                    <a th:href="${'/admin/event/' + e.getId()}" class="button big blue">Upraviť</a>
+                </td>
             </tr>
         </tbody>
     </table>

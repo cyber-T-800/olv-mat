@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sk">
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,12 +10,14 @@
 <div class="obal obal-static">
     <a href="/admin/events" class="button big white">Späť na prehľad eventov</a>
     <h1>Úprava eventu</h1>
-    <form action="/admin/event" method="post">
+    <form th:object="${eventEditForm}" id="form" action="/admin/event" method="post">
+        <input type="hidden" th:field="*{id}"/>
+        <input type="hidden" id="popisInput" th:field="*{description}"/>
         <label for="name">Názov:</label>
-        <input type="text" id="name" name="name" required>
+        <input type="text" id="name" name="name" th:field="*{name}" required>
 
         <label for="description">Popis:</label>
-        <div contenteditable="true" id="description" style="border: 1px solid black;">
+        <div contenteditable="true" id="description" style="border: 1px solid black;" th:utext="*{description}">
             <h1>Názov udalosti</h1>
             <p>
                 Bla bla bla
@@ -26,17 +28,11 @@
 
 </div>
 </body>
-<script>
-    let save = function(event) {
+<script type="text/javascript">
+    let save = function (event){
         event.preventDefault();
-        let description = document.getElementById("description").innerHTML;
-        let form = event.target.form;
-        let input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "description";
-        input.value = description;
-        form.appendChild(input);
-        form.submit();
+        document.getElementById("popisInput").value = document.getElementById("description").innerHTML;
+        document.getElementById("form").submit()
     }
 </script>
 </html>
