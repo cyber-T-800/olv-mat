@@ -5,18 +5,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.upece.granko.olvmat.entity.ScheduleItemEntity;
 import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.entity.VolunteerEntity;
 import org.upece.granko.olvmat.entity.enums.TypListkaEnum;
 import org.upece.granko.olvmat.entity.enums.VolunteerStavEnum;
 import org.upece.granko.olvmat.model.DobrovolnikForm;
+import org.upece.granko.olvmat.model.ScheduleItem;
+import org.upece.granko.olvmat.repository.ScheduleItemRepository;
 import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.repository.VolunteerRepository;
 import org.upece.granko.olvmat.service.EmailService;
 import org.upece.granko.olvmat.service.EventService;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -27,6 +29,7 @@ public class DobrovolniciController {
     private final EmailService emailService;
     private final EventService eventService;
     private final VolunteerRepository volunteerRepository;
+    private final ScheduleItemRepository scheduleItemRepository;
 
     @GetMapping("dobrovolnici")
     public String getDobrovolnici(ModelMap model) {
@@ -41,24 +44,9 @@ public class DobrovolniciController {
                         <div style="height:1.5rem;"></div>
                 """);
 
-        // rowspan 1 = 5 minút
-        List<Map<String, Object>> program = List.of(
-            Map.of("rowspan", 12, "color", "#6e8c8c", "text", "Registrácia"),
-            Map.of("rowspan", 12, "color", "#5082d7", "text", "Sv. omša"),
-            Map.of("rowspan",  2, "color", "#87bed2", "text", "Otvorenie"),
-            Map.of("rowspan",  6, "color", "#32affa", "text", "Tanečné kolo"),
-            Map.of("rowspan",  2, "color", "#fafafa", "text", ""),
-            Map.of("rowspan",  6, "color", "#64affa", "text", "Škola tanca"),
-            Map.of("rowspan",  6, "color", "#32affa", "text", "Tanečné kolo"),
-            Map.of("rowspan",  2, "color", "#fafafa", "text", ""),
-            Map.of("rowspan",  4, "color", "#a5bed2", "text", "Súťaže"),
-            Map.of("rowspan",  6, "color", "#32affa", "text", "Tanečné kolo"),
-            Map.of("rowspan",  3, "color", "#87bed2", "text", "Fotka"),
-            Map.of("rowspan",  4, "color", "#a5bed2", "text", "Limbo"),
-            Map.of("rowspan",  7, "color", "#32affa", "text", "Tanečné kolo"),
-            Map.of("rowspan",  6, "color", "#87bed2", "text", "Tombola"),
-            Map.of("rowspan", 42, "color", "#64affa", "text", "Voľná zábava")
-            );
+        List<ScheduleItemEntity> programEntity = scheduleItemRepository.findAllByEventIdOrderByOrder(eventService.findSelected().orElseThrow().getId());
+
+        List<ScheduleItem> program = programEntity.stream().map(it -> new ScheduleItem(it.getLength() / 5, it.getColor(), it.getText())).toList();
 
         model.put("program", program);
         model.put("startHour", 18);

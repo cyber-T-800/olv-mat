@@ -22,6 +22,7 @@ public class EventService {
         form.setId(entity.getId());
         form.setName(entity.getNazov());
         form.setDescription(entity.getPopis());
+        form.setDate(entity.getDatum());
         return form;
     }
 

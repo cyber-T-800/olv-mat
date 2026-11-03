@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -20,4 +21,5 @@ public class EventEntity {
     private String nazov;
     private String stav;
     private String popis;
+    private LocalDate datum;
 }

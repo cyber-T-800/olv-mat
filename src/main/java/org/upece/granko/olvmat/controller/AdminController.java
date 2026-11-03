@@ -164,10 +164,12 @@ public class AdminController {
     }
 
     @PostMapping("/admin/event")
-    public String saveEvent(EventEditForm eventEditForm) {
+    public String saveEvent(EventEditForm eventEditForm, ModelMap model) {
         eventService.save(eventEditForm);
 
-        return "redirect:/admin/events";
+        model.addAttribute("success", true);
+
+        return getEvent(eventEditForm.getId(), model);
     }
 
     @PostMapping("/admin/zrus-rezervaciu")
