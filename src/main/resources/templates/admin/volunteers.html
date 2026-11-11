@@ -106,7 +106,7 @@
                 <a th:if="${volunteer.stav == T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).ZRUSENY}" th:hx-get="${'/admin/volunteers/revire/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
                    class="button small blue" hx-include="#zaradene, #zrusene, #search">Obnoviť</a>
                 <a th:if="${volunteer.stav == T(org.upece.granko.olvmat.entity.enums.VolunteerStavEnum).ZARADENY}" th:hx-get="${'/admin/volunteers/revire/' + volunteer.id}" hx-target="#volunteers" hx-swap="innerHTML"
-                   class="button small red" hx-include="#zaradene, #zrusene, #search">Vyradiť</a>
+                   class="button small red" hx-include="#zaradene, #zrusene, #search">Zrušiť zaradenie</a>
             </td>
         </tr>
         </tbody>
