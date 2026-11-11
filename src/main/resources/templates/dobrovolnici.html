@@ -27,22 +27,18 @@
 
 
         <h3>Služby</h3>
-        <p>Vyber služby zaškrtnutím. Každá označená služba sa presunie pod najnižšiu už zaškrtnutú položku.</p>
+        <p>Vyber služby kliknutím. Každá vybraná služba sa presunie pod najnižšiu už vybranú položku.</p>
         <p>(Hore sú služby, ktoré si vybral ako prvé.)</p>
         <div style="height:1.5rem;"></div>
 
         <table id="services">
             <colgroup>
                 <col style="width: auto">
-                <col style="width: 20px">
             </colgroup>
 
             <tbody>
-            <tr th:each="service : ${services}" class="service-row">
+            <tr th:each="service : ${services}" class="service-row" role="checkbox" tabindex="0" aria-checked="false">
                 <td th:text="${service}">Služba</td>
-                <td>
-                    <input type="checkbox" class="service-checkbox" aria-label="Vybrať službu">
-                </td>
             </tr>
             </tbody>
         </table>
@@ -71,12 +67,12 @@
         </table>
 
 
-        <div style="height:1rem;"></div>
-        <input class="button big blue" style="width:100%;" type="submit" value="Odoslať dostupnosť">
-
-
         <label for="text">Poznámka:</label>
         <input type="text" id="text" name="text">
+
+
+        <div style="height:1rem;"></div>
+        <input class="button big blue" style="width:100%;" type="submit" value="Odoslať dostupnosť">
     </form>
     <div style="height:1.5rem;"></div>
 </div>
@@ -201,19 +197,15 @@ document.addEventListener("mouseup", () => {
 // ===== TABULKA SLUZIEB =====
 const servicesTbody = document.querySelector("#services tbody");
 
-servicesTbody.addEventListener('change', e => {
-    const checkbox = e.target.closest('.service-checkbox');
-    if (!checkbox) return;
+function toggleService(row) {
+    const selected = row.classList.toggle('selected');
+    row.setAttribute('aria-checked', String(selected));
 
-    const row = checkbox.closest('tr');
-    const checkedCheckboxes = [...servicesTbody.querySelectorAll('.service-checkbox:checked')];
-    const checkedRowsExceptCurrent = checkedCheckboxes
-        .filter(c => c !== checkbox)
-        .map(c => c.closest('tr'));
-
-    if (checkbox.checked) {
-        if (checkedRowsExceptCurrent.length > 0) {
-            checkedRowsExceptCurrent[checkedRowsExceptCurrent.length - 1].after(row);
+    if (selected) {
+        const selectedRows = [...servicesTbody.querySelectorAll('tr.selected')]
+            .filter(selectedRow => selectedRow !== row);
+        if (selectedRows.length > 0) {
+            selectedRows[selectedRows.length - 1].after(row);
         } else {
             servicesTbody.prepend(row);
         }
@@ -221,18 +213,22 @@ servicesTbody.addEventListener('change', e => {
         servicesTbody.append(row);
     }
 
-    row.classList.add('moved');
+    row.classList.remove('moved');
+    requestAnimationFrame(() => row.classList.add('moved'));
     window.setTimeout(() => row.classList.remove('moved'), 400);
-});
+}
 
 servicesTbody.addEventListener('click', e => {
-    const row = e.target.closest('tr');
-    if (!row || !row.classList.contains('service-row')) return;
-    if (e.target.closest('.service-checkbox')) return;
+    const row = e.target.closest('.service-row');
+    if (row) toggleService(row);
+});
 
-    const checkbox = row.querySelector('.service-checkbox');
-    if (!checkbox) return;
-    checkbox.click();
+servicesTbody.addEventListener('keydown', e => {
+    const row = e.target.closest('.service-row');
+    if (!row || (e.key !== ' ' && e.key !== 'Enter')) return;
+
+    e.preventDefault();
+    toggleService(row);
 });
 
 
@@ -252,7 +248,7 @@ document.querySelector("form").addEventListener("submit", function(e) {
     this.querySelectorAll("input[name='availability'], input[name='services']")
         .forEach(el => el.remove());
 
-    // Zakliknuté checkboxy
+    // Vybrané služby v poradí
     const availInput = document.createElement("input");
     availInput.type = "hidden";
     availInput.name = "availability";
@@ -260,11 +256,8 @@ document.querySelector("form").addEventListener("submit", function(e) {
     this.appendChild(availInput);
 
     // Poradie služieb → "Bar,Šatňa,SBS,..."
-    const services = [...document.querySelectorAll("#services tbody tr")]
-        .map(tr => tr.querySelector("td:last-child input").checked ? tr.querySelector("td:first-child").innerText : "")
-        .filter(it => it !== "");
-
-    console.log(services)
+    const services = [...document.querySelectorAll("#services tbody tr.selected")]
+        .map(tr => tr.querySelector("td:first-child").innerText);
     const servInput = document.createElement("input");
     servInput.type = "hidden";
     servInput.name = "services";

@@ -266,10 +266,35 @@ tr:hover {
 
 /* ───── SERVICES ───── */
 #services tr {
-    height: 30;
+    height: 30px;
+    cursor: pointer;
+}
+#services tbody tr td {
+    transition: background-color 0.2s ease;
+}
+#services tbody tr:hover:not(.selected) td {
+    background-color: #edf6ff;
+}
+#services tbody tr.selected td {
+    background-color: #8fc2ff;
+}
+#services tbody tr:focus-visible {
+    outline: 2px solid #1a5fc8;
+    outline-offset: -2px;
 }
 #services tbody tr.moved {
     animation: moved-row 0.35s ease-out;
+}
+@keyframes moved-row {
+    from { transform: translateX(-6px); }
+    to { transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    #services tbody tr,
+    #services tbody tr td {
+        animation: none;
+        transition: none;
+    }
 }
 
 
