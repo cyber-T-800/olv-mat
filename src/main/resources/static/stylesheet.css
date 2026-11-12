@@ -162,6 +162,12 @@ th, td {
     text-align: center;
     font-size: 1rem;
 }
+#volunteers tbody td {
+    border-bottom: 2px solid #666;
+}
+#volunteers tbody tr:last-child td {
+    border-bottom: none;
+}
 th {
     background: #fafafa;
 }
