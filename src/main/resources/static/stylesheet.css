@@ -75,7 +75,7 @@ label {
 
 
 /* ───── BUTTONS ───── */
-.button {
+[class^="button"] {
     text-decoration: none;
     display: inline-block;
     cursor: pointer;
@@ -84,32 +84,32 @@ label {
     background: var(--bg);
     color: #fafafa;
 }
-.button:hover {
+[class^="button"]:hover {
     background: var(--bg-hover);
 }
 
-.big {
+.button, .button-secondary, .button-negative {
     padding: 0.75rem 1.25rem;
 }
-.small {
+.button-small, .button-small-negative {
     padding: 0.25rem 0.75rem;
 }
-.close {
+.button-close {
     border: none;
     width: 28px;
     height: 28px;
 }
 
-.blue {
+.button, .button-small {
     --bg: #2864f0;
     --bg-hover: #1e3cb4;
 }
-.white {
+.button-secondary {
     --bg: #e0e0e0;
     --bg-hover: #c8c8c8;
     color: #000000;
 }
-.red {
+.button-negative, .button-small-negative, .button-close {
     --bg: #ff0000;
     --bg-hover: #aa0000;
 }
@@ -161,6 +161,12 @@ th, td {
     border-bottom: 1px solid #dcdcdc;
     text-align: center;
     font-size: 1rem;
+}
+#volunteers tbody td {
+    border-bottom: 2px solid #666;
+}
+#volunteers tbody tr:last-child td {
+    border-bottom: none;
 }
 th {
     background: #fafafa;
@@ -266,13 +272,40 @@ tr:hover {
 
 /* ───── SERVICES ───── */
 #services tr {
-    height: 30;
+    height: 30px;
+    cursor: pointer;
+}
+#services tbody tr td {
+    transition: background-color 0.2s ease;
+}
+#services tbody tr:hover:not(.selected) td {
+    background-color: #edf6ff;
+}
+#services tbody tr.selected td {
+    background-color: #8fc2ff;
+}
+#services tbody tr:focus-visible {
+    outline: 2px solid #1a5fc8;
+    outline-offset: -2px;
 }
 #services tbody tr.moved {
     animation: moved-row 0.35s ease-out;
 }
+@keyframes moved-row {
+    from { transform: translateX(-6px); }
+    to { transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    #services tbody tr,
+    #services tbody tr td {
+        animation: none;
+        transition: none;
+    }
+}
 
 
+
+/* ───── VOLUNTEERS TABLE ───── */
 .volunteers-green{
     background-color: #90ee90;
 }
