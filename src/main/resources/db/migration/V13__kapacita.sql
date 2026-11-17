@@ -1,0 +1,1 @@
+alter table event add column kapacita int not null default 350;

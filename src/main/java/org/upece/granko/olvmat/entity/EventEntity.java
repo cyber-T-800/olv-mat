@@ -21,5 +21,6 @@ public class EventEntity {
     private String nazov;
     private String stav;
     private String popis;
+    private Integer kapacita;
     private LocalDate datum;
 }
