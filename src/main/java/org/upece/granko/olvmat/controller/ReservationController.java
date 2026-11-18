@@ -32,7 +32,7 @@ public class ReservationController {
     @GetMapping("")
     public String rezervacia(ModelMap model) {
         String popis = """
-                <h1>Rezervácia lístka na Majáles</h1>
+                <h1>Rezervácia lístka na OĽV</h1>
                 
                 
                     <p>Ohniví muchachos, krásne señoritas,</p>
