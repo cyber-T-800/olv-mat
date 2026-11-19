@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Predaj produktov</title>
+    <link rel="stylesheet" href="/stylesheet.css">
+    <style>
+        .obal {
+            width: 100%;
+            max-width: none;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, 232px);
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .product {
+            width: 232px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 1px solid #dcdcdc;
+            border-radius: 12px;
+            background: #fff;
+            cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .product:hover,
+        .product:focus-visible {
+            background: #edf6ff;
+            box-shadow: 0 0 0 2px #8fc2ff;
+            outline: none;
+        }
+
+        .product[aria-busy="true"] {
+            cursor: wait;
+            opacity: 0.7;
+        }
+
+        .product-image {
+            width: 200px;
+            height: 200px;
+            max-width: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            align-self: center;
+        }
+
+        .product h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .message {
+            position: fixed;
+            z-index: 10;
+            top: 1rem;
+            left: 50%;
+            width: max-content;
+            max-width: calc(100% - 2rem);
+            margin: 0;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            text-align: center;
+            transform: translateX(-50%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .message-error {
+            background: #ffe5e5;
+            color: #aa0000;
+            animation: notification 3s ease-in-out forwards;
+        }
+
+        .message-success {
+            background: #e2f5e8;
+            color: #187a36;
+            animation: notification 3s ease-in-out forwards;
+        }
+
+        @keyframes notification {
+            0% { opacity: 0; transform: translate(-50%, -1rem); }
+            15%, 80% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -1rem); }
+        }
+    </style>
+</head>
+<body>
+<main class="obal">
+    <h1 th:text="${title}">Predaj produktov</h1>
+
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+
+    <div th:if="${#lists.isEmpty(products)}" class="message">
+        Momentálne nie sú dostupné žiadne produkty.
+    </div>
+
+    <section class="products" th:unless="${#lists.isEmpty(products)}">
+        <article class="product"
+                 th:each="product : ${products}"
+                 th:attr="data-product-id=${product.id}"
+                 role="button"
+                 tabindex="0"
+                 aria-label="Predať produkt">
+            <img class="product-image"
+                 th:if="${product.image != null and #arrays.length(product.image) > 0}"
+                 th:src="${'data:image/jpeg;base64,' + product.imageBase64}"
+                 th:alt="${product.title}">
+
+            <h2 th:text="${product.title}">Produkt</h2>
+            <strong style="text-align: center" th:if="${product.price != null}"
+                    th:text="${product.price + ' €'}">0,00 €</strong>
+        </article>
+    </section>
+</main>
+
+<script>
+    document.querySelectorAll(".product").forEach(function (card) {
+        async function sellProduct() {
+            const message = document.getElementById("message");
+            card.setAttribute("aria-busy", "true");
+            message.className = "message";
+            message.textContent = "";
+
+            try {
+                const response = await fetch("/api/sell", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: new URLSearchParams({id: card.dataset.productId})
+                });
+
+                if (!response.ok) {
+                    card.removeAttribute("aria-busy");
+                    showMessage("message-error", "Predaj sa nepodarilo zaznamenať.");
+                    return;
+                }
+
+                card.removeAttribute("aria-busy");
+                showMessage("message-success", "Predaj bol zaznamenaný.");
+            } catch (error) {
+                card.removeAttribute("aria-busy");
+                showMessage("message-error", "Predaj sa nepodarilo zaznamenať.");
+            }
+        }
+
+        card.addEventListener("click", sellProduct);
+        card.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                sellProduct();
+            }
+        });
+    });
+
+    function showMessage(type, text) {
+        const message = document.getElementById("message");
+        message.className = "message";
+        message.textContent = text;
+        void message.offsetWidth;
+        message.className = "message " + type;
+    }
+</script>
+</body>
+</html>
