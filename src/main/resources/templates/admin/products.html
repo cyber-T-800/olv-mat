@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Produkty</title>
+    <link rel="stylesheet" href="/stylesheet.css">
+    <style>
+        body {
+            padding: 1.5rem;
+        }
+
+        .products-page {
+            width: min(100%, 980px) !important;
+            max-width: 980px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            text-align: left;
+        }
+
+        .page-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 2rem 0 0.75rem;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            text-align: left;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1rem;
+        }
+
+        .product-card {
+            display: flex;
+            min-height: 150px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.25rem;
+            border: 1px solid #dcdcdc;
+            border-radius: 12px;
+            background: #fff;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .product-card:hover,
+        .product-card:focus-visible {
+            background: #edf6ff;
+            box-shadow: 0 0 0 2px #8fc2ff;
+            outline: none;
+        }
+
+        .product-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .product-card-image {
+            width: 140px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f0f0f0;
+        }
+
+        .product-card-type {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .new-product-card {
+            color: #2864f0;
+            font-size: 4rem;
+            line-height: 1;
+            font-weight: 300;
+        }
+
+        .product-editor {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #dcdcdc;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .product-editor h2 {
+            margin: 0 0 1.25rem;
+            text-align: left;
+        }
+
+        .product-form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.35rem 1rem;
+        }
+
+        .product-form label {
+            margin-top: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .product-form input,
+        .product-form textarea,
+        .product-form select {
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            border: 1px solid #afafaf;
+            border-radius: 8px;
+            font: inherit;
+            background: #fff;
+        }
+
+        .product-form input:focus,
+        .product-form textarea:focus,
+        .product-form select:focus {
+            border-color: #2864f0;
+            outline: 2px solid rgba(40, 100, 240, 0.2);
+            outline-offset: 1px;
+        }
+
+        .product-form textarea {
+            min-height: 7rem;
+            resize: vertical;
+            line-height: 1.45;
+        }
+
+        .description-meta {
+            display: flex;
+            justify-content: flex-end;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .product-form label[for="description"],
+        .product-form #description,
+        .product-form .description-meta,
+        .product-form label[for="image"],
+        .product-form .product-preview,
+        .product-form #image,
+        .product-form button {
+            grid-column: 1 / -1;
+        }
+
+        .product-form .button {
+            align-self: flex-start;
+            margin-top: 0.75rem;
+            border: 0;
+        }
+
+        .product-preview {
+            display: block;
+            width: 180px;
+            height: 135px;
+            margin: 0.5rem 0 0.75rem;
+            object-fit: cover;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            background: #f0f0f0;
+        }
+
+        @media (max-width: 680px) {
+            body {
+                padding: 0.75rem;
+            }
+
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+                margin-bottom: 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.7rem;
+            }
+
+            .page-actions,
+            .page-actions a {
+                width: 100%;
+            }
+
+            .page-actions a {
+                text-align: center;
+            }
+
+            .product-editor {
+                padding: 1rem;
+            }
+
+            .product-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="obal obal-static products-page">
+    <header class="page-header">
+        <h1>Produkty aktuálneho eventu</h1>
+        <nav class="page-actions" aria-label="Navigácia produktov">
+            <a href="/admin" class="button-secondary">Späť na administráciu</a>
+            <a href="/admin/products" class="button">Nový produkt</a>
+        </nav>
+    </header>
+
+    <section aria-labelledby="product-list-heading">
+        <div class="section-heading">
+            <h2 id="product-list-heading">Zoznam produktov</h2>
+        </div>
+        <div class="products-grid">
+            <a class="product-card" th:each="product : ${products}"
+               th:href="@{/admin/products/{id}(id=${product.id})}">
+                <img class="product-card-image"
+                     th:if="${product.image != null and #arrays.length(product.image) > 0}"
+                     th:src="${'data:image/jpeg;base64,' + product.imageBase64}"
+                     th:alt="${product.title}">
+                <span class="product-card-title" th:text="${product.title}">Produkt</span>
+                <span class="product-card-type" th:text="${product.type}">BAR</span>
+                <strong th:if="${product.price != null}"
+                        th:text="${product.price + ' €'}">0,00 €</strong>
+            </a>
+            <a class="product-card new-product-card" href="/admin/products"
+               aria-label="Vytvoriť nový produkt">+</a>
+        </div>
+    </section>
+
+    <section class="product-editor" aria-labelledby="product-editor-heading">
+        <h2 id="product-editor-heading"
+            th:text="${editingProductId == null ? 'Pridať produkt' : 'Upraviť produkt'}">
+            Pridať produkt
+        </h2>
+        <form class="product-form" th:object="${productForm}"
+              th:action="${editingProductId == null ? '/admin/products' : '/admin/products/' + editingProductId}"
+              method="post" enctype="multipart/form-data">
+        <input id="textId" type="hidden" th:field="*{textId}">
+
+        <label for="type">Typ:</label>
+        <select id="type"  th:field="*{type}" required>
+            <option value="BAR">Bar</option>
+            <option value="JEDLO">Občerstvenie</option>
+        </select>
+
+        <label for="title">Názov:</label>
+        <input id="title" type="text" th:field="*{title}" required>
+
+        <label for="description">Popis:</label>
+        <textarea id="description" th:field="*{description}" maxlength="150"></textarea>
+        <div class="description-meta">
+            <span id="description-count">0/150</span>
+        </div>
+
+        <label for="price">Cena:</label>
+        <input id="price" type="number" min="0" max="9.5" step="0.5" th:field="*{price}">
+
+        <label for="image">Obrázok:</label>
+        <img id="product-image-preview" class="product-preview"
+             th:src="${editingProduct != null and editingProduct.image != null
+                 ? 'data:image/jpeg;base64,' + editingProduct.imageBase64 : ''}"
+             th:alt="${editingProduct != null ? editingProduct.title : 'Náhľad obrázka'}"
+             th:style="${editingProduct != null and editingProduct.image != null ? '' : 'display: none;'}">
+        <input id="image" type="file" name="image" accept="image/*"
+               th:required="${editingProductId == null}">
+
+            <button class="button" type="submit"
+                    th:text="${editingProductId == null ? 'Pridať produkt' : 'Uložiť zmeny'}">
+                Uložiť
+            </button>
+        </form>
+    </section>
+</main>
+<script>
+    const description = document.getElementById("description");
+    const descriptionCount = document.getElementById("description-count");
+    const title = document.getElementById("title");
+    const textId = document.getElementById("textId");
+    const image = document.getElementById("image");
+    const imagePreview = document.getElementById("product-image-preview");
+
+    function updateTextId() {
+        textId.value = title.value
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "-");
+    }
+
+    function updateDescriptionCount() {
+        descriptionCount.textContent = description.value.length + "/150";
+    }
+
+    title.addEventListener("input", updateTextId);
+    updateTextId();
+    description.addEventListener("input", updateDescriptionCount);
+    updateDescriptionCount();
+
+    image.addEventListener("change", function () {
+        const selectedImage = image.files[0];
+        if (!selectedImage) {
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.addEventListener("load", function () {
+            imagePreview.src = reader.result;
+            imagePreview.style.display = "block";
+        });
+        reader.readAsDataURL(selectedImage);
+    });
+</script>
+</body>
+</html>

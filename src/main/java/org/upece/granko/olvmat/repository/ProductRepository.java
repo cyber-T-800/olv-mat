@@ -11,5 +11,7 @@ import java.util.UUID;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
 
+    List<ProductEntity> findByEvent(EventEntity event);
+
     List<ProductEntity> findByEventAndType(EventEntity event, String type);
 }
