@@ -1,0 +1,1 @@
+alter table event add column status varchar(20) default 'ACTIVE';

@@ -22,5 +22,6 @@ public class EventEntity {
     private String stav;
     private String popis;
     private Integer kapacita;
+    private String status; // ACTIVE, NOT ACTIVE, UNDERWAY
     private LocalDate datum;
 }

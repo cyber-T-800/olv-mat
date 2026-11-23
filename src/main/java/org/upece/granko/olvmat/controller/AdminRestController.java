@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.upece.granko.olvmat.entity.AdminEntity;
+import org.upece.granko.olvmat.entity.EventEntity;
 import org.upece.granko.olvmat.entity.TicketEntity;
 import org.upece.granko.olvmat.entity.enums.StavRezervacieEnum;
 import org.upece.granko.olvmat.model.AdminDetails;
@@ -47,18 +48,25 @@ public class AdminRestController {
             return;
         }
 
-        Map<String, Object> mailModel = new HashMap<>();
-        mailModel.put("meno", entity.getMeno().split(" ")[0]);
-
-        byte[] qrImage = QRCodeGenerator.generateQrPng(entity.getId().toString());
-
-        emailService.sendMail(entity.getEmail(), "Tvoj lístok na OĽV", "potvrdenie-zaplatenie", mailModel, qrImage);
-
+        EventEntity event = eventService.findSelected().orElseThrow();
         AdminEntity admin = ((AdminDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAdminEntity();
         entity.setSchvalil(admin);
-        entity.setStav(StavRezervacieEnum.ZAPLATENY);
-        ticketRepository.save(entity);
 
+        if (event.getStatus().equals("UNDERWAY")) { // ak akcia prebieha, lístok nepošleme, iba zaznačíme ako použitý
+            entity.setStav(StavRezervacieEnum.POUZITY);
+        } else {
+
+            Map<String, Object> mailModel = new HashMap<>();
+            mailModel.put("meno", entity.getMeno().split(" ")[0]);
+
+            byte[] qrImage = QRCodeGenerator.generateQrPng(entity.getId().toString());
+
+            emailService.sendMail(entity.getEmail(), "Tvoj lístok na OĽV", "potvrdenie-zaplatenie", mailModel, qrImage);
+
+            entity.setStav(StavRezervacieEnum.ZAPLATENY);
+
+        }
+        ticketRepository.save(entity);
         response.setStatus(200);
     }
 

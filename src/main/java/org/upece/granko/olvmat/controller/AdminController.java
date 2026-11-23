@@ -9,10 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.upece.granko.olvmat.entity.AdminEntity;
-import org.upece.granko.olvmat.entity.AdminRegistraciaZiadostEntity;
-import org.upece.granko.olvmat.entity.TicketEntity;
-import org.upece.granko.olvmat.entity.VolunteerEntity;
+import org.upece.granko.olvmat.entity.*;
 import org.upece.granko.olvmat.entity.enums.*;
 import org.upece.granko.olvmat.model.AdminDetails;
 import org.upece.granko.olvmat.model.EventEditForm;
@@ -265,11 +262,13 @@ public class AdminController {
     }
 
     public String renderPage(String pageId, ModelMap model) {
-        UUID selectedEventId = eventService.findSelected().orElseThrow().getId();
+        EventEntity event = eventService.findSelected().orElseThrow();
+        UUID selectedEventId = event.getId();
 
         model.put("pocetObsadenych", ticketRepository.countUcastnicke(selectedEventId));
         model.put("maxPocet", maxPocetListkov);
 
+        model.addAttribute("eventStatus", event.getStatus());
         model.put("pocetDobrovolnikov", ticketRepository.countDobrovolnicke(selectedEventId));
         model.put("pocetTeamakov", ticketRepository.countTeamacke(selectedEventId));
         model.put("pocetPouzite", ticketRepository.countPouzite(selectedEventId));
