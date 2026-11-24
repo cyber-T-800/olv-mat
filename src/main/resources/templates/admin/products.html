@@ -240,7 +240,7 @@
                th:href="@{/admin/products/{id}(id=${product.id})}">
                 <img class="product-card-image"
                      th:if="${product.image != null and #arrays.length(product.image) > 0}"
-                     th:src="${'data:image/jpeg;base64,' + product.imageBase64}"
+                     th:src="${'data:' + product.imageContentType + ';base64,' + product.imageBase64}"
                      th:alt="${product.title}">
                 <span class="product-card-title" th:text="${product.title}">Produkt</span>
                 <span class="product-card-type" th:text="${product.type}">BAR</span>
@@ -283,7 +283,7 @@
         <label for="image">Obrázok:</label>
         <img id="product-image-preview" class="product-preview"
              th:src="${editingProduct != null and editingProduct.image != null
-                 ? 'data:image/jpeg;base64,' + editingProduct.imageBase64 : ''}"
+                 ? 'data:' + editingProduct.imageContentType + ';base64,' + editingProduct.imageBase64 : ''}"
              th:alt="${editingProduct != null ? editingProduct.title : 'Náhľad obrázka'}"
              th:style="${editingProduct != null and editingProduct.image != null ? '' : 'display: none;'}">
         <input id="image" type="file" name="image" accept="image/*"

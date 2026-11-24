@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.glavo.webp.WebPImage;
 import org.upece.granko.olvmat.entity.EventEntity;
 import org.upece.granko.olvmat.entity.ProductEntity;
 import org.upece.granko.olvmat.model.NewProductForm;
@@ -18,6 +19,7 @@ import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -81,7 +83,7 @@ public class ProductAdministrationController {
         product.setPrice(validatePrice(form.getPrice()));
 
         if (form.getImage() != null && !form.getImage().isEmpty()) {
-            product.setImage(rescaleImage(form.getImage().getBytes(), form.getImage().getContentType()));
+            product.setImage(rescaleImage(form.getImage().getBytes()));
         } else if (newProduct) {
             throw new IllegalArgumentException("An image is required for a new product");
         }
@@ -98,8 +100,10 @@ public class ProductAdministrationController {
         return price;
     }
 
-    private byte[] rescaleImage(byte[] imageBytes, String contentType) throws IOException {
-        BufferedImage source = ImageIO.read(new java.io.ByteArrayInputStream(imageBytes));
+    private byte[] rescaleImage(byte[] imageBytes) throws IOException {
+        BufferedImage source = isWebpImage(imageBytes)
+                ? decodeWebp(imageBytes)
+                : ImageIO.read(new ByteArrayInputStream(imageBytes));
         if (source == null) {
             throw new IllegalArgumentException("Uploaded file is not a supported image");
         }
@@ -118,14 +122,31 @@ public class ProductAdministrationController {
             graphics.dispose();
         }
 
-        String format = "image/png".equalsIgnoreCase(contentType) || source.getColorModel().hasAlpha()
-                ? "png"
-                : "jpg";
+        String format = source.getColorModel().hasAlpha() ? "png" : "jpg";
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         if (!ImageIO.write(resized, format, output)) {
             throw new IOException("Unable to encode resized image");
         }
         return output.toByteArray();
+    }
+
+    private boolean isWebpImage(byte[] imageBytes) {
+        return imageBytes.length >= 12
+                && imageBytes[0] == 'R'
+                && imageBytes[1] == 'I'
+                && imageBytes[2] == 'F'
+                && imageBytes[3] == 'F'
+                && imageBytes[8] == 'W'
+                && imageBytes[9] == 'E'
+                && imageBytes[10] == 'B'
+                && imageBytes[11] == 'P';
+    }
+
+    private BufferedImage decodeWebp(byte[] imageBytes) throws IOException {
+        var frame = WebPImage.read(new ByteArrayInputStream(imageBytes)).getFirstFrame();
+        BufferedImage image = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        image.setRGB(0, 0, frame.getWidth(), frame.getHeight(), frame.getArgbArray(), 0, frame.getWidth());
+        return image;
     }
 
     private ProductEntity findProductForCurrentEvent(UUID id) {

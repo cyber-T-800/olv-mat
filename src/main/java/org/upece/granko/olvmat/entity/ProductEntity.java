@@ -63,4 +63,19 @@ public class ProductEntity {
 
         return Base64.getEncoder().encodeToString(image);
     }
+
+    public String getImageContentType() {
+        if (image != null && image.length >= 8
+                && (image[0] & 0xFF) == 0x89
+                && image[1] == 0x50
+                && image[2] == 0x4E
+                && image[3] == 0x47
+                && image[4] == 0x0D
+                && image[5] == 0x0A
+                && image[6] == 0x1A
+                && image[7] == 0x0A) {
+            return "image/png";
+        }
+        return "image/jpeg";
+    }
 }

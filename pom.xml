@@ -104,6 +104,11 @@
             <artifactId>javase</artifactId>
             <version>3.5.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.glavo</groupId>
+            <artifactId>webp</artifactId>
+            <version>0.2.0</version>
+        </dependency>
 
     </dependencies>
 

@@ -111,7 +111,7 @@
                  aria-label="Predať produkt">
             <img class="product-image"
                  th:if="${product.image != null and #arrays.length(product.image) > 0}"
-                 th:src="${'data:image/jpeg;base64,' + product.imageBase64}"
+                 th:src="${'data:' + product.imageContentType + ';base64,' + product.imageBase64}"
                  th:alt="${product.title}">
 
             <h2 th:text="${product.title}">Produkt</h2>
