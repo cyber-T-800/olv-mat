@@ -3,6 +3,9 @@ package org.upece.granko.olvmat.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -220,6 +223,37 @@ public class AdminController {
         } else {
             return renderPage("admin/volunteers", model);
         }
+    }
+
+    @GetMapping("/admin/volunteers/export")
+    public ResponseEntity<byte[]> exportVolunteers() {
+        UUID eventId = eventService.findSelected().orElseThrow().getId();
+        List<VolunteerEntity> volunteers = volunteerRepository.findAllByEventIdAndStavNot(eventId, VolunteerStavEnum.ZRUSENY);
+
+        StringBuilder csv = new StringBuilder("\uFEFFMeno,Email,Dostupnosť,Služby,Poznámka,Stav\r\n");
+        volunteers.forEach(volunteer -> csv
+                .append(csvCell(volunteer.getName())).append(',')
+                .append(csvCell(volunteer.getEmail())).append(',')
+                .append(csvCell(volunteer.getAvailability())).append(',')
+                .append(csvCell(volunteer.getServices())).append(',')
+                .append(csvCell(volunteer.getText())).append(',')
+                .append(csvCell(volunteer.getStav().name())).append("\r\n"));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"dobrovolnici.csv\"")
+                .contentType(new MediaType("text", "csv", StandardCharsets.UTF_8))
+                .body(csv.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    private String csvCell(String value) {
+        if (value == null) {
+            value = "";
+        }
+        String trimmedValue = value.stripLeading();
+        if (!trimmedValue.isEmpty() && "=+-@".indexOf(trimmedValue.charAt(0)) >= 0) {
+            value = "'" + value;
+        }
+        return "\"" + value.replace("\"", "\"\"") + "\"";
     }
 
     @GetMapping("/admin/volunteers/cancel/{id}")

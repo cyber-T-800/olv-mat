@@ -91,6 +91,13 @@ label {
 .button, .button-secondary, .button-negative {
     padding: 0.75rem 1.25rem;
 }
+.button-large {
+    display: block;
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    text-align: center;
+    font-size: 1.25rem;
+}
 .button-small, .button-small-negative {
     padding: 0.25rem 0.75rem;
 }

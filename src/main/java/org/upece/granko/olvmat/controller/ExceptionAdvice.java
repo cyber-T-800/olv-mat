@@ -15,8 +15,9 @@ public class ExceptionAdvice {
     private final AdminDetailService adminDetailService;
 
     @ExceptionHandler(Exception.class)
-    public String handleException(Exception ex) {
+    public String handleException(Exception ex, HttpServletRequest request) {
         ex.printStackTrace();
+
         return "redirect:/";
     }
 
