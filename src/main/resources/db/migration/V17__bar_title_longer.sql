@@ -1,0 +1,1 @@
+alter table product alter column title type varchar(50);
