@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="sk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${errorCode + ' – ' + errorTitle}">Chyba</title>
+    <link type="text/css" rel="stylesheet" href="/stylesheet.css">
+</head>
+<body>
+<main class="obal">
+    <h1 th:text="${errorCode}">404</h1>
+    <h2 th:text="${errorTitle}">Stránka sa nenašla.</h2>
+    <p th:text="${errorMessage}">Požadovanú stránku sa nepodarilo zobraziť.</p>
+    <div style="height: 2rem;"></div>
+    <a class="button" th:href="${homeUrl}" th:text="${homeLabel}">Späť na úvodnú stránku</a>
+</main>
+</body>
+</html>
