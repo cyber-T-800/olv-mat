@@ -18,6 +18,7 @@ import org.upece.granko.olvmat.model.AdminDetails;
 import org.upece.granko.olvmat.model.EventEditForm;
 import org.upece.granko.olvmat.repository.AdminRegistraciaZiadostRepository;
 import org.upece.granko.olvmat.repository.AdminRepository;
+import org.upece.granko.olvmat.repository.ErrorLogRepository;
 import org.upece.granko.olvmat.repository.TicketRepository;
 import org.upece.granko.olvmat.repository.VolunteerRepository;
 import org.upece.granko.olvmat.service.AdminDetailService;
@@ -37,6 +38,7 @@ public class AdminController {
     private final EmailService emailService;
     private final AdminRegistraciaZiadostRepository adminRegistraciaZiadostRepository;
     private final AdminRepository adminRepository;
+    private final ErrorLogRepository errorLogRepository;
     private final PasswordEncoder passwordEncoder;
     private final VytvorenieHeslaSession vytvorenieHeslaSession;
     private final TicketRepository ticketRepository;
@@ -77,6 +79,14 @@ public class AdminController {
             model.addAttribute("vacantSuperadminPosition", true);
         }
         return renderPage("admin/admin", model);
+    }
+
+    @GetMapping("/admin/errors")
+    public String getErrors(ModelMap model) {
+        model.addAttribute("errors", errorLogRepository.findAllByOrderByCreatedAtDesc());
+        model.addAttribute("user", ((AdminDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal()).getUsername());
+        return "admin/errors";
     }
 
     @PostMapping("/admin")

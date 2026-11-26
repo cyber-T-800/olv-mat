@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chybové záznamy</title>
+    <link type="text/css" rel="stylesheet" href="/stylesheet.css">
+</head>
+<body>
+<main class="obal" style="width: min(1100px, 95vw);">
+    <h1>Chybové záznamy</h1>
+    <div class="admin-info">
+        Prihlásený ako: <strong th:text="${user}">admin@upc.sk</strong> |
+        <a href="/admin">Späť do administrácie</a> |
+        <a href="/logout">Odhlásiť sa</a>
+    </div>
+
+    <p th:if="${#lists.isEmpty(errors)}">Zatiaľ nie sú zaznamenané žiadne chyby.</p>
+    <section th:each="error : ${errors}" style="margin-top: 1.5rem; padding: 1rem; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+        <h2 th:text="${error.createdAt}">Dátum chyby</h2>
+        <p><strong>Správa:</strong> <span th:text="${error.message ?: 'Bez správy'}">Chybová správa</span></p>
+        <details>
+            <summary>Zobraziť stack trace</summary>
+            <pre style="white-space: pre-wrap; overflow-wrap: anywhere;" th:text="${error.stackTrace}">Stack trace</pre>
+        </details>
+    </section>
+</main>
+</body>
+</html>
